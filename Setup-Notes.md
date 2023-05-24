@@ -1,0 +1,15 @@
+# Instructions for editing config
+
+1. Log into https://portal.azure.com/ and once successful, you will see this
+
+<img width="1176" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/bcd44875-a5bc-49e0-b047-638b7747c1ae">
+
+2. Click the JupyterHub icon and you will see this
+
+<img width="815" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/99c0cac0-7e65-444a-8b95-b0377db1ec4a">
+
+3. Click the Connect icon and you will see this. Ignore everything else that you see.
+
+<img width="247" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/686f64b0-f5ef-47b7-addd-0f8ddbc0455c">
+
+4. Type `nano config.yaml` to get the the JupyterHub config. This is the only file you need to change. Cmd-O to write. Cmd-X to exit.
