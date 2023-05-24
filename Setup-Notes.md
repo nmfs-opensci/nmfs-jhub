@@ -8,7 +8,7 @@
 
 <img width="815" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/99c0cac0-7e65-444a-8b95-b0377db1ec4a">
 
-3. Click the Connect icon and you will see this. Ignore everything else that you see.
+3. Click the Connect icon and you will see this. Ignore everything else that you see. I don't think you need to run the `kubectl get deployments --all-namespaces=true` unless you need to check Kubernetes set up.
 
 <img width="247" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/686f64b0-f5ef-47b7-addd-0f8ddbc0455c">
 
