@@ -12,4 +12,16 @@
 
 <img width="247" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/686f64b0-f5ef-47b7-addd-0f8ddbc0455c">
 
-4. Type `nano config.yaml` to get the the JupyterHub config. This is the only file you need to change. Cmd-O to write. Cmd-X to exit.
+4. Type `nano config.yaml` to get the the JupyterHub config. This is the only file you need to change. cntl-O to write. cntl-X to exit.
+
+After you update the `config.yaml`, you need to tell the JupyterHub about the change
+
+```
+helm upgrade --cleanup-on-fail jhub jupyterhub/jupyterhub --namespace jhub  --version=2.0.0 --values config.yaml
+```
+
+If upgrade was successful, you will see this (plus a bunch of text below that you can ignore).
+
+<img width="797" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/d632c4ed-e9a0-49df-b0a3-433a2778bb03">
+
+5. What a few minutes for your changes to take effect.
