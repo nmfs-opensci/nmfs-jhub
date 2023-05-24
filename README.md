@@ -17,3 +17,21 @@ Instructions: It should be pretty self-explanatory.
 * How do I link to my GitHub repositories? Follow these instructions https://snowex-2022.hackweek.io/preliminary/git.html
 
 Post any comments in the discussion so we all can follow them.
+
+## Setting up Git to remember you
+
+Basically
+
+1. Open up a terminal
+```
+git config --global user.name "Attendee Name"
+git config --global user.email "attendee@hackweek.com"
+git config --global pull.rebase false
+git config --global credential.helper store
+```
+
+2. Make a PAT on GitHub
+
+3. Head back to the JupyterHub and do a push. It'll ask for your username and password. After that it will remember.
+
+
