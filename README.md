@@ -2,7 +2,7 @@
 
 I have set us up a JupyterHub/RStudio cloud-computing site on Azure. Its on Kubernetes and will spin up VMs as needed. The VMs are not huge: 2CPU & 8 Gig RAM
 
-jub.opensci.live/hub/login
+https://jhub.opensci.live/hub/login
 
 Read about why cloud compute environments are great. This one is the same as the SnowEx Hackweek one except that it also has RStudio server: https://snowex-2022.hackweek.io/preliminary/jupyterhub.html
 
