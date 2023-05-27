@@ -24,8 +24,8 @@ Basically
 
 1. Open up a terminal
 ```
-git config --global user.name "Attendee Name"
-git config --global user.email "attendee@hackweek.com"
+git config --global user.name "Your Name"
+git config --global user.email "yourname@your.com"
 git config --global pull.rebase false
 git config --global credential.helper store
 ```
