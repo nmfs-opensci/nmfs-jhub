@@ -32,8 +32,8 @@ Choose 'new project' (top right) and Version Control.
 
 ### Tell Git who you are 
 
-Tell Git who you are and to save your authentication info. You only do this once (or until your
-PAT expires. Run this code from the R console.
+Tell Git who you are and save your authentication info. You only do this once (or until your
+PAT expires). Run this code from the R console (not terminal).
 
 ```
 usethis::use_git_config(user.name = "YourName", user.email = "your@email.com")
@@ -57,8 +57,8 @@ Now commit a change and push.
 Any of the browser tabs with this icon are JupyterLab <img width="37" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/65af5d1b-9382-4c2e-a058-df32c6059350">
 
 Be careful because you can be in RStudio with one GitHub repository and you could open the same repo in JupyterLab and easily create merge
-conflicts. Just be aware that they are essentially in separate file systems so changes on RStudio will not be reflected in JupyterLab. It is
-not like you are one one computer.
+conflicts. Just be aware that they are in separate file systems so changes on RStudio will not be reflected in JupyterLab. It is
+not like you are on one computer.
 
 ### Tell Git who you are
 
