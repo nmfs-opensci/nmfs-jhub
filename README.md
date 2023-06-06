@@ -26,7 +26,6 @@ Basically
 ```
 git config --global user.name "Your Name"
 git config --global user.email "yourname@your.com"
-git config --global pull.rebase false
 git config --global credential.helper store
 ```
 
