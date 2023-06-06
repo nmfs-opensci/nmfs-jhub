@@ -36,7 +36,7 @@ Tell Git who you are and to save your authentication info. You only do this once
 PAT expires. Run this code from the R console.
 
 ```
-usethis::use_git_config(user.name = "YourName", user.email = "your@mail.com")
+usethis::use_git_config(user.name = "YourName", user.email = "your@email.com")
 ```
 Now create a personal access token for authentication.  SAVE the token because you will need it in the next step.
 ```
@@ -49,6 +49,8 @@ gitcreds::gitcreds_set()
 Restart R. You can chose your project from the dropdown on the top right to do this.
 
 Now commit a change and push.
+
+*Note, you can also run the commands below from a terminal window.*
 
 ## Let's choose JupyterLab
 
@@ -74,9 +76,8 @@ Now click Termnal
 * Run this code
 
 ```
-git config --global user.name "Attendee Name"
-git config --global user.email "attendee@hackweek.com"
-git config --global pull.rebase false
+git config --global user.name "YourName"
+git config --global user.email "your@email.com"
 git config --global credential.helper store
 ```
 
