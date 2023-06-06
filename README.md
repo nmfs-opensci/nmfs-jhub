@@ -4,8 +4,6 @@ I have set us up a JupyterHub/RStudio cloud-computing site on Azure. Its on Kube
 
 https://jhub.opensci.live/hub/login
 
-Read about why cloud compute environments are great. This one is the same as the SnowEx Hackweek one except that it also has RStudio server: https://snowex-2022.hackweek.io/preliminary/jupyterhub.html
-
 Login via GitHub. Only members of the Connect-Forum GitHub team can log on.
 
 Instructions: It should be pretty self-explanatory.
@@ -32,5 +30,10 @@ git config --global credential.helper store
 2. Make a PAT on GitHub
 
 3. Head back to the JupyterHub and do a push. It'll ask for your username and password. After that it will remember.
+
+## What a JupyterHub
+
+Read about why cloud compute environments are great. This one is the same as the SnowEx Hackweek one except that it also has RStudio server: https://snowex-2022.hackweek.io/preliminary/jupyterhub.html
+
 
 
