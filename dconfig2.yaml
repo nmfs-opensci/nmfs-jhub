@@ -12,6 +12,18 @@ jupyterhub:
           - read:org
       JupyterHub:
         authenticator_class: github
+    allowNamedServers: true
+    networkPolicy:
+      # FIXME: For dask gateway
+      enabled: false
+    readinessProbe:
+      enabled: false
+  scheduling:
+    userScheduler:
+      enabled: true
+    userPods:
+      nodeAffinity:
+        matchNodePurpose: require
   proxy:
     https:
       enabled: true
@@ -84,29 +96,11 @@ jupyterhub:
                 kubespawner_override:
                   mem_guarantee: 28.937G
                   cpu_guarantee: 0.4
-          kubespawner_override:
-            cpu_limit: null
-            mem_limit: null
-            node_selector:
-              node.kubernetes.io/instance-type: r5.xlarge
-  singleuser:
-    image:
-      name: openscapes/python
-      tag: f577786
-    cmd: null
-  singleuser:
-    # Defines the default image
-    image:
-      name: openscapes/python
-      tag: f577786
-    profileList:
-      - display_name: "Python3"
-        description: "NASA Openscapes Python image"
-        default: true
-      - display_name: "R"
-        description: "NASA Openscapes RStudio image"
         kubespawner_override:
-          image: openscapes/rocker:a7596b5        
+          cpu_limit: null
+          mem_limit: null
+          node_selector:
+            node.kubernetes.io/instance-type: r5.xlarge
 dask-gateway:
   gateway:
     extraConfig:
