@@ -55,19 +55,19 @@ Click on the link that says "Open Cloud Shell".
 
 You will get to a terminal. Paste in the two commands in the previous image (the commands that show up for you that is).
 
-## Create `dhub-config.yaml`
+## Create `dconfig.yaml`
 
-This will be the configuration file for your Dask-enabled JupyterHub. For now, it can be just comments. Note the name is unimportant but should end in `.yaml`.
+This will be the configuration file for your Dask-enabled JupyterHub. For now, it can be just comments. Note the name is unimportant but should end in `.yaml`. I am using `dconfig.yaml` instead of `config.yaml` since I already have a `config.yaml` file for something else.
 
 ```
-nano dhub-config.yaml
+nano dconfig.yaml
 ```
 This will open the nano editor. Edit your file. You can do `# just blank for now`. Then `Cntl-O` to save and `Cntl-X` to exit.
 
 
 ## Install daskhub via helm chart
 
-Note, the instructions at https://artifacthub.io/packages/helm/dask/daskhub did not work for me. I used the following.
+Instructions: https://artifacthub.io/packages/helm/dask/daskhub .
 
 Check that helm is installed
 ```
@@ -78,12 +78,16 @@ Tell helm about the dask helm repository
 helm repo add dask https://helm.dask.org
 helm repo update
 ```
-At the command line. Replace version with latest version.
+
+Now install
 ```
-helm upgrade --cleanup-on-fail --install dhub dask/daskhub --namespace dhub --create-namespace --version=2023.1.0 --values dhub-config.yaml
+helm upgrade --wait --install --render-subchart-notes \
+    dhub dask/daskhub \
+    --namespace=dhub --create-namespace \
+    --values=dconfig.yaml
 ```
-You will see this on successful installation
-<img width="733" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/c5e5b808-0df5-4acc-a73b-47dc7276c729">
+You will see this on successful installation (it's long. much has been cut).
+<img width="820" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/4540dc50-6c3d-42c5-be13-e54c4baa08f5">
 
 ## Set-up your external IP address
 
@@ -102,23 +106,117 @@ You can log out of your cluster. The next steps are done elsewhere.
 
 ## Create a domain name
 
-You will need a domain name for `https::` which you want for security (and JHub won't stop complaining if you don't). Find a domain name provider and set one up. It is not expensive. I used GoDaddy.  
+You will need a domain name for `https` which you want for security (and JHub won't stop complaining if you don't). Find a domain name provider and set one up. It is not expensive. I used GoDaddy.  
 
 ## Create a DNS entry
 
-Let's pretend you set up `bluemountain123.live` as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let's say you create, `jhub` as the type A DNS entry. Then `jhub.bluemountain123.live` will be the url. You can have as many subdomains as you need.
+Let's pretend you set up `bluemountain123.live` as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let's say you create, `dhub` as the type A DNS entry. Then `dhub.bluemountain123.live` will be the url. You can have as many subdomains as you need.
 
 <img width="813" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/4e99d678-3c89-4a5c-b617-c220729ddbc1">
 
 ## Test if the url is working
 
-`jhub.bluemountain123.live` using the example would be the url. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:
+`dhub.bluemountain123.live` using the example would be the url. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:
 
 <img width="378" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/1d71683f-9c8d-4f9b-ae79-dfa0a5c86712">
+
+## Set-up https on your JupyterHub
+
+[Read documentation](https://tljh.jupyter.org/en/latest/howto/admin/https.html) Log back into your cluster. Got to portal.azure.com, click on your Kubernetes cluster name, and then click on "Connect". Then click on "Cloud Shell".
+
+Once you are on the shell, type
+
+```
+nano dconfig.yaml
+```
+to edit the config file. Paste this in and save. Note the additional `jupyterhub:` in the yaml file. This is not in a plain JupyterHub with Kubernetes config file.
+```
+juptyerhub:
+  proxy:
+    https:
+      enabled: true
+      hosts:
+        - dhub.opensci.live
+      letsencrypt:
+        contactEmail: eli.holmes@noaa.gov
+```
+
+## Update the JupyterHub installation
+
+```
+helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml
+```
+
+## Test if https is working
+
+Try `https:\\dhub.bluemountain123.live`
 
 # Step 3 Set up GitHub authentication
 
 Optional, if you want to manage who can login via GitHub. I am going to show an example where I use a team on a GitHub organization to manage authentication. There are many other ways to manage users. Google to find that.
+
+## Create a new Oauth Application on GitHub
+
+This is going to be associated with your GitHub account, but you can use a team on a GitHub org.
+
+Log into GitHub and go to GitHub > Settings > Developer Settings > New Oauth Application
+
+<img width="625" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/0e176cc5-0fe2-4960-9a5e-31d6db92f812">
+
+Next you will see something like this
+<img width="812" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/96f4a440-ebb2-49c5-8888-25d7e81b6eb4">
+
+## Create a team in your GitHub org
+
+You will be added by default and add anyone else who needs access to the hub.  Let's say your org is `MyOrg` and the team is called `DaskHub`. So then the allowed organization is MyOrg:DaskHub. You can leave off `:DaskHub` if you want to allow all members of the organization to log in.
+
+## Edit the `dconfig.yaml` file
+
+```
+nano dconfig.yaml
+```
+Add to your config file so it is now this. Replace the id, secret and url with your values.
+```
+jupyterhub:
+  hub:
+    config:
+      GitHubOAuthenticator:
+        client_id: <replace with your OAuth id>
+        client_secret: <replace with your OAuth app secret>
+        oauth_callback_url: https://<your url>/hub/oauth_callback
+        allowed_organizations:
+          - MyOrg:DaskHub
+        scope:
+          - read:org
+      JupyterHub:
+        authenticator_class: github
+  proxy:
+    https:
+      enabled: true
+      hosts:
+        - <your url>
+      letsencrypt:
+        contactEmail: eli.holmes@noaa.gov        
+```
+
+## Update the hub
+
+```
+helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml
+```
+
+## Test
+
+You should now see this and can authenticate with GitHub.
+
+<img width="221" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/4e8f72d3-9e38-4490-b2fa-57254a6801ce">
+
+
+
+
+
+
+
 
 
 
