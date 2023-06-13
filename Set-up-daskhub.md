@@ -270,6 +270,10 @@ dask-gateway:
 helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml
 ```
 
+# Troubleshooting
+
+* I cannot clone repos in the JupyterHub. Restart the server. In Jupyter, File > Hub Control Panel > Stop My Server.
+
 
 
 # Refs I used
