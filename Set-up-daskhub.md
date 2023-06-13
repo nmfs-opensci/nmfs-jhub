@@ -211,7 +211,72 @@ You should now see this and can authenticate with GitHub.
 
 <img width="221" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/4e8f72d3-9e38-4490-b2fa-57254a6801ce">
 
+# Set up the container image
 
+Now you need to specify the Docker image that will be used. We will use 2 different profiles: Python and R (RStudio).
+
+Edit the `dconfig.yaml` file and add the user image info. Note the spacing matters (a lot). I also added some Dask gateway config.
+
+```
+jupyterhub:
+  hub:
+    config:
+      GitHubOAuthenticator:
+        client_id: <replace with your OAuth id>
+        client_secret: <replace with your OAuth app secret>
+        oauth_callback_url: https://<your url>/hub/oauth_callback
+        allowed_organizations:
+          - MyOrg:DaskHub
+        scope:
+          - read:org
+      JupyterHub:
+        authenticator_class: github
+  proxy:
+    https:
+      enabled: true
+      hosts:
+        - <your url>
+      letsencrypt:
+        contactEmail: eli.holmes@noaa.gov        
+  singleuser:
+    image:
+      name: openscapes/python
+      tag: f577786
+    cmd: null
+  singleuser:
+    # Defines the default image
+    image:
+      name: openscapes/python
+      tag: f577786
+    profileList:
+      - display_name: "Python3"
+        description: "NASA Openscapes Python image"
+        default: true
+      - display_name: "R"
+        description: "NASA Openscapes RStudio image"
+        kubespawner_override:
+          image: openscapes/rocker:a7596b5        
+dask-gateway:
+  gateway:
+    extraConfig:
+      idle: |-
+        # timeout after 30 minutes of inactivity
+        c.KubeClusterConfig.idle_timeout = 1800        
+```
+
+## Update the hub
+
+```
+helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml
+```
+
+
+
+# Refs I used
+
+* https://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/dask_gateway/dask-hub/config_daskhub.yaml
+* https://saturncloud.io/blog/how-to-setup-jupyterhub-on-azure/
+* https://saturncloud.io/blog/jupyterhub-and-azure-ad/
 
 
 
