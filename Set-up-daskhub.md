@@ -270,9 +270,19 @@ dask-gateway:
 helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml
 ```
 
+## Changing the VM size
+
+<img width="825" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/5a354f55-b77d-44a7-8ad5-c8597fb662c4">
+
+```
+kubectl get nodes --show-labels
+```
+
+beta.kubernetes.io/instance-type=Standard_D8s_v3
 # Troubleshooting
 
 * I cannot clone repos in the JupyterHub. Restart the server. In Jupyter, File > Hub Control Panel > Stop My Server.
+
 
 
 
