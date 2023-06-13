@@ -279,6 +279,34 @@ kubectl get nodes --show-labels | grep instance-type
 ```
 
 beta.kubernetes.io/instance-type=Standard_D8s_v3
+
+
+## Create a persistent volume for user data
+
+```
+nana pvc.yaml
+```
+
+```
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: hub-db-dir
+  labels:
+    component: jupyter
+spec:
+  storageClassName: "standard" # name of storage class, it will be default storage class if unspecified.
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: "40Gi"
+```
+
+```
+kubectl create -f pvc.yaml
+```
+
 # Troubleshooting
 
 * I cannot clone repos in the JupyterHub. Restart the server. In Jupyter, File > Hub Control Panel > Stop My Server.
