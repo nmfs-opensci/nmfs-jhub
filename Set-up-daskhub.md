@@ -275,7 +275,7 @@ helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --names
 <img width="825" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/5a354f55-b77d-44a7-8ad5-c8597fb662c4">
 
 ```
-kubectl get nodes --show-labels
+kubectl get nodes --show-labels | grep instance-type
 ```
 
 beta.kubernetes.io/instance-type=Standard_D8s_v3
