@@ -167,16 +167,15 @@ This is going to be associated with your (personal) GitHub account, but you can 
 
 Log into GitHub and go to GitHub \> Settings \> Developer Settings \> New Oauth Application
 
-Look carefully at how I filled in the boxes. It's all important. Make sure you use https:\\\\ since your url has that now. The image has a mistake. The call back is really `https://dhub.opensci.live/hub/oauth_callback` without the IP address.
+Look carefully at how I filled in the boxes.
 
 ![](images/img10.png)
-
 
 Next you will see something like this
 
 ![](images/img11.png)
 
-You need to copy the ID and then click the create secrets button and save the secret.  Save those for later.
+You need to copy the ID and then click the create secrets button and save the secret. Save those for later.
 
 ## Create a team in your GitHub org
 
