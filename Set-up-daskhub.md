@@ -116,29 +116,29 @@ Let's pretend you set up `bluemountain123.live` as the domain. Go to the DNS set
 
 ## Test if the url is working
 
-`dhub.bluemountain123.live` using the example would be the url. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:
+`http:\\dhub.bluemountain123.live` would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:
 
 <img width="378" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/1d71683f-9c8d-4f9b-ae79-dfa0a5c86712">
 
 ## Set-up https on your JupyterHub
 
-[Read documentation](https://tljh.jupyter.org/en/latest/howto/admin/https.html) Log back into your cluster. Got to portal.azure.com, click on your Kubernetes cluster name, and then click on "Connect". Then click on "Cloud Shell".
+Log back into your cluster. Got to portal.azure.com, click on your Kubernetes cluster name, and then click on "Connect". Then click on "Cloud Shell". [Read documentation about https](https://tljh.jupyter.org/en/latest/howto/admin/https.html) 
 
 Once you are on the shell, type
 
 ```
 nano dconfig.yaml
 ```
-to edit the config file. Paste this in and save. Note the additional `jupyterhub:` in the yaml file. This is not in a plain JupyterHub with Kubernetes config file.
+to edit the config file. Paste this in and save. Note the additional `jupyterhub:` in the yaml file. This is not in a plain JupyterHub with Kubernetes config file (i.e. in a non-daskhub, the `jupyterhub:` bit is not there and everything is moved to left by 2 spaces).
 ```
-juptyerhub:
+jupyterhub:
   proxy:
     https:
       enabled: true
       hosts:
-        - dhub.opensci.live
+        - dhub.bluemountain123.live
       letsencrypt:
-        contactEmail: eli.holmes@noaa.gov
+        contactEmail: your@email.com
 ```
 
 ## Update the JupyterHub installation
@@ -153,11 +153,11 @@ Try `https:\\dhub.bluemountain123.live`
 
 # Step 3 Set up GitHub authentication
 
-Optional, if you want to manage who can login via GitHub. I am going to show an example where I use a team on a GitHub organization to manage authentication. There are many other ways to manage users. Google to find that.
+Optional, if you want to manage who can login via GitHub Team. I am going to show an example where I use a team on a GitHub organization to manage authentication. There are many other ways to manage users. Google to find that.
 
 ## Create a new Oauth Application on GitHub
 
-This is going to be associated with your GitHub account, but you can use a team on a GitHub org.
+This is going to be associated with your (personal) GitHub account, but you can use a team on a GitHub org that you are owner of.
 
 Log into GitHub and go to GitHub > Settings > Developer Settings > New Oauth Application
 
@@ -183,7 +183,7 @@ jupyterhub:
       GitHubOAuthenticator:
         client_id: <replace with your OAuth id>
         client_secret: <replace with your OAuth app secret>
-        oauth_callback_url: https://<your url>/hub/oauth_callback
+        oauth_callback_url: https://dhub.bluemountain123.live/hub/oauth_callback
         allowed_organizations:
           - MyOrg:DaskHub
         scope:
@@ -194,9 +194,9 @@ jupyterhub:
     https:
       enabled: true
       hosts:
-        - <your url>
+        - dhub.bluemountain123.live
       letsencrypt:
-        contactEmail: eli.holmes@noaa.gov        
+        contactEmail: your@email.com        
 ```
 
 ## Update the hub
@@ -224,7 +224,7 @@ jupyterhub:
       GitHubOAuthenticator:
         client_id: <replace with your OAuth id>
         client_secret: <replace with your OAuth app secret>
-        oauth_callback_url: https://<your url>/hub/oauth_callback
+        oauth_callback_url: https://dhub.bluemountain123.live/hub/oauth_callback
         allowed_organizations:
           - MyOrg:DaskHub
         scope:
@@ -235,9 +235,9 @@ jupyterhub:
     https:
       enabled: true
       hosts:
-        - <your url>
+        - dhub.bluemountain123.live
       letsencrypt:
-        contactEmail: eli.holmes@noaa.gov        
+        contactEmail: your@email.com        
   singleuser:
     image:
       name: openscapes/python
@@ -272,6 +272,8 @@ helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --names
 
 ## Changing the VM size
 
+**NOT WORKING YET** I am stuck on creating the persistent volumes. Needed because you need the user storage somewhere if you have multiple node pools.
+
 <img width="825" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/5a354f55-b77d-44a7-8ad5-c8597fb662c4">
 
 ```
@@ -281,7 +283,9 @@ kubectl get nodes --show-labels | grep instance-type
 beta.kubernetes.io/instance-type=Standard_D8s_v3
 
 
-## Create a persistent volume for user data
+## Create a persistent volume claim for user data
+
+**NOT WORKING YET** Is this pvc.yaml right? Should I do this in the Azure dashboard instead?
 
 ```
 nana pvc.yaml
@@ -306,6 +310,9 @@ spec:
 ```
 kubectl create -f pvc.yaml
 ```
+
+**What do I do next??**
+
 
 # Troubleshooting
 
