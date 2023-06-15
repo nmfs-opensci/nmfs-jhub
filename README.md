@@ -1,15 +1,18 @@
 # nmfs-jhub
 
-I have set us up a JupyterHub Python/JupyterNotebook & R/RStudio cloud-computing site on Azure. Its on Kubernetes and will spin up VMs as needed. The VMs are not huge: 2CPU & 8 Gig RAM
+I have set us up a JupyterHub Python/JupyterNotebook & R/RStudio cloud-computing site on Azure. Its on Kubernetes and will spin up VMs as needed. 
 
-https://jhub.opensci.live/hub/login
+Vanilla: https://jhub.opensci.live/hub/login. The VMs are not huge: 2CPU & 8 Gig RAM (testing hub)
 
-Login via GitHub. Only members of the Connect-Forum GitHub team can log on.
+daskhub: https://dhub.opensci.live/hub/login. The VMs are not huge: 4CPU & 32 Gig RAM (production hub)
 
-Instructions: It should be pretty self-explanatory.
+
+Login via GitHub. Contact Eli if you want access to test.
+
+Instructions for the test hub https://jhub.opensci.live/hub/login: It should be pretty self-explanatory.
 
 * Chose Python or R
-* It is based on the Openscapes docker images and is fairly full-featured but during testing let me know any libraries you need loaded.
+* It is based on the Openscapes Docker images and is fairly full-featured but during testing let me know any libraries you need loaded.
 * Does your work persist? Yes. It should be like your computer.
 * Is there a limit to storage? Yes. I don't know what it is. Go ahead an use it so I can get a sense of storage needs.
 * How do I link to my GitHub repositories? Follow these instructions https://snowex-2022.hackweek.io/preliminary/git.html
