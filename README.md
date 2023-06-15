@@ -1,6 +1,6 @@
 # nmfs-jhub
 
-I have set us up a JupyterHub/RStudio cloud-computing site on Azure. Its on Kubernetes and will spin up VMs as needed. The VMs are not huge: 2CPU & 8 Gig RAM
+I have set us up a JupyterHub Python/JupyterNotebook & R/RStudio cloud-computing site on Azure. Its on Kubernetes and will spin up VMs as needed. The VMs are not huge: 2CPU & 8 Gig RAM
 
 https://jhub.opensci.live/hub/login
 
