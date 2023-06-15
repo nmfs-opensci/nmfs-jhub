@@ -1,5 +1,7 @@
 Setting up a multi-user JupyterHub with Dask enabled.
 
+Based on: https://github.com/2i2c-org/infrastructure/tree/master/config/clusters/openscapes
+
 # Create your Kubernetes cluster
 
 Log into `https:\\portal.azure.com`

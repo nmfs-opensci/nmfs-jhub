@@ -1,3 +1,9 @@
+# Indian Ocean Summer Docker Images
+
+https://hub.docker.com/repository/docker/eeholmes/iopython/general
+
+The one to use is the dated one. The `main` tag doesn't seem to always be recognized as a new tag when it changes.
+
 # Requirements
 
 Docker installed. For example, if doing on a Mac or PC, you need Docker Desktop. On VMs, docker will already be installed.
