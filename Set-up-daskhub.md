@@ -299,7 +299,12 @@ beta.kubernetes.io/instance-type=Standard_D8s_v3
 
 ## Create a persistent volume claim for user data
 
-**NOT WORKING YET** Is this pvc.yaml right? Should I do this in the Azure dashboard instead?
+**NOT WORKING YET** Is this pvc.yaml right? Should I do this in the Azure dashboard instead? 
+
+This command might have useful info
+```
+KUBE_EDITOR="nano" kubectl edit pvc --namespace=dhub claim-eeholmes
+```
 
 ```         
 nana pvc.yaml
@@ -325,6 +330,24 @@ spec:
 kubectl create -f pvc.yaml
 ```
 
+To delete, you need to first edit the pvc yaml file and get rid of pvc protection. It is 2 lines.
+```
+kubectl --namespace=dhub get pvc
+KUBE_EDITOR="nano" kubectl edit pvc --namespace=dhub claim-eeholmes
+```
+Then you can delete
+```
+kubectl --namespace=dhub delete pvc claim-eeholmes
+```
+Check that it is gone
+```
+kubectl --namespace=dhub get pvc
+```
+if not try
+```
+kubectl --namespace=dhub delete pvc claim-eeholmes --grace-period=0 --force
+```
+
 **What do I do next??**
 
 # Troubleshooting
@@ -336,7 +359,13 @@ kubectl create -f pvc.yaml
 -   <https://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/dask_gateway/dask-hub/config_daskhub.yaml>
 -   <https://saturncloud.io/blog/how-to-setup-jupyterhub-on-azure/>
 -   <https://saturncloud.io/blog/jupyterhub-and-azure-ad/>
+
+## Storage
+
 * https://www.youtube.com/watch?v=Da1qn7-RHvY
 * Dynamic NFS provisioning 2 https://www.youtube.com/watch?v=DF3v2P8ENEg&t=0s
 * Dynamic NFS provisioning 1 https://www.youtube.com/watch?v=AavnQzWDTEk&t=0s
 * https://alan-turing-institute.github.io/hub23-deploy/
+* https://z2jh.jupyter.org/en/latest/jupyterhub/customizing/user-storage.html
+* https://learn.microsoft.com/en-us/azure/aks/azure-nfs-volume
+

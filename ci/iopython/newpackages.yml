@@ -1,11 +1,10 @@
-name: openscapes
 channels:
   - conda-forge
 dependencies:
-  - python=3.9
-  - zarr-eosdis-store
+  - pip:
+    - zarr-eosdis-store
   - tensorflow
-  - tensorflow-gpu 
+  - pqdm
 platforms:
   - linux-64
   - osx-64
