@@ -187,7 +187,7 @@ You will be added by default and add anyone else who needs access to the hub. Le
 nano dconfig.yaml
 ```
 
-Add to your config file so it is now this. Replace the id, secret and url with your values.
+Add to your config file so it is now this. Replace the id, secret and url with your values. We need to set the KubeSpawner working directory because the Openscapes Docker image sets it to `home/jovyan/.kernels`--which is fine but annoying since `.kernels` is hidden and not `$HOME`.
 
 ```         
 jupyterhub:
@@ -203,6 +203,8 @@ jupyterhub:
           - read:org
       JupyterHub:
         authenticator_class: github
+      KubeSpawner:
+        working_dir: /home/jovyan
   proxy:
     https:
       enabled: true
@@ -334,3 +336,7 @@ kubectl create -f pvc.yaml
 -   <https://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/dask_gateway/dask-hub/config_daskhub.yaml>
 -   <https://saturncloud.io/blog/how-to-setup-jupyterhub-on-azure/>
 -   <https://saturncloud.io/blog/jupyterhub-and-azure-ad/>
+* https://www.youtube.com/watch?v=Da1qn7-RHvY
+* Dynamic NFS provisioning 2 https://www.youtube.com/watch?v=DF3v2P8ENEg&t=0s
+* Dynamic NFS provisioning 1 https://www.youtube.com/watch?v=AavnQzWDTEk&t=0s
+* https://alan-turing-institute.github.io/hub23-deploy/

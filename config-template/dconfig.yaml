@@ -12,6 +12,8 @@ jupyterhub:
           - read:org
       JupyterHub:
         authenticator_class: github
+      KubeSpawner:
+        working_dir: /home/jovyan
   proxy:
     https:
       enabled: true
