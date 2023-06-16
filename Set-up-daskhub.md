@@ -358,9 +358,14 @@ kubectl --namespace=dhub delete pvc claim-eeholmes --grace-period=0 --force
 
 # Refs I used
 
--   <https://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/dask_gateway/dask-hub/config_daskhub.yaml>
--   <https://saturncloud.io/blog/how-to-setup-jupyterhub-on-azure/>
--   <https://saturncloud.io/blog/jupyterhub-and-azure-ad/>
+## Overall
+
+* https://2i2c.org/service/#getahub
+* Openscapes common.values.yaml https://github.com/2i2c-org/infrastructure/blob/master/config/clusters/openscapes/common.values.yaml
+* https://artifacthub.io/packages/helm/dask/daskhub
+* https://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/dask_gateway/dask-hub/config_daskhub.yaml
+* https://saturncloud.io/blog/how-to-setup-jupyterhub-on-azure/
+* https://saturncloud.io/blog/jupyterhub-and-azure-ad/
 
 ## Storage
 
@@ -370,4 +375,16 @@ kubectl --namespace=dhub delete pvc claim-eeholmes --grace-period=0 --force
 * https://alan-turing-institute.github.io/hub23-deploy/
 * https://z2jh.jupyter.org/en/latest/jupyterhub/customizing/user-storage.html
 * https://learn.microsoft.com/en-us/azure/aks/azure-nfs-volume
+* https://learn.microsoft.com/en-us/azure/storage/files/storage-files-quick-create-use-linux
+* https://bluexp.netapp.com/blog/azure-cvo-blg-azure-kubernetes-service-configuring-persistent-volumes-in-aks
 
+# Setting up a shared data disk
+
+* https://www.mathworks.com/help/matlab/import_export/work-with-remote-data.html
+* https://realpython.com/storing-images-in-python/
+
+# S3 access
+
+* https://s3fs.readthedocs.io/en/latest/
+* https://stackoverflow.com/questions/67259323/jupyterhub-access-aws-s3
+* https://data.lpdaac.earthdatacloud.nasa.gov/s3credentialsREADME
