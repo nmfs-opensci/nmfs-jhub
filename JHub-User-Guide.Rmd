@@ -1,4 +1,11 @@
-# Instructions
+---
+title: "User Instructions"
+description: |
+  How to use the hub
+output:
+  distill::distill_article:
+    toc: true
+---
 
 ## Login
 
