@@ -14,7 +14,7 @@ A DockerHub user account. The instructions are using EEH's.
 
 Add to Dockerfile something like
 ```
-RUN pip install zarr-eosdis-store
+RUN pip install tensorflow
 ```
 
 # Rebuild and push the Docker image
@@ -39,7 +39,7 @@ docker push eeholmes/iopython:${DOCKER_TAG}
 docker push eeholmes/iopython:main
 ```
 
-https://help.valohai.com/hc/en-us/articles/4421364087569-Build-your-own-Docker-image
+Notes: https://help.valohai.com/hc/en-us/articles/4421364087569-Build-your-own-Docker-image
 
 
 # Stop any running the Jupyter Lab instances

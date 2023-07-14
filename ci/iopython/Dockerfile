@@ -5,6 +5,8 @@ FROM openscapes/python:f577786
 USER ${NB_USER}
 
 RUN pip install tensorflow pqdm motuclient imbalanced-learn
+RUN pip install pillow
+
 # RUN pip install zarr-eosdis-store
 # don't think this is needed and it is downgrading xarray to 0.21 (2 years old)
 # it can't find new.yml in home/joyvan/.kernels
