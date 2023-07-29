@@ -10,6 +10,7 @@ RUN R -e 'install.packages("gtools", repos = "http://cran.us.r-project.org")'
 RUN R -e 'install.packages("gdata", repos = "http://cran.us.r-project.org")'
 RUN R -e 'install.packages("reticulate", repos = "http://cran.us.r-project.org")'
 RUN R -e 'install.packages("matrixcalc", repos = "http://cran.us.r-project.org")'
+RUN R -e 'install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)'
 RUN R -e 'install.packages("sdmTMB", repos = "http://cran.us.r-project.org")'
 
 ENV JUPYTERHUB_HTTP_REFERER=https://dhub.opensci.live/

@@ -28,7 +28,7 @@ cd ci/iorocker
 ```
 DOCKER_TAG="20230615"
 ```
-2. Build the image. `.` means current directory. `eeholmes/iopython` is the name of the repo on DockerHub. See notes below. 
+2. Build the image. `.` means current directory. `eeholmes/iorocker` is the name of the repo on DockerHub. `--platform` is added if you are building on an Mac with Apple chip. 
 ```
 docker build --platform linux/amd64 -t eeholmes/iorocker:${DOCKER_TAG} -t eeholmes/iorocker:main .
 ```
