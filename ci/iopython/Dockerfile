@@ -5,7 +5,9 @@ FROM openscapes/python:f577786
 USER ${NB_USER}
 
 RUN pip install tensorflow pqdm motuclient imbalanced-learn
-RUN pip install pillow
+RUN pip install pillow tensorflow-hub
+RUN pip install cmocean
+RUN conda install --channel conda-forge pygmt -y
 
 # RUN pip install zarr-eosdis-store
 # don't think this is needed and it is downgrading xarray to 0.21 (2 years old)
