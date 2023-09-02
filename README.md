@@ -6,12 +6,16 @@ Base Python image is **openscapes/python** ![](https://img.shields.io/docker/ima
 )
 <a href="https://hub.docker.com/repository/docker/openscapes/python:f577786"><img src="https://img.shields.io/badge/version-f577786-blue"></a>
 
+Base R image is **openscapes/rocker** based on rocker/geospatial ![](https://img.shields.io/docker/image-size/openscapes/rocker/a7596b5
+)
+<a href="https://hub.docker.com/repository/docker/openscapes/rocker:a7596b5"><img src="https://img.shields.io/badge/version-a7596b5-blue"></a>
+
 In ci folder and on DockerHub
 
 **iopython (Openscpaes Python+tensorflow)**: ![](https://img.shields.io/docker/image-size/eeholmes/iopython?sort=date)
 <a href="https://hub.docker.com/repository/docker/eeholmes/iopython/tags?page=1&ordering=last_updated"><img src="https://img.shields.io/docker/v/eeholmes/iopython"></a>
 
-**iorocker (Openscpaes Python+R)**: ![](https://img.shields.io/docker/image-size/eeholmes/iorocker?sort=date)
+**iorocker (Openscpaes Python+R+ SDM packages)**: ![](https://img.shields.io/docker/image-size/eeholmes/iorocker?sort=date)
 <a href="https://hub.docker.com/repository/docker/eeholmes/iorocker/tags?page=1&ordering=last_updated"><img src="https://img.shields.io/docker/v/eeholmes/iorocker"></a>
 
 ## JupyterHubs
