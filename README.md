@@ -12,11 +12,14 @@ Base R image is **openscapes/rocker** based on rocker/geospatial ![](https://img
 
 In ci folder and on DockerHub
 
-**iopython (Openscpaes Python+tensorflow)**: ![](https://img.shields.io/docker/image-size/eeholmes/iopython?sort=date)
-<a href="https://hub.docker.com/repository/docker/eeholmes/iopython/tags?page=1&ordering=last_updated"><img src="https://img.shields.io/docker/v/eeholmes/iopython"></a>
+**iopython (Openscpaes Python+)** + nb_conda_kernels to create conda envs: ![](https://img.shields.io/docker/image-size/eeholmes/iopython/20230901)
+<a href="https://hub.docker.com/repository/docker/eeholmes/iopython:20230901"><img src="https://img.shields.io/badge/version-20230901-blue"></a>
 
-**iorocker (Openscpaes Python+R+ SDM packages)**: ![](https://img.shields.io/docker/image-size/eeholmes/iorocker?sort=date)
-<a href="https://hub.docker.com/repository/docker/eeholmes/iorocker/tags?page=1&ordering=last_updated"><img src="https://img.shields.io/docker/v/eeholmes/iorocker"></a>
+**iopython-tf (Openscpaes Python+tensorflow)**: ![](https://img.shields.io/docker/image-size/eeholmes/iopython-tf/20230901)
+<a href="https://hub.docker.com/repository/docker/eeholmes/iopython-tf:20230901"><img src="https://img.shields.io/badge/version-20230901-blue"></a>
+
+**iorocker (Openscpaes Python+R+ SDM packages)**: ![](https://img.shields.io/docker/image-size/eeholmes/iorocker/20230901)
+<a href="https://hub.docker.com/repository/docker/eeholmes/iorocker:20230901"><img src="https://img.shields.io/badge/version-20230901-blue"></a>
 
 ## JupyterHubs
 
