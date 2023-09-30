@@ -1,0 +1,45 @@
+project: 
+  type: website
+  output-dir: docs
+
+website:
+  page-navigation: true  
+  title: "Eli's JupyterHub notes"
+  favicon: images/nmfs-opensci-logo2-notext.png
+  site-url: https://nmfs-opensci.github.io/nmfs-jhub
+  repo-url: https://github.com/nmfs-opensci/nmfs-jhub
+  repo-actions: [edit, issue, source]
+  
+  page-footer: <img src="/images/nmfs-opensci-logo2-notext.png" alt="NMFS OpenSci logo" style="width:150px"><br />NMFS OpenSci (2023)
+ 
+  sidebar:
+    logo: images/nmfs-opensci-logo2-notext.png
+    pinned: true
+    align: center
+    
+    style: "docked"
+    collapse-level: 1
+    toc-expand: false
+    contents:
+      - text: "Home"
+        href: index.Rmd
+      - text: "JHub User Guide"
+        href: JHub-User-Guide.Rmd
+      - text: "JHub Set-up"
+        href: Set-up-daskhub.Rmd
+      - text: "Centos Set-up"
+        href: Set-up-centos.Rmd
+
+format:
+  html:
+    theme:
+      light: cosmo
+      dark: [cosmo, theme-dark.scss]
+    code-background: true
+    code-copy: true
+    css: styles.css
+    toc: true
+    toc-depth: 2
+
+filters:
+  - quarto

@@ -7,14 +7,14 @@ output:
     toc: true
 ---
 
-This is my notes for setting this up on a DreamCloud Centos 7 (Linux distribution) VM. 
+This is my notes for setting this up on a Centos 7 (Linux distribution) server. 
 
 **All the commands are run in a shell (bash)**
 
 References:
 
-* https://jupyterhub.readthedocs.io/en/1.2.0/installation-guide-hard.html This is an old version (1.2.0) while the newest verson of JupyterHub is 4+. However the 4+ docs do not cover a simple bare metal (own server installation).
-* https://jupyterhub-dockerspawner.readthedocs.io/en/latest/install.html
+* <https://jupyterhub.readthedocs.io/en/1.2.0/installation-guide-hard.html> This is an old version (1.2.0) while the newest verson of JupyterHub is 4+. However the 4+ docs do not cover a simple bare metal (own server installation).
+* <https://jupyterhub-dockerspawner.readthedocs.io/en/latest/install.html>
 
 ## Check Set-up
 
@@ -32,18 +32,20 @@ You will need conda (or miniconda) for these instructions. conda (and miniconda)
 
 Check for conda with
 ```
-conda -V
+conda list
 ```
-Install miniconda if needed ([instructions](https://docs.conda.io/projects/miniconda/en/latest/)). Read about miniconda for scientists from Software Carpentries  [here](https://carpentries-incubator.github.io/introduction-to-conda-for-data-scientists/setup/).
+If it doesn't show a list of environments, then you need to install miniconda.
+[Installation instructions](https://docs.conda.io/projects/miniconda/en/latest/)). Read about miniconda for scientists from Software Carpentries  [here](https://carpentries-incubator.github.io/introduction-to-conda-for-data-scientists/setup/).
 
 
 ## Create the conda environment
 
-Create the conda environment (which includes a directory with all the files for packages), activate it (enter it), and get the location of the environment (folder).
+Create the conda environment for the jupyterhub installation. Installation will be in a directory with all the files for packages. Then activate it (enter it), and get the location of the environment (folder).
 
 *All the commands below are in the terminal window on your machine.*
 
 Create the environment named `jupyterhub` with Python 3.9 and jupyterhub (module). Replace 3.9 with the version you have but needs to be 3.6+. After creating, activate (enter) that environment. Then install jupyterlab, notebook and dockerspawner into the environment. Note the `jupyterhub` after `-n` is the name of the environment.
+
 ```
 conda create -n jupyterhub python=3.9
 conda activate jupyterhub
@@ -76,10 +78,16 @@ and check that it starts. Then use Cntl-C to stop the hub.
 ## Open the 8000 port
 
 Find out the Public IP address for the server you are on. Then open the 8000 port.
+
+First find out what ports are open through the firewall
 ```
-add port
-reload
-list ports to check
+firewall-cmd --list-ports
+```
+Add the 8000 port, reload and recheck that it appears.
+```
+firewall-cmd  --permanent --add-port 8000/tcp
+firewall-cmd –reload
+firewall-cmd --list-ports
 ```
 
 *Background* 
@@ -106,7 +114,15 @@ Next create the default configuration file `jupyterhub_config.py`.
 ```
 sudo $JHUB-PATH/bin/jupyterhub --generate-config
 ```
-Because we `cd`-d into the `$JHUB-PATH/etc/jupyterhub/` directory, the file is created there. This default file is very long and we won't edit it quite yet.
+Because we `cd`-d into the `$JHUB-PATH/etc/jupyterhub/` directory, the file is created there. This default file is very long. Open up with
+```
+nano jupyterhub_config.py
+```
+Use F6 to find lines. Uncomment these two lines and save (Cntl-O, Enter, Cntl-X).
+```
+c.Spawner.default_url = '/lab'
+c.Spawner.http_timeout = 3600
+```
 
 ## Make a new server service
 
@@ -119,7 +135,7 @@ Create a new directory for the service unit file,
 sudo mkdir -p $JHUB-PATH/etc/systemd
 cd $JHUB-PATH/etc/systemd
 ```
-Create the file. For example, using nano editor, we do
+Create the file and name `jupyterhub.service`. For example, using nano editor, we do
 ```
 nano jupyterhub.service
 ```
@@ -159,13 +175,16 @@ systemd_unit_file_t
 ```
 We change the file label with
 ```
-sudo chron .... $JHUB-PATH/etc/systemd/jupyterhub.service
+sudo chcon system_u:object_r:systemd_unit_file_t:s0
+-f $JHUB-PATH/etc/systemd/jupyterhub.service
 ```
 
 SELinux will also object to the file label on all the binaries that we use to start up the JupyterHub (like `jupyterhub`) so we need to fix those file labels.
 
-This will add `bin_t` label to all the binaries.
+This will add `bin_t` label to all the binaries and check that it worked.
 ```
+sudo find $JHUB-ENV/bin -type f -exec chcon system_u:object_r:bin_t:s0 {} \;
+ls -Z $JHUB-ENV/bin
 ```
 
 ## Start our new service
@@ -179,8 +198,17 @@ Check that it is running.
 ```
 sudo systemctl status jupyterhub.service
 ```
+If it fails, try 
+```
+audit2why < /var/log/audit/audit.log
+```
+to debug. It is likely to be an issue with SELinux blocking the service from starting.
 
-Now our hub should be available on `http:\\XXX.XX.XX.XX:8000`. At this point, you will need to address security if your hub is open to the web, as opposed to being on an internal network and only accessible to that network. Learn about that [here](https://jupyterhub.readthedocs.io/en/1.2.0/installation-guide-hard.html).
+Now our hub should be available on `http:\\XXX.XX.XX.XX:8000`. You can double check that it is listen on this port by running
+```
+netstat -tuln
+```
+At this point, you will need to address security if your hub is open to the web, as opposed to being on an internal network and only accessible to that network. Learn about that [here](https://jupyterhub.readthedocs.io/en/1.2.0/installation-guide-hard.html).
 
 ## Create the base user environment
 

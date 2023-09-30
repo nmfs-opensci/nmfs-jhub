@@ -1,5 +1,5 @@
 ---
-title: "User Instructions"
+title: "JHub User Instructions"
 description: |
   How to use the hub
 output:
@@ -7,11 +7,24 @@ output:
     toc: true
 ---
 
-## Login
+I have set us up a JupyterHub/RStudio cloud-computing hub on Azure. It's on Kubernetes and will spin up VMs as needed. The VMs are not huge: 2CPU & 8 Gig RAM.
 
 <https://jhub.opensci.live/hub/login>
 
-You will see this. Choose Python for Python only; choose R for Python and R.
+Login authentication is via GitHub. Only members of the JHub GitHub team can log on. This is a testing environment. Contact Eli if you want to test it out.
+
+Instructions: It should be pretty self-explanatory.
+
+* Chose Python or R
+* It is based on the Openscapes docker images and is fairly full-featured but during testing let me know any libraries you need loaded.
+* Does your work persist? Yes. It should be like your computer.
+* Is there a limit to storage? Yes. I don't know what it is. Go ahead an use it so I can get a sense of storage needs.
+* How do I link to my GitHub repositories? Follow these instructions https://snowex-2022.hackweek.io/preliminary/git.html
+
+
+## Login
+
+After you get paste the login page, you will see this. Choose Python for Python only; choose R for Python and R.
 
 ![](images/user-guide/img1.png)
 
