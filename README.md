@@ -1,5 +1,28 @@
 # nmfs-jhub
 
+## Images 
+
+Base Python image is **openscapes/python** ![](https://img.shields.io/docker/image-size/openscapes/python/f577786
+)
+<a href="https://hub.docker.com/repository/docker/openscapes/python:f577786"><img src="https://img.shields.io/badge/version-f577786-blue"></a>
+
+Base R image is **openscapes/rocker** based on rocker/geospatial ![](https://img.shields.io/docker/image-size/openscapes/rocker/a7596b5
+)
+<a href="https://hub.docker.com/repository/docker/openscapes/rocker:a7596b5"><img src="https://img.shields.io/badge/version-a7596b5-blue"></a>
+
+In ci folder and on DockerHub
+
+**iopython (Openscpaes Python+)** + nb_conda_kernels to create conda envs: ![](https://img.shields.io/docker/image-size/eeholmes/iopython/20230901)
+<a href="https://hub.docker.com/repository/docker/eeholmes/iopython:20230901"><img src="https://img.shields.io/badge/version-20230901-blue"></a>
+
+**iopython-tf (Openscpaes Python+tensorflow)**: ![](https://img.shields.io/docker/image-size/eeholmes/iopython-tf/20230901)
+<a href="https://hub.docker.com/repository/docker/eeholmes/iopython-tf:20230901"><img src="https://img.shields.io/badge/version-20230901-blue"></a>
+
+**iorocker (Openscpaes Python+R+ SDM packages)**: ![](https://img.shields.io/docker/image-size/eeholmes/iorocker/20230901)
+<a href="https://hub.docker.com/repository/docker/eeholmes/iorocker:20230901"><img src="https://img.shields.io/badge/version-20230901-blue"></a>
+
+## JupyterHubs
+
 I have set us up a JupyterHub Python/JupyterNotebook & R/RStudio cloud-computing site on Azure. Its on Kubernetes and will spin up VMs as needed. 
 
 Vanilla: https://jhub.opensci.live/hub/login. The VMs are not huge: 2CPU & 8 Gig RAM (testing hub)
