@@ -10,3 +10,5 @@ navbar:
       href: JHub-User-Guide.html
     - text: "Hub Set-up"
       href: Set-up-daskhub.html
+    - text: "Centos Set-up"
+      href: Set-up-centos.html

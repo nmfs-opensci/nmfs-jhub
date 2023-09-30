@@ -1,6 +1,6 @@
 # Indian Ocean Summer Docker Images
 
-https://hub.docker.com/repository/docker/eeholmes/iopython/general
+https://hub.docker.com/repository/docker/eeholmes/iopython-tf/general
 
 The one to use is the dated one. The `main` tag doesn't seem to always be recognized as a new tag when it changes.
 
@@ -14,7 +14,7 @@ A DockerHub user account. The instructions are using EEH's.
 
 Add to Dockerfile something like
 ```
-RUN R -e 'install.packages("gtools", repos = "http://cran.us.r-project.org")'
+RUN pip install tensorflow
 ```
 
 # Rebuild and push the Docker image
@@ -22,21 +22,21 @@ RUN R -e 'install.packages("gtools", repos = "http://cran.us.r-project.org")'
 1. Make sure Docker app is running, not just installed. So if you are on a local computer, start up the app (open it).
 1. Go to a terminal and cd to the directory with the Dockerfile. So to the `ci` directory in the `nmfs-jhub` repo.
 ```
-cd ci/iorocker
+cd ci/iopython-tf
 ```
 2. Update the docker tag to the date.
 ```
 DOCKER_TAG="20230901"
 ```
-2. Build the image. `.` means current directory. `eeholmes/iorocker` is the name of the repo on DockerHub. `--platform` is added if you are building on an Mac with Apple chip. 
+2. Build the image. `.` means current directory. `eeholmes/iopython` is the name of the repo on DockerHub. See notes below. 
 ```
-docker build --platform linux/amd64 -t eeholmes/iorocker:${DOCKER_TAG} -t eeholmes/iorocker:main .
+docker build --platform linux/amd64 -t eeholmes/iopython-tf:${DOCKER_TAG} -t eeholmes/iopython-tf:main .
 ```
 
 3. Push the image up to DockerHub. Make sure you are logged into DockerHub in the Docker app otherwise you'll get "access denied". Open the Docker app and look that it shows that you are signed in.
 ```
-docker push eeholmes/iorocker:${DOCKER_TAG}
-docker push eeholmes/iorocker:main
+docker push eeholmes/iopython-tf:${DOCKER_TAG}
+docker push eeholmes/iopython-tf:main
 ```
 
 Notes: https://help.valohai.com/hc/en-us/articles/4421364087569-Build-your-own-Docker-image
@@ -48,7 +48,7 @@ Log in. File > Hub Control > Stop my server
 
 # Run `helm upgrade`
 
-Log into Azure portal, go to DaskHub, Connect, Cloud Shell, and run this command. Note, this assumes that `eeholmes/iorocker:main` is still the image to use. If not, edit `dconfig2.yaml` (`nano dconfig2.yaml`) and then upgrade.
+Log into Azure portal, go to DaskHub, Connect, Cloud Shell, and run this command. Note, this assumes that `eeholmes/iopython:main` is still the image to use. If not, edit `dconfig2.yaml` (`nano dconfig2.yaml`) and then upgrade.
 
 ```
 helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig2.yaml

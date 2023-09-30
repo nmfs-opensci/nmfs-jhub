@@ -1,0 +1,207 @@
+---
+title: "Centos Set-up"
+description: |
+  Setting up a multi-user JupyterHub on Centos 7 VM
+output:
+  distill::distill_article:
+    toc: true
+---
+
+This is my notes for setting this up on a DreamCloud Centos 7 (Linux distribution) VM. 
+
+**All the commands are run in a shell (bash)**
+
+References:
+
+* https://jupyterhub.readthedocs.io/en/1.2.0/installation-guide-hard.html This is an old version (1.2.0) while the newest verson of JupyterHub is 4+. However the 4+ docs do not cover a simple bare metal (own server installation).
+* https://jupyterhub-dockerspawner.readthedocs.io/en/latest/install.html
+
+## Check Set-up
+
+Log into your machine (server or VM) as root and get to a terminal (bash) window. How you do this is going to vary. For example, if you have a physical computer with Linux, you will login and open a Terminal. If you are on an network, you would ssh (secure shell) into the machine. On a VM, you would ssh in or often the VM provider will have a widget to get to the shell on the VM.
+
+You will need Python 3.6+ installed. Open a terminal window and run 
+`python3 -version` or `python -version` to see if Python is installed and what the version is.
+
+Check your operating system (OS) with
+```
+cat /etc/os-release
+```
+
+You will need conda (or miniconda) for these instructions. conda (and miniconda) take care of checking that all our packages will be inter-operable. It is best to install JupyterHub into a clean environment. That way you minimize chances of conflicts and your environment will solve (figure out any conflicts) much much faster.
+
+Check for conda with
+```
+conda -V
+```
+Install miniconda if needed ([instructions](https://docs.conda.io/projects/miniconda/en/latest/)). Read about miniconda for scientists from Software Carpentries  [here](https://carpentries-incubator.github.io/introduction-to-conda-for-data-scientists/setup/).
+
+
+## Create the conda environment
+
+Create the conda environment (which includes a directory with all the files for packages), activate it (enter it), and get the location of the environment (folder).
+
+*All the commands below are in the terminal window on your machine.*
+
+Create the environment named `jupyterhub` with Python 3.9 and jupyterhub (module). Replace 3.9 with the version you have but needs to be 3.6+. After creating, activate (enter) that environment. Then install jupyterlab, notebook and dockerspawner into the environment. Note the `jupyterhub` after `-n` is the name of the environment.
+```
+conda create -n jupyterhub python=3.9
+conda activate jupyterhub
+conda install -c conda-forge jupyterhub
+conda install -c conda-forge jupyterlab notebook dockerspawner
+```
+The environment has a folder with all the packages and binaries that we install. We are going to need to know the location of that folder. Get the location with
+```
+conda env list
+```
+On the computer I am set up using conda to create the environment, the folder location is 
+```
+/opt/jupyterhub/
+```
+Yours could be something entirely different. On another server with anaconda (a not-free conda package resolver), the folder was
+```
+/SHARE/anaconda3/envs/jupterhub/
+```
+We are going to be saving the configuration files for our JupyterHub in this folder. Let's save the path to a variable so we don't have to keep entering the whole path.
+```
+JHUB-ENV=/opt/jupyterhub/
+```
+
+You should now be able to start the hub, but you will not be able to access it yet. Type 
+```
+jupyterhub
+```
+and check that it starts. Then use Cntl-C to stop the hub.
+
+## Open the 8000 port
+
+Find out the Public IP address for the server you are on. Then open the 8000 port.
+```
+add port
+reload
+list ports to check
+```
+
+*Background* 
+
+The JupyterhHub is running by default on `http://localhost:8000`. This means that if you start the hub on a machine that you are logged into, you should be able to open a browser on that machine, enter `http://localhost:8000` and the hub login page will appear. There are a few reasons that might not work
+
+* You are ssh-ing into a server and don't have a browser to open. The browser on the computer that you are ssh-ing from is the "localhost" in this case and you need the "localhost" to be the server.
+* You are logged directly into your server, but it doesn't have a browser installed.
+
+However `http://localhost:8000` is actually not very useful. We are trying to create a hub that others can log into from their browsers.
+
+So you need to determine the Public IP address for the server you are on. This is the IP address that you could enter into a browser. If you enter `http://XXX.XX.XX.XX` (replace with actual IP), then you should see a page of some sort. This indicates that the server is working. If you are on an internal network, then you will only be able to load the address if you are also on that network. But for security reason, ports will not be open by default. You need to open the 8000 port so that `http://XXX.XX.XX.XX:8000` will be found.
+
+## Set up a configuration file
+
+So far, we have started the hub with the default configuration. We are going to need to customize it. For that we need a configuration file. We will create this in the folder where the environment files are.
+
+```
+sudo mkdir -p $JHUB-ENV/etc/jupyterhub/
+cd $JHUB-ENV/etc/jupyterhub/
+```
+
+Next create the default configuration file `jupyterhub_config.py`.
+```
+sudo $JHUB-PATH/bin/jupyterhub --generate-config
+```
+Because we `cd`-d into the `$JHUB-PATH/etc/jupyterhub/` directory, the file is created there. This default file is very long and we won't edit it quite yet.
+
+## Make a new server service
+
+### Create the new unit file
+
+At this point, after opening the port, you should be able to get to your JupyterHub by starting it with `jupyterhub --ip XXX.XX.XX.XX --port=8000` and then browsing to `http://XXX.XX.XX.XX:8000`. But you hub is going to be stopped whenever the server is rebooted. So next we need to set up a service for your service so that our hub starts automatically.
+
+Create a new directory for the service unit file, 
+```
+sudo mkdir -p $JHUB-PATH/etc/systemd
+cd $JHUB-PATH/etc/systemd
+```
+Create the file. For example, using nano editor, we do
+```
+nano jupyterhub.service
+```
+And into that file we put the following. Replace `Environment="JHUB-ENV=\opt\jupyterhub\"` with the actual path to the jupyterhub environment folder.
+```
+[Unit]
+Description=JupyterHub
+After=syslog.target network.target
+
+[Service]
+User=root
+Environment="JHUB-ENV=/opt/jupyterhub/"
+Environment="PATH=/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:$JHUB-ENV/bin"
+ExecStart=$JHUB-ENV/bin/jupyterhub -f $JHUB-ENV/etc/jupyterhub/jupyterhub_config.py
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Next we make systemd aware of the new service. 
+
+Create a symlink file in the folder where all the server services are kept. And tell `systemd` to reload its configuration files
+```
+sudo ln -s $JHUB-ENV/etc/systemd/jupyterhub.service /etc/systemd/system/jupyterhub.service
+sudo systemctl daemon-reload
+```
+
+### Make sure SELinux doesn't block our service
+
+SELinux (security for the server) checks that files that are used have the correct label. All our files have generic file labels. If you do,
+```
+ls -Z $JHUB-ENV/etc/systemd/
+```
+You will see that the file label is `xyz`. We need it to be
+```
+systemd_unit_file_t
+```
+We change the file label with
+```
+sudo chron .... $JHUB-PATH/etc/systemd/jupyterhub.service
+```
+
+SELinux will also object to the file label on all the binaries that we use to start up the JupyterHub (like `jupyterhub`) so we need to fix those file labels.
+
+This will add `bin_t` label to all the binaries.
+```
+```
+
+## Start our new service
+
+The service will start on reboot, but we can start it straight away using `start`:
+```
+sudo systemctl enable jupyterhub.service
+sudo systemctl start jupyterhub.service
+```
+Check that it is running.
+```
+sudo systemctl status jupyterhub.service
+```
+
+Now our hub should be available on `http:\\XXX.XX.XX.XX:8000`. At this point, you will need to address security if your hub is open to the web, as opposed to being on an internal network and only accessible to that network. Learn about that [here](https://jupyterhub.readthedocs.io/en/1.2.0/installation-guide-hard.html).
+
+## Create the base user environment
+
+When you log in the jupyter notebooks will be trying to use the Python environment that was created to install JupyterHub, this is not what we want. We will use a docker image to "spawn" the user environment. Read  [here](https://jupyterhub.readthedocs.io/en/1.2.0/installation-guide-hard.html#part-2-conda-environments) for other approaches.
+
+We are going to use [dockerspawner](https://jupyterhub-dockerspawner.readthedocs.io/) so that we can use a docker image for our user environments. The user will work in these containerized environments and they won't have access to any other files in the server. In order to share their work with others, the normal workflow would be to work in Git repos and share those repos to a GitHub (or GitLab server). Each user will have a home directory on the server for their files, but they won't have access to other hub user directories nor will they have access to any other directories on the server.
+
+### Check that the versions of jupyterhub match
+
+The image that we use must have the jupyterhub module installed and the version of jupyterhub on your server must match that in the image.
+
+Check the version on your server:
+```
+jupyterhub -V
+```
+For demo purposes, we will use the `jupyter/scipy-notebook` images on DockerHub. We want to find an image with the same version of jupyterhub as we have on our server.
+
+### Edit the config file
+
+Edit the `jupyterhub_config.py` file in `$JHUB-ENV/etc/jupyterhub/` to add that we want to use DockerSpawner and specify the image. Add these lines to `jupyterhub_config.py`.
+```
+c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
+c.DockerSpawner.image = 'jupyter/scipy-notebook:67b8fb91f950'
+```

@@ -88,29 +88,29 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 
   <!--radix_placeholder_meta_tags-->
-  <title>NMFS Open Sci JHub: User Instructions</title>
+  <title>NMFS Open Sci JHub: Centos Set-up</title>
 
-  <meta property="description" itemprop="description" content="How to use the hub"/>
+  <meta property="description" itemprop="description" content="Setting up a multi-user JupyterHub on Centos 7 VM"/>
 
 
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-  <meta property="og:title" content="NMFS Open Sci JHub: User Instructions"/>
+  <meta property="og:title" content="NMFS Open Sci JHub: Centos Set-up"/>
   <meta property="og:type" content="article"/>
-  <meta property="og:description" content="How to use the hub"/>
+  <meta property="og:description" content="Setting up a multi-user JupyterHub on Centos 7 VM"/>
   <meta property="og:locale" content="en_US"/>
   <meta property="og:site_name" content="NMFS Open Sci JHub"/>
 
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary"/>
-  <meta property="twitter:title" content="NMFS Open Sci JHub: User Instructions"/>
-  <meta property="twitter:description" content="How to use the hub"/>
+  <meta property="twitter:title" content="NMFS Open Sci JHub: Centos Set-up"/>
+  <meta property="twitter:description" content="Setting up a multi-user JupyterHub on Centos 7 VM"/>
 
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","output"]}},"value":[{"type":"character","attributes":{},"value":["User Instructions"]},{"type":"character","attributes":{},"value":["How to use the hub\n"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc"]}},"value":[{"type":"logical","attributes":{},"value":[true]}]}]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","output"]}},"value":[{"type":"character","attributes":{},"value":["Centos Set-up"]},{"type":"character","attributes":{},"value":["Setting up a multi-user JupyterHub on Centos 7 VM\n"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc"]}},"value":[{"type":"logical","attributes":{},"value":[true]}]}]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   <!--radix_placeholder_navigation_in_header-->
@@ -2094,7 +2094,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"User Instructions","description":"How to use the hub","authors":[]}
+{"title":"Centos Set-up","description":"Setting up a multi-user JupyterHub on Centos 7 VM","authors":[]}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2120,10 +2120,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_site_before_body-->
 
 <div class="d-title">
-<h1>User Instructions</h1>
+<h1>Centos Set-up</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>How to use the hub</p></p>
+<p><p>Setting up a multi-user JupyterHub on Centos 7 VM</p></p>
 </div>
 
 
@@ -2132,72 +2132,135 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <nav class="l-text toc figcaption" id="TOC">
 <h3>Contents</h3>
 <ul>
-<li><a href="#login" id="toc-login">Login</a></li>
-<li><a href="#spin-up-your-server" id="toc-spin-up-your-server">Spin up your server</a></li>
-<li><a href="#choose-your-platform" id="toc-choose-your-platform">Choose your platform</a></li>
-<li><a href="#lets-choose-rstudio" id="toc-lets-choose-rstudio">Let’s choose RStudio</a>
+<li><a href="#check-set-up" id="toc-check-set-up">Check Set-up</a></li>
+<li><a href="#create-the-conda-environment" id="toc-create-the-conda-environment">Create the conda environment</a></li>
+<li><a href="#open-the-8000-port" id="toc-open-the-8000-port">Open the 8000 port</a></li>
+<li><a href="#set-up-a-configuration-file" id="toc-set-up-a-configuration-file">Set up a configuration file</a></li>
+<li><a href="#make-a-new-server-service" id="toc-make-a-new-server-service">Make a new server service</a>
 <ul>
-<li><a href="#clone-a-repo" id="toc-clone-a-repo">Clone a repo</a></li>
-<li><a href="#tell-git-who-you-are" id="toc-tell-git-who-you-are">Tell Git who you are</a></li>
+<li><a href="#create-the-new-unit-file" id="toc-create-the-new-unit-file">Create the new unit file</a></li>
+<li><a href="#make-sure-selinux-doesnt-block-our-service" id="toc-make-sure-selinux-doesnt-block-our-service">Make sure SELinux doesn’t block our service</a></li>
 </ul></li>
-<li><a href="#lets-choose-jupyterlab" id="toc-lets-choose-jupyterlab">Let’s choose JupyterLab</a>
+<li><a href="#start-our-new-service" id="toc-start-our-new-service">Start our new service</a></li>
+<li><a href="#create-the-base-user-environment" id="toc-create-the-base-user-environment">Create the base user environment</a>
 <ul>
-<li><a href="#tell-git-who-you-are-1" id="toc-tell-git-who-you-are-1">Tell Git who you are</a></li>
-<li><a href="#clone-a-git-repo" id="toc-clone-a-git-repo">Clone a Git repo</a></li>
+<li><a href="#check-that-the-versions-of-jupyterhub-match" id="toc-check-that-the-versions-of-jupyterhub-match">Check that the versions of jupyterhub match</a></li>
+<li><a href="#edit-the-config-file" id="toc-edit-the-config-file">Edit the config file</a></li>
 </ul></li>
-<li><a href="#stop-your-server" id="toc-stop-your-server">Stop your server</a></li>
 </ul>
 </nav>
 </div>
-<h2 id="login">Login</h2>
-<p><a href="https://jhub.opensci.live/hub/login" class="uri">https://jhub.opensci.live/hub/login</a></p>
-<p>You will see this. Choose Python for Python only; choose R for Python and R.</p>
-<p><img src="images/user-guide/img1.png" /></p>
-<h2 id="spin-up-your-server">Spin up your server</h2>
-<p>You will see this as your server spins up</p>
-<p><img src="images/user-guide/img1b.png" /></p>
-<h2 id="choose-your-platform">Choose your platform</h2>
-<p>You can code in RStudio, JupyterLab or Terminal.</p>
-<p><img src="images/user-guide/img2.png" /></p>
-<h2 id="lets-choose-rstudio">Let’s choose RStudio</h2>
-<p><img src="images/user-guide/img3.png" /></p>
-<h3 id="clone-a-repo">Clone a repo</h3>
-<p>Choose ‘new project’ (top right) and Version Control.</p>
-<p><img src="images/user-guide/img4.png" /></p>
-<h3 id="tell-git-who-you-are">Tell Git who you are</h3>
-<p>Tell Git who you are and save your authentication info. You only do this once (or until your PAT expires). Run this code from the R console (not terminal).</p>
-<pre><code>usethis::use_git_config(user.name = &quot;YourName&quot;, user.email = &quot;your@email.com&quot;)</code></pre>
-<p>Now create a personal access token for authentication. SAVE the token because you will need it in the next step.</p>
-<pre><code>usethis::create_github_token() </code></pre>
-<p>Now run this and paste in the token.</p>
-<pre><code>gitcreds::gitcreds_set()</code></pre>
-<p>Restart R. You can chose your project from the dropdown on the top right to do this.</p>
-<p>Now commit a change and push.</p>
-<p><em>Note, you can also run the commands below from a terminal window.</em></p>
-<pre><code>git config --global user.name &quot;YourName&quot;
-git config --global user.email &quot;your@email.com&quot;
-git config --global credential.helper store</code></pre>
-<h2 id="lets-choose-jupyterlab">Let’s choose JupyterLab</h2>
-<p>Any of the browser tabs with the Jupyter icon are JupyterLab.</p>
-<p>Be careful because you can be in RStudio with one GitHub repository and you could open the same repo in JupyterLab and easily create merge conflicts. Just be aware that they are in separate file systems so changes on RStudio will not be reflected in JupyterLab. It is not like you are on one computer.</p>
-<h3 id="tell-git-who-you-are-1">Tell Git who you are</h3>
-<p><em>But I just did that with RStudio!</em> I know but the JLab instance is in a different environment and doesn’t know what you did in the RStudio environment.</p>
-<p>Open a terminal. You do this from the Launcher window. You can always open a new launcher window by clicking the little + tab</p>
-<p><img src="images/user-guide/img5.png" /></p>
-<p>Now click Terminal and run this code</p>
-<pre><code>git config --global user.name &quot;YourName&quot;
-git config --global user.email &quot;your@email.com&quot;
-git config --global credential.helper store</code></pre>
+<p>This is my notes for setting this up on a DreamCloud Centos 7 (Linux distribution) VM.</p>
+<p><strong>All the commands are run in a shell (bash)</strong></p>
+<p>References:</p>
 <ul>
-<li><p>Create a PAT or use the one you created for RStudio</p></li>
-<li><p>Make a commit and push with the PAT as the password. Now you are set (until your PAT expires).</p></li>
+<li><a href="https://jupyterhub.readthedocs.io/en/1.2.0/installation-guide-hard.html" class="uri">https://jupyterhub.readthedocs.io/en/1.2.0/installation-guide-hard.html</a> This is an old version (1.2.0) while the newest verson of JupyterHub is 4+. However the 4+ docs do not cover a simple bare metal (own server installation).</li>
+<li><a href="https://jupyterhub-dockerspawner.readthedocs.io/en/latest/install.html" class="uri">https://jupyterhub-dockerspawner.readthedocs.io/en/latest/install.html</a></li>
 </ul>
-<h3 id="clone-a-git-repo">Clone a Git repo</h3>
-<p>Click the Git icon on the left and you can clone a repo.</p>
-<p><img src="images/user-guide/img6.png" /></p>
-<h2 id="stop-your-server">Stop your server</h2>
-<p>It will stop on it’s own after awhile, but if it hangs, you can stop it and restart it. With File &gt; Hub Control Panel</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h2 id="check-set-up">Check Set-up</h2>
+<p>Log into your machine (server or VM) as root and get to a terminal (bash) window. How you do this is going to vary. For example, if you have a physical computer with Linux, you will login and open a Terminal. If you are on an network, you would ssh (secure shell) into the machine. On a VM, you would ssh in or often the VM provider will have a widget to get to the shell on the VM.</p>
+<p>You will need Python 3.6+ installed. Open a terminal window and run
+<code>python3 -version</code> or <code>python -version</code> to see if Python is installed and what the version is.</p>
+<p>Check your operating system (OS) with</p>
+<pre><code>cat /etc/os-release</code></pre>
+<p>You will need conda (or miniconda) for these instructions. conda (and miniconda) take care of checking that all our packages will be inter-operable. It is best to install JupyterHub into a clean environment. That way you minimize chances of conflicts and your environment will solve (figure out any conflicts) much much faster.</p>
+<p>Check for conda with</p>
+<pre><code>conda -V</code></pre>
+<p>Install miniconda if needed (<a href="https://docs.conda.io/projects/miniconda/en/latest/">instructions</a>). Read about miniconda for scientists from Software Carpentries <a href="https://carpentries-incubator.github.io/introduction-to-conda-for-data-scientists/setup/">here</a>.</p>
+<h2 id="create-the-conda-environment">Create the conda environment</h2>
+<p>Create the conda environment (which includes a directory with all the files for packages), activate it (enter it), and get the location of the environment (folder).</p>
+<p><em>All the commands below are in the terminal window on your machine.</em></p>
+<p>Create the environment named <code>jupyterhub</code> with Python 3.9 and jupyterhub (module). Replace 3.9 with the version you have but needs to be 3.6+. After creating, activate (enter) that environment. Then install jupyterlab, notebook and dockerspawner into the environment. Note the <code>jupyterhub</code> after <code>-n</code> is the name of the environment.</p>
+<pre><code>conda create -n jupyterhub python=3.9
+conda activate jupyterhub
+conda install -c conda-forge jupyterhub
+conda install -c conda-forge jupyterlab notebook dockerspawner</code></pre>
+<p>The environment has a folder with all the packages and binaries that we install. We are going to need to know the location of that folder. Get the location with</p>
+<pre><code>conda env list</code></pre>
+<p>On the computer I am set up using conda to create the environment, the folder location is</p>
+<pre><code>/opt/jupyterhub/</code></pre>
+<p>Yours could be something entirely different. On another server with anaconda (a not-free conda package resolver), the folder was</p>
+<pre><code>/SHARE/anaconda3/envs/jupterhub/</code></pre>
+<p>We are going to be saving the configuration files for our JupyterHub in this folder. Let’s save the path to a variable so we don’t have to keep entering the whole path.</p>
+<pre><code>JHUB-ENV=/opt/jupyterhub/</code></pre>
+<p>You should now be able to start the hub, but you will not be able to access it yet. Type</p>
+<pre><code>jupyterhub</code></pre>
+<p>and check that it starts. Then use Cntl-C to stop the hub.</p>
+<h2 id="open-the-8000-port">Open the 8000 port</h2>
+<p>Find out the Public IP address for the server you are on. Then open the 8000 port.</p>
+<pre><code>add port
+reload
+list ports to check</code></pre>
+<p><em>Background</em></p>
+<p>The JupyterhHub is running by default on <code>http://localhost:8000</code>. This means that if you start the hub on a machine that you are logged into, you should be able to open a browser on that machine, enter <code>http://localhost:8000</code> and the hub login page will appear. There are a few reasons that might not work</p>
+<ul>
+<li>You are ssh-ing into a server and don’t have a browser to open. The browser on the computer that you are ssh-ing from is the “localhost” in this case and you need the “localhost” to be the server.</li>
+<li>You are logged directly into your server, but it doesn’t have a browser installed.</li>
+</ul>
+<p>However <code>http://localhost:8000</code> is actually not very useful. We are trying to create a hub that others can log into from their browsers.</p>
+<p>So you need to determine the Public IP address for the server you are on. This is the IP address that you could enter into a browser. If you enter <code>http://XXX.XX.XX.XX</code> (replace with actual IP), then you should see a page of some sort. This indicates that the server is working. If you are on an internal network, then you will only be able to load the address if you are also on that network. But for security reason, ports will not be open by default. You need to open the 8000 port so that <code>http://XXX.XX.XX.XX:8000</code> will be found.</p>
+<h2 id="set-up-a-configuration-file">Set up a configuration file</h2>
+<p>So far, we have started the hub with the default configuration. We are going to need to customize it. For that we need a configuration file. We will create this in the folder where the environment files are.</p>
+<pre><code>sudo mkdir -p $JHUB-ENV/etc/jupyterhub/
+cd $JHUB-ENV/etc/jupyterhub/</code></pre>
+<p>Next create the default configuration file <code>jupyterhub_config.py</code>.</p>
+<pre><code>sudo $JHUB-PATH/bin/jupyterhub --generate-config</code></pre>
+<p>Because we <code>cd</code>-d into the <code>$JHUB-PATH/etc/jupyterhub/</code> directory, the file is created there. This default file is very long and we won’t edit it quite yet.</p>
+<h2 id="make-a-new-server-service">Make a new server service</h2>
+<h3 id="create-the-new-unit-file">Create the new unit file</h3>
+<p>At this point, after opening the port, you should be able to get to your JupyterHub by starting it with <code>jupyterhub --ip XXX.XX.XX.XX --port=8000</code> and then browsing to <code>http://XXX.XX.XX.XX:8000</code>. But you hub is going to be stopped whenever the server is rebooted. So next we need to set up a service for your service so that our hub starts automatically.</p>
+<p>Create a new directory for the service unit file,</p>
+<pre><code>sudo mkdir -p $JHUB-PATH/etc/systemd
+cd $JHUB-PATH/etc/systemd</code></pre>
+<p>Create the file. For example, using nano editor, we do</p>
+<pre><code>nano jupyterhub.service</code></pre>
+<p>And into that file we put the following. Replace <code>Environment="JHUB-ENV=\opt\jupyterhub\"</code> with the actual path to the jupyterhub environment folder.</p>
+<pre><code>[Unit]
+Description=JupyterHub
+After=syslog.target network.target
+
+[Service]
+User=root
+Environment=&quot;JHUB-ENV=/opt/jupyterhub/&quot;
+Environment=&quot;PATH=/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:$JHUB-ENV/bin&quot;
+ExecStart=$JHUB-ENV/bin/jupyterhub -f $JHUB-ENV/etc/jupyterhub/jupyterhub_config.py
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+<p>Next we make systemd aware of the new service.</p>
+<p>Create a symlink file in the folder where all the server services are kept. And tell <code>systemd</code> to reload its configuration files</p>
+<pre><code>sudo ln -s $JHUB-ENV/etc/systemd/jupyterhub.service /etc/systemd/system/jupyterhub.service
+sudo systemctl daemon-reload</code></pre>
+<h3 id="make-sure-selinux-doesnt-block-our-service">Make sure SELinux doesn’t block our service</h3>
+<p>SELinux (security for the server) checks that files that are used have the correct label. All our files have generic file labels. If you do,</p>
+<pre><code>ls -Z $JHUB-ENV/etc/systemd/</code></pre>
+<p>You will see that the file label is <code>xyz</code>. We need it to be</p>
+<pre><code>systemd_unit_file_t</code></pre>
+<p>We change the file label with</p>
+<pre><code>sudo chron .... $JHUB-PATH/etc/systemd/jupyterhub.service</code></pre>
+<p>SELinux will also object to the file label on all the binaries that we use to start up the JupyterHub (like <code>jupyterhub</code>) so we need to fix those file labels.</p>
+<p>This will add <code>bin_t</code> label to all the binaries.</p>
+<pre><code></code></pre>
+<h2 id="start-our-new-service">Start our new service</h2>
+<p>The service will start on reboot, but we can start it straight away using <code>start</code>:</p>
+<pre><code>sudo systemctl enable jupyterhub.service
+sudo systemctl start jupyterhub.service</code></pre>
+<p>Check that it is running.</p>
+<pre><code>sudo systemctl status jupyterhub.service</code></pre>
+<p>Now our hub should be available on <code>http:\\XXX.XX.XX.XX:8000</code>. At this point, you will need to address security if your hub is open to the web, as opposed to being on an internal network and only accessible to that network. Learn about that <a href="https://jupyterhub.readthedocs.io/en/1.2.0/installation-guide-hard.html">here</a>.</p>
+<h2 id="create-the-base-user-environment">Create the base user environment</h2>
+<p>When you log in the jupyter notebooks will be trying to use the Python environment that was created to install JupyterHub, this is not what we want. We will use a docker image to “spawn” the user environment. Read <a href="https://jupyterhub.readthedocs.io/en/1.2.0/installation-guide-hard.html#part-2-conda-environments">here</a> for other approaches.</p>
+<p>We are going to use <a href="https://jupyterhub-dockerspawner.readthedocs.io/">dockerspawner</a> so that we can use a docker image for our user environments. The user will work in these containerized environments and they won’t have access to any other files in the server. In order to share their work with others, the normal workflow would be to work in Git repos and share those repos to a GitHub (or GitLab server). Each user will have a home directory on the server for their files, but they won’t have access to other hub user directories nor will they have access to any other directories on the server.</p>
+<h3 id="check-that-the-versions-of-jupyterhub-match">Check that the versions of jupyterhub match</h3>
+<p>The image that we use must have the jupyterhub module installed and the version of jupyterhub on your server must match that in the image.</p>
+<p>Check the version on your server:</p>
+<pre><code>jupyterhub -V</code></pre>
+<p>For demo purposes, we will use the <code>jupyter/scipy-notebook</code> images on DockerHub. We want to find an image with the same version of jupyterhub as we have on our server.</p>
+<h3 id="edit-the-config-file">Edit the config file</h3>
+<p>Edit the <code>jupyterhub_config.py</code> file in <code>$JHUB-ENV/etc/jupyterhub/</code> to add that we want to use DockerSpawner and specify the image. Add these lines to <code>jupyterhub_config.py</code>.</p>
+<pre><code>c.JupyterHub.spawner_class = &#39;dockerspawner.DockerSpawner&#39;
+c.DockerSpawner.image = &#39;jupyter/scipy-notebook:67b8fb91f950&#39;</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

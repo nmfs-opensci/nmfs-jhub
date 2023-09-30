@@ -1,4 +1,4 @@
-# Indian Ocean Summer Docker Images
+# Indian Ocean Summer Docker Images: Openscapes + a few extras
 
 https://hub.docker.com/repository/docker/eeholmes/iopython/general
 
@@ -14,8 +14,10 @@ A DockerHub user account. The instructions are using EEH's.
 
 Add to Dockerfile something like
 ```
-RUN pip install zarr-eosdis-store
+RUN conda install -c conda-forge cmocean
+RUN pip install cmocean
 ```
+Try to use conda instead of pip so that any package conflicts are resolved.
 
 # Rebuild and push the Docker image
 
@@ -26,7 +28,7 @@ cd ci/iopython
 ```
 2. Update the docker tag to the date.
 ```
-DOCKER_TAG="20230615"
+DOCKER_TAG="20230901"
 ```
 2. Build the image. `.` means current directory. `eeholmes/iopython` is the name of the repo on DockerHub. See notes below. 
 ```
@@ -39,7 +41,7 @@ docker push eeholmes/iopython:${DOCKER_TAG}
 docker push eeholmes/iopython:main
 ```
 
-https://help.valohai.com/hc/en-us/articles/4421364087569-Build-your-own-Docker-image
+Notes: https://help.valohai.com/hc/en-us/articles/4421364087569-Build-your-own-Docker-image
 
 
 # Stop any running the Jupyter Lab instances
@@ -76,7 +78,7 @@ DockerHub will want to you to buy the premium account but you only need that if 
 
 You won't see this on docker build tutorials. But if you are on a Mac with Apple chip, then you'll build arm64 images and that's not going to work on Ubuntu VMs. The vanilla images you see are amd64 so we want to make sure we are building for that platform. This only matters if you are on a Mac with Apple chip, but it won't break things for unix and PC so I added to make the instructions more robust.
 
-## If an specific image tag is in config
+## If a specific image tag is in config
 
 The JupyterHub has a config file that specifies what images are being used. If the image is say `eeholmes/iopython:hublatest`, then whenever the a image with tag `hublatest` is pushed, the hub will use that. If on the otherhand, you config file has a specific, an unique tag that you don't overwrite, then you'll have to update the file in the config file on the cluster (log into Azure, go to cluster, connect to cloud shell, `nano dconfig2.yaml`) and upgrade the installation of the JupyterHub.
 
@@ -124,7 +126,7 @@ A helm is what runs the commands to upgrade (and install in the beginning) our J
 
 When the openscapes image is used, we are in a conda env called 'notebook'. We want to
 update that with the packages in newpackages.yml but need to get that file into the container. For now,
-I just hard code in the pip install commands.
+I just hard code in the pip/conda install commands.
 
 Add to Docker file
 ```

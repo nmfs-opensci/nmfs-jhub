@@ -1,8 +1,8 @@
 # Indian Ocean Summer Docker Images
 
-https://hub.docker.com/repository/docker/eeholmes/iopython/general
+https://hub.docker.com/repository/docker/eeholmes/iosdmTMB/general
 
-The one to use is the dated one. The `main` tag doesn't seem to always be recognized as a new tag when it changes.
+A separate sdmTMB image is made since it takes forever to build.
 
 # Requirements
 
@@ -14,7 +14,7 @@ A DockerHub user account. The instructions are using EEH's.
 
 Add to Dockerfile something like
 ```
-RUN R -e 'install.packages("gtools", repos = "http://cran.us.r-project.org")'
+RUN R -e 'install.packages("sdmTMB", dependencies = TRUE)'
 ```
 
 # Rebuild and push the Docker image
@@ -22,21 +22,21 @@ RUN R -e 'install.packages("gtools", repos = "http://cran.us.r-project.org")'
 1. Make sure Docker app is running, not just installed. So if you are on a local computer, start up the app (open it).
 1. Go to a terminal and cd to the directory with the Dockerfile. So to the `ci` directory in the `nmfs-jhub` repo.
 ```
-cd ci/iorocker
+cd ci/iosdmTMB
 ```
 2. Update the docker tag to the date.
 ```
-DOCKER_TAG="20230901"
+DOCKER_TAG="20230615"
 ```
 2. Build the image. `.` means current directory. `eeholmes/iorocker` is the name of the repo on DockerHub. `--platform` is added if you are building on an Mac with Apple chip. 
 ```
-docker build --platform linux/amd64 -t eeholmes/iorocker:${DOCKER_TAG} -t eeholmes/iorocker:main .
+docker build --platform linux/amd64 -t eeholmes/iosdmTMB:${DOCKER_TAG} -t eeholmes/iosdmTMB:main .
 ```
 
 3. Push the image up to DockerHub. Make sure you are logged into DockerHub in the Docker app otherwise you'll get "access denied". Open the Docker app and look that it shows that you are signed in.
 ```
-docker push eeholmes/iorocker:${DOCKER_TAG}
-docker push eeholmes/iorocker:main
+docker push eeholmes/iosdmTMB:${DOCKER_TAG}
+docker push eeholmes/iosdmTMB:main
 ```
 
 Notes: https://help.valohai.com/hc/en-us/articles/4421364087569-Build-your-own-Docker-image
@@ -53,6 +53,8 @@ Log into Azure portal, go to DaskHub, Connect, Cloud Shell, and run this command
 ```
 helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig2.yaml
 ```
+
+It can take 30 minutes for the changes to take place.
 
 
 # Asides
