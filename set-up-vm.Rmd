@@ -1,0 +1,10 @@
+---
+title: "Set up VM"
+description: |
+  Setting up Linux VM for testing
+---
+
+For testing JupyterHub set-ups, I start various Linux machines. Here is how to set up a virtual machine on my Mac.
+
+* <https://medium.com/@thehippieandtheboss/how-to-create-a-linux-virtual-machine-on-macos-1278ec1ef327>
+* <https://tomcudd.com/how-i-set-up-a-centos-7-virtual-machine/>

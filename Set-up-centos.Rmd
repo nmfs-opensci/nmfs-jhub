@@ -2,9 +2,6 @@
 title: "Centos Set-up"
 description: |
   Setting up a multi-user JupyterHub on Centos 7 VM
-output:
-  distill::distill_article:
-    toc: true
 ---
 
 This is my notes for setting this up on a Centos 7 (Linux distribution) server. 

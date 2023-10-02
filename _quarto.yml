@@ -29,6 +29,8 @@ website:
         href: Set-up-daskhub.Rmd
       - text: "Centos Set-up"
         href: Set-up-centos.Rmd
+      - text: "Set-up VM on mac"
+        href: set-up-vm.Rmd
 
 format:
   html:
