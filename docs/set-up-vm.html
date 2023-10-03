@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Setting up Linux VM for testing">
 
-<title>Eli's JupyterHub notes – setup-notes</title>
+<title>Eli’s JupyterHub notes - Set up VM</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -29,6 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./Set-up-centos.html" rel="prev">
 <link href="./images/nmfs-opensci-logo2-notext.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -74,7 +76,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./set-up-vm.html">Set-up VM on mac</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -128,7 +130,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./set-up-vm.html" class="sidebar-item-text sidebar-link">
+  <a href="./set-up-vm.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Set-up VM on mac</span></a>
   </div>
 </li>
@@ -142,39 +144,58 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#instructions-for-editing-config" id="toc-instructions-for-editing-config" class="nav-link active" data-scroll-target="#instructions-for-editing-config">Instructions for editing config</a></li>
+  <li><a href="#azure" id="toc-azure" class="nav-link active" data-scroll-target="#azure">Azure</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/nmfs-opensci/nmfs-jhub/edit/main/Setup-Notes.Rmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/nmfs-opensci/nmfs-jhub/issues/new" class="toc-action">Report an issue</a></p><p><a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/Setup-Notes.Rmd" class="toc-action">View source</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/nmfs-opensci/nmfs-jhub/edit/main/set-up-vm.Rmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/nmfs-opensci/nmfs-jhub/issues/new" class="toc-action">Report an issue</a></p><p><a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/set-up-vm.Rmd" class="toc-action">View source</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Set up VM</h1>
+</div>
+
+<div>
+  <div class="description">
+    <p>Setting up Linux VM for testing</p>
+  </div>
+</div>
 
 
-<section id="instructions-for-editing-config" class="level1">
-<h1>Instructions for editing config</h1>
-<ol type="1">
-<li>Log into https://portal.azure.com/ and once successful, you will see this</li>
-</ol>
-<p><img width="1176" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/bcd44875-a5bc-49e0-b047-638b7747c1ae"></p>
-<ol start="2" type="1">
-<li>Click the JupyterHub icon and you will see this</li>
-</ol>
-<p><img width="815" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/99c0cac0-7e65-444a-8b95-b0377db1ec4a"></p>
-<ol start="3" type="1">
-<li>Click the Connect icon and you will see this. Ignore everything else that you see. I don’t think you need to run the <code>kubectl get deployments --all-namespaces=true</code> unless you need to check Kubernetes set up.</li>
-</ol>
-<p><img width="247" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/686f64b0-f5ef-47b7-addd-0f8ddbc0455c"></p>
-<ol start="4" type="1">
-<li>Type <code>nano config.yaml</code> to get the the JupyterHub config. This is the only file you need to change. cntl-O to write. cntl-X to exit.</li>
-</ol>
-<p>After you update the <code>config.yaml</code>, you need to tell the JupyterHub about the change</p>
-<pre><code>helm upgrade --cleanup-on-fail jhub jupyterhub/jupyterhub --namespace jhub  --version=2.0.0 --values config.yaml</code></pre>
-<p>If upgrade was successful, you will see this (plus a bunch of text below that you can ignore).</p>
-<p><img width="797" alt="image" src="https://github.com/nmfs-opensci/nmfs-jhub/assets/2545978/d632c4ed-e9a0-49df-b0a3-433a2778bb03"></p>
-<ol start="5" type="1">
-<li>What a few minutes for your changes to take effect.</li>
-</ol>
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>For testing JupyterHub set-ups, I start various Linux machines. Here is how to set up a virtual machines.</p>
+<section id="azure" class="level2">
+<h2 class="anchored" data-anchor-id="azure">Azure</h2>
+<ul>
+<li>Created a Centos 8.3 server on Azure: https://portal.azure.com/#create/cloud-infrastructure-services.centos-8-3centos-8-3</li>
+<li>I didn’t do anything special for set-up. Choose SSH with key.</li>
+<li>Once it is created, I went to the dashboard and selected my VM. The dashboard has a “Connect” button to get to the shell and it shows the public IP address.</li>
+<li>I had to create a special security rule to allow me to ssh into the public IP address to connect. Normally I use the cloud shell to connect, but Azure would not let me connect via the cloud shell for a server since it wanted upgraded security and I cannot do that with my work subscription.</li>
+<li>Then I saved the key somewhere on my computer and</li>
+</ul>
+<pre><code>chmod 400 ~/&lt;key location&gt;
+ssh -i ~/&lt;key location&gt; &lt;vm-username&gt;@&lt;public key&gt;</code></pre>
+<ul>
+<li>I downloaded <a href="https://www.vmware.com/products/fusion.html">VMware Fusion</a> 13.0.2 for M1 macs.</li>
+<li>Then I downloaded a Centos 9 server image from <a href="https://sourceforge.net/projects/osboxes/files/v/vm/10-Cn-t/9/Server/64bit.7z/download">here</a></li>
+<li>https://www.centos.org/download/</li>
+<li>Open VMWare and create a new VM. Choose other Linux. Doesn’t actually matter since it will be removed.</li>
+<li>Shut down the VM.</li>
+<li>Go to settings and remove the hard drive.</li>
+<li>Add a new hardrive. For me, I used ‘Add Device’ in the upper right of the Settings box. Choose ‘existing harddrive’</li>
+<li><a href="https://communities.vmware.com/t5/VMware-Fusion-Documents/The-Unofficial-Fusion-13-for-Apple-Silicon-Companion-Guide/ta-p/2939907">Help for M1</a> <a href="https://medium.com/@thehippieandtheboss/how-to-create-a-linux-virtual-machine-on-macos-1278ec1ef327" class="uri">https://medium.com/@thehippieandtheboss/how-to-create-a-linux-virtual-machine-on-macos-1278ec1ef327</a></li>
+<li><a href="https://tomcudd.com/how-i-set-up-a-centos-7-virtual-machine/" class="uri">https://tomcudd.com/how-i-set-up-a-centos-7-virtual-machine/</a></li>
+</ul>
 
 
 </section>
@@ -528,6 +549,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Set-up-centos.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Centos Set-up</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">

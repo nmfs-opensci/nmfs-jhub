@@ -4,7 +4,28 @@ description: |
   Setting up Linux VM for testing
 ---
 
-For testing JupyterHub set-ups, I start various Linux machines. Here is how to set up a virtual machine on my Mac.
+For testing JupyterHub set-ups, I start various Linux machines. Here is how to set up a virtual machines.
 
-* <https://medium.com/@thehippieandtheboss/how-to-create-a-linux-virtual-machine-on-macos-1278ec1ef327>
+## Azure
+
+* Created a Centos 8.3 server on Azure: https://portal.azure.com/#create/cloud-infrastructure-services.centos-8-3centos-8-3
+* I didn't do anything special for set-up. Choose SSH with key.
+* Once it is created, I went to the dashboard and selected my VM. The dashboard has a "Connect" button to get to the shell and it shows the public IP address.
+* I had to create a special security rule to allow me to ssh into the public IP address to connect. Normally I use the cloud shell to connect, but Azure would not let me connect via the cloud shell for a server since it wanted upgraded security and I cannot do that with my work subscription.
+* Then I saved the key somewhere on my computer and
+```
+chmod 400 ~/<key location>
+ssh -i ~/<key location> <vm-username>@<public key>
+```
+
+
+* I downloaded [VMware Fusion](https://www.vmware.com/products/fusion.html) 13.0.2 for M1 macs.
+* Then I downloaded a Centos 9 server image from [here](https://sourceforge.net/projects/osboxes/files/v/vm/10-Cn-t/9/Server/64bit.7z/download)
+* https://www.centos.org/download/
+* Open VMWare and create a new VM. Choose other Linux. Doesn't actually matter since it will be removed.
+* Shut down the VM.
+* Go to settings and remove the hard drive.
+* Add a new hardrive. For me, I used 'Add Device' in the upper right of the Settings box. Choose 'existing harddrive'
+* [Help for M1](https://communities.vmware.com/t5/VMware-Fusion-Documents/The-Unofficial-Fusion-13-for-Apple-Silicon-Companion-Guide/ta-p/2939907)
+<https://medium.com/@thehippieandtheboss/how-to-create-a-linux-virtual-machine-on-macos-1278ec1ef327>
 * <https://tomcudd.com/how-i-set-up-a-centos-7-virtual-machine/>
