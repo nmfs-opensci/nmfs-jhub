@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -155,7 +189,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#make-a-new-server-service" id="toc-make-a-new-server-service" class="nav-link" data-scroll-target="#make-a-new-server-service">Make a new server service</a></li>
   <li><a href="#enable-our-new-service" id="toc-enable-our-new-service" class="nav-link" data-scroll-target="#enable-our-new-service">Enable our new service</a></li>
   <li><a href="#create-the-base-user-environment" id="toc-create-the-base-user-environment" class="nav-link" data-scroll-target="#create-the-base-user-environment">Create the base user environment</a></li>
-  <li><a href="#multiple-images" id="toc-multiple-images" class="nav-link" data-scroll-target="#multiple-images">Multiple images</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/nmfs-opensci/nmfs-jhub/edit/main/Set-up-centos.Rmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/nmfs-opensci/nmfs-jhub/issues/new" class="toc-action">Report an issue</a></p><p><a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/Set-up-centos.Rmd" class="toc-action">View source</a></p></div></div></nav>
     </div>
@@ -184,7 +218,7 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>This is my notes for setting this up on a Centos 7 (Linux distribution) server.</p>
+<p>This is my notes for setting this up on a Centos 7 (Linux distribution) server. Jump to the “Summary” section to see only the instructions without explanations.</p>
 <p><strong>All the commands are run in a shell (bash)</strong></p>
 <p>References:</p>
 <ul>
@@ -200,40 +234,56 @@ ul.task-list li input[type="checkbox"] {
 <li>I had to create a special security rule to allow me to ssh into the public IP address to connect. Normally I use the cloud shell to connect, but Azure would not let me connect via the cloud shell for a server since it wanted upgraded security and I cannot do that with my work subscription.</li>
 <li>Then I saved the key somewhere on my computer and</li>
 </ul>
-<pre><code>chmod 400 ~/&lt;key location&gt;
-ssh -i ~/&lt;key location&gt; &lt;vm-username&gt;@&lt;public key&gt;</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> 400 ~/<span class="op">&lt;</span>key location<span class="op">&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-i</span> ~/<span class="op">&lt;</span>key location<span class="op">&gt;</span> <span class="op">&lt;</span>vm-username<span class="op">&gt;</span>@<span class="op">&lt;</span>public key<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="on-vm-check-set-up" class="level2">
 <h2 class="anchored" data-anchor-id="on-vm-check-set-up">On VM check set-up</h2>
 <p>I ssh-ed into the VM with</p>
-<pre><code>ssh -i &lt;path to key downloaded from Azure&gt; eeholmes@&lt;public ip address&gt;</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-i</span> <span class="op">&lt;</span>path to key downloaded from Azure<span class="op">&gt;</span> eeholmes@<span class="op">&lt;</span>public ip address<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <section id="make-sure-you-are-root" class="level3">
 <h3 class="anchored" data-anchor-id="make-sure-you-are-root">Make sure you are root</h3>
 <p>Getting the JupyterHub set up needs to be done as root. First make sure you have an admin password. When I set up my Azure VM, I did not set a password. So first</p>
-<pre><code>sudo passwd &lt;your username&gt;</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> passwd <span class="op">&lt;</span>your username<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>and set a password. Then switch to root if you are not signed in as root</p>
-<pre><code>sudo -i</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> <span class="at">-i</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="check-for-python" class="level3">
 <h3 class="anchored" data-anchor-id="check-for-python">Check for Python</h3>
 <p>You will need Python 3.6+ installed. Open a terminal window and run <code>python3 --version</code> or <code>python --version</code> to see if Python is installed and what the version is.</p>
 <p>Check your operating system (OS) with</p>
-<pre><code>cat /etc/os-release</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> /etc/os-release</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="check-for-conda" class="level3">
 <h3 class="anchored" data-anchor-id="check-for-conda">Check for conda</h3>
 <p>You will need conda (or miniconda) for these instructions. conda (and miniconda) take care of checking that all our packages will be inter-operable. It is best to install JupyterHub into a clean environment. That way you minimize chances of conflicts and your environment will solve (figure out any conflicts) much much faster.</p>
 <p>Check for conda with</p>
-<pre><code>conda list</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> list</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>If it doesn’t show a list of environments, then you need to install miniconda. <a href="https://docs.conda.io/projects/miniconda/en/latest/">Installation instructions</a>. Read about miniconda for scientists from Software Carpentries <a href="https://carpentries-incubator.github.io/introduction-to-conda-for-data-scientists/setup/">here</a>.</p>
 <p>This is what I used to install miniconda from <a href="https://docs.conda.io/projects/miniconda/en/latest/index.html#quick-command-line-install">these instructions</a>. Note install miniconda in some place like <code>/opt/miniconda3</code> where all users will have access to `<code>/opt/miniconda3/bin</code>. We don’t want to install in <code>/root/</code> for example or the admin users home directory.</p>
-<pre><code>mkdir -p /opt/miniconda3
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /opt/miniconda3/miniconda.sh
-bash /opt/miniconda3/miniconda.sh -b -u -p /opt/miniconda3
-rm -rf /opt/miniconda3/miniconda.sh</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> /opt/miniconda3</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh <span class="at">-O</span> /opt/miniconda3/miniconda.sh</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> /opt/miniconda3/miniconda.sh <span class="at">-b</span> <span class="at">-u</span> <span class="at">-p</span> /opt/miniconda3</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> /opt/miniconda3/miniconda.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Then initialize to set up the path. Note I am using bash. You’ll need to change if you are using zsh.</p>
-<pre><code>/opt/miniconda3/bin/conda init bash
-source ~/.bashrc</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">/opt/miniconda3/bin/conda</span> init bash</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/.bashrc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p><em>note will need to do something else to add the conda binary to all the users’ paths</em></p>
 </section>
 </section>
@@ -242,48 +292,76 @@ source ~/.bashrc</code></pre>
 <p>Create the conda environment for the jupyterhub installation. Installation will be in a directory with all the files for packages. Then activate it (enter it), and get the location of the environment (folder).</p>
 <p><em>All the commands below are in the terminal window on your VM/server.</em></p>
 <p>Create the environment named <code>jupyterhub</code> with python and jupyterhub (module). After creating, activate (enter) that environment. Then install jupyterlab, notebook and dockerspawner into the environment. Note the <code>jupyterhub</code> after <code>-n</code> is the name of the environment.</p>
-<pre><code>conda create -n jupyterhub python</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> create <span class="at">-n</span> jupyterhub python</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Then activate (enter) that environment</p>
-<pre><code>conda activate jupyterhub</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate jupyterhub</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Then install jupyterhub here</p>
-<pre><code>conda install -c conda-forge jupyterhub</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install <span class="at">-c</span> conda-forge jupyterhub</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>and then jupyterlab</p>
-<pre><code>conda install -c conda-forge jupyterlab notebook</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install <span class="at">-c</span> conda-forge jupyterlab notebook</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <section id="set-a-variable-for-env-path" class="level3">
 <h3 class="anchored" data-anchor-id="set-a-variable-for-env-path">Set a variable for env path</h3>
 <p>The environment has a folder with all the packages and binaries that we install. We are going to need to know the location of that folder. Get the location with</p>
-<pre><code>conda env list</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env list</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>On the VM I set up, the folder location is</p>
-<pre><code>/opt/miniconda3/envs/jupyterhub</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">/opt/miniconda3/envs/jupyterhub</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Yours could be something entirely different. On another server with anaconda (a not-free conda package resolver), the folder was</p>
-<pre><code>/SHARE/anaconda3/envs/jupterhub/</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">/SHARE/anaconda3/envs/jupterhub/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>We are going to be saving the configuration files for our JupyterHub in this folder. Let’s save the path to a variable so we don’t have to keep entering the whole path.</p>
-<pre><code>JHUBENV=/opt/miniconda3/envs/jupyterhub</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="va">JHUBENV</span><span class="op">=</span>/opt/miniconda3/envs/jupyterhub</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Make sure users can read and execute this folder. They need to in order to be able to spawn instances for the hub.</p>
-<pre><code>chmod 755 $JHUBENV</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> 755 <span class="va">$JHUBENV</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>You should now be able to start the hub, but you will not be able to access it yet because you need to open the 8000 port. Type</p>
-<pre><code>$JHUBENV/bin/jupyterhub</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="va">$JHUBENV</span><span class="ex">/bin/jupyterhub</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>and check that it starts. Then use Cntl-C to stop the hub.</p>
 </section>
 </section>
 <section id="create-a-user-on-the-vm" class="level2">
 <h2 class="anchored" data-anchor-id="create-a-user-on-the-vm">Create a user on the VM</h2>
 <p>By default, any user on the server will be able to login. Let’s create a test user so that we are not logging into our hub with the root user password. We will be using “http” until we secure it so passwords are potentially exposed.</p>
-<pre><code>useradd jhub</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">useradd</span> jhub</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>and give it a password when it asks.</p>
 </section>
 <section id="open-the-8000-port" class="level2">
 <h2 class="anchored" data-anchor-id="open-the-8000-port">Open the 8000 port</h2>
 <p>FirewallD was not running on my Azure Centos server, so I started it up to manage the ports.</p>
-<pre><code>sudo systemctl enable firewalld
-sudo systemctl start firewalld</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl enable firewalld</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl start firewalld</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Find out the Public IP address for the server you are on; it’s listed on the Azure overview and networking page for the VM in the Azure portal. Then open the 8000 port.</p>
 <p>First find out what ports are open through the firewall</p>
-<pre><code>sudo firewall-cmd --list-ports</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--list-ports</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Add the 8000 port, reload and recheck that it appears.</p>
-<pre><code>sudo firewall-cmd  --permanent --add-port 8000/tcp
-sudo firewall-cmd --reload
-sudo firewall-cmd --list-ports</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd  <span class="at">--permanent</span> <span class="at">--add-port</span> 8000/tcp</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--reload</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--list-ports</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Because I am on an Azure VM, I also have to set up a networking rule to allow the 8000 port. By default, all public access to the server is blocked. Go to the Azure dashboard, select your VM, then select Networking under Settings, and then click Add Inbound Port rule. I am pretty sure you need to select “http” instead of “https”.</p>
 <p>Once the port is open, you should be able to reach your JupyterHub at <code>http://XXX.XX.XX.XX:8000</code> (replace the XX’s with the Public IP address).</p>
 <p><em>Background</em></p>
@@ -302,15 +380,22 @@ sudo firewall-cmd --list-ports</code></pre>
 <section id="set-up-a-configuration-file" class="level2">
 <h2 class="anchored" data-anchor-id="set-up-a-configuration-file">Set up a configuration file</h2>
 <p>So far, we have started the hub with the default configuration. We are going to need to customize it. For that we need a configuration file. We will create this in the folder where the environment files are.</p>
-<pre><code>sudo mkdir -p $JHUBENV/etc/jupyterhub/
-cd $JHUBENV/etc/jupyterhub/</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir <span class="at">-p</span> <span class="va">$JHUBENV</span>/etc/jupyterhub/</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$JHUBENV</span>/etc/jupyterhub/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Next create the default configuration file <code>jupyterhub_config.py</code>.</p>
-<pre><code>sudo $JHUBENV/bin/jupyterhub --generate-config</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> <span class="va">$JHUBENV</span>/bin/jupyterhub <span class="at">--generate-config</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Because we <code>cd</code>-d into the <code>$JHUBENV/etc/jupyterhub/</code> directory, the file is created there. This default file is very long. Open up with</p>
-<pre><code>nano jupyterhub_config.py</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> jupyterhub_config.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Use F6 to find lines. Uncomment these two lines and save (Cntl-O, Enter, Cntl-X).</p>
-<pre><code>c.Spawner.default_url = '/lab'
-c.Spawner.http_timeout = 3600</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">c.Spawner.http_timeout</span> = 3600</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="make-a-new-server-service" class="level2">
 <h2 class="anchored" data-anchor-id="make-a-new-server-service">Make a new server service</h2>
@@ -318,54 +403,80 @@ c.Spawner.http_timeout = 3600</code></pre>
 <h3 class="anchored" data-anchor-id="create-the-new-unit-file">Create the new unit file</h3>
 <p>At this point, after opening the port, you should be able to get to your JupyterHub by starting it with <code>jupyterhub --ip XXX.XX.XX.XX --port=8000</code> and then browsing to <code>http://XXX.XX.XX.XX:8000</code>. But you hub is going to be stopped whenever the server is rebooted. So next we need to set up a service for your service so that our hub starts automatically.</p>
 <p>Create a new directory for the service unit file,</p>
-<pre><code>sudo mkdir -p $JHUBENV/etc/systemd
-cd $JHUBENV/etc/systemd</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir <span class="at">-p</span> <span class="va">$JHUBENV</span>/etc/systemd</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$JHUBENV</span>/etc/systemd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Create the file and name <code>jupyterhub.service</code>. For example, using nano editor, we do</p>
-<pre><code>nano jupyterhub.service</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> jupyterhub.service</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>And into that file we put the following. Replace <code>/opt/miniconda3/envs/jupyterhub</code> with the actual path to the jupyterhub environment folder.</p>
-<pre><code>[Unit]
-Description=JupyterHub
-After=syslog.target network.target
-
-[Service]
-User=root
-Environment="PATH=/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/miniconda3/envs/jupyterhub/bin"
-ExecStart=/opt/miniconda3/envs/jupyterhub/bin/jupyterhub -f /opt/miniconda3/envs/jupyterhub/etc/jupyterhub/jupyterhub_config.py
-
-[Install]
-WantedBy=multi-user.target</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="ex">[Unit]</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="va">Description</span><span class="op">=</span>JupyterHub</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="va">After</span><span class="op">=</span>syslog.target <span class="ex">network.target</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="ex">[Service]</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="va">User</span><span class="op">=</span>root</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="va">Environment</span><span class="op">=</span><span class="st">"PATH=/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/miniconda3/envs/jupyterhub/bin"</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="va">ExecStart</span><span class="op">=</span>/opt/miniconda3/envs/jupyterhub/bin/jupyterhub <span class="ex">-f</span> /opt/miniconda3/envs/jupyterhub/etc/jupyterhub/jupyterhub_config.py</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="ex">[Install]</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="va">WantedBy</span><span class="op">=</span>multi-user.target</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Next we make systemd aware of the new service.</p>
 <p>Create a symlink file in the folder where all the server services are kept. And tell <code>systemd</code> to reload its configuration files</p>
-<pre><code>sudo ln -s $JHUBENV/etc/systemd/jupyterhub.service /etc/systemd/system/jupyterhub.service
-sudo systemctl daemon-reload</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ln <span class="at">-s</span> <span class="va">$JHUBENV</span>/etc/systemd/jupyterhub.service /etc/systemd/system/jupyterhub.service</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl daemon-reload</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="make-sure-selinux-doesnt-block-our-service" class="level3">
 <h3 class="anchored" data-anchor-id="make-sure-selinux-doesnt-block-our-service">Make sure SELinux doesn’t block our service</h3>
 <p>SELinux (security for the server) checks that files that are used have the correct label. All our files have generic file labels. If you do,</p>
-<pre><code>ls -Z $JHUBENV/etc/systemd/</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-Z</span> <span class="va">$JHUBENV</span>/etc/systemd/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>You will see that the file label is <code>unconfined_u:object_r:usr_t:s0</code>. We need it to be</p>
-<pre><code>systemd_unit_file_t</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="ex">systemd_unit_file_t</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>We change the file label with</p>
-<pre><code>sudo chcon system_u:object_r:systemd_unit_file_t:s0 $JHUBENV/etc/systemd/jupyterhub.service</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> chcon system_u:object_r:systemd_unit_file_t:s0 <span class="va">$JHUBENV</span>/etc/systemd/jupyterhub.service</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>SELinux will also object to the file label on all the binaries that we use to start up the JupyterHub (like <code>jupyterhub</code>) so we need to fix those file labels.</p>
 <p>This will add <code>bin_t</code> label to all the binaries and check that it worked.</p>
-<pre><code>sudo find $JHUBENV/bin -type f -exec chcon system_u:object_r:bin_t:s0 {} \;
-ls -Z $JHUBENV/bin</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> find <span class="va">$JHUBENV</span>/bin <span class="at">-type</span> f <span class="at">-exec</span> chcon system_u:object_r:bin_t:s0 {} <span class="dt">\;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-Z</span> <span class="va">$JHUBENV</span>/bin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>It got all the binaries but not the simlinks. Nonetheless it seemed to run ok.</p>
 </section>
 </section>
 <section id="enable-our-new-service" class="level2">
 <h2 class="anchored" data-anchor-id="enable-our-new-service">Enable our new service</h2>
-<pre><code>sudo systemctl enable jupyterhub.service</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl enable jupyterhub.service</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>The service will start on reboot, but we can start it straight away using <code>start</code>:</p>
-<pre><code>sudo systemctl start jupyterhub.service</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl start jupyterhub.service</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Check that it is running.</p>
-<pre><code>sudo systemctl status jupyterhub.service</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl status jupyterhub.service</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>If it fails, try</p>
-<pre><code>audit2why &lt; /var/log/audit/audit.log</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="ex">audit2why</span> <span class="op">&lt;</span> /var/log/audit/audit.log</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>to debug. It is likely to be an issue with SELinux blocking the service from starting.</p>
 <p>Now our hub should be available on <code>http:\\XXX.XX.XX.XX:8000</code>. You can double check that it is listen on this port by running</p>
-<pre><code>netstat -tuln</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">netstat</span> <span class="at">-tuln</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>At this point, you will need to address security if your hub is open to the web, as opposed to being on an internal network and only accessible to that network. Learn about that <a href="https://jupyterhub.readthedocs.io/en/1.2.0/installation-guide-hard.html">here</a>.</p>
 </section>
 <section id="create-the-base-user-environment" class="level2">
@@ -375,57 +486,207 @@ ls -Z $JHUBENV/bin</code></pre>
 <section id="install-docker" class="level3">
 <h3 class="anchored" data-anchor-id="install-docker">Install docker</h3>
 <p>I am using Centos in this example</p>
-<pre><code>sudo yum install -y yum-utils
-sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> yum install <span class="at">-y</span> yum-utils</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> yum-config-manager <span class="at">--add-repo</span> https://download.docker.com/linux/centos/docker-ce.repo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Then we need to start docker</p>
-<pre><code>sudo systemctl start docker</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl start docker</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Not sure this is needed.</p>
-<pre><code>sudo firewall-cmd --zone=docker --add-port=8081/tcp
-sudo firewall-cmd --reload
-sudo systemctl restart docker</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--zone</span><span class="op">=</span>docker <span class="at">--add-port</span><span class="op">=</span>8081/tcp</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--reload</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl restart docker</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="install-dockerspawner" class="level3">
 <h3 class="anchored" data-anchor-id="install-dockerspawner">Install dockerspawner</h3>
 <p>I am going to be creating the user environment from a docker image, so I also want dockerspawner. Note dockerspawner installed docker-py but it was really old and threw errors so I installed separately to get the latest version. Note make sure you are in the jupyterhub conda env. You can run <code>conda env list</code> and use <code>conda activate jupyterhub</code> if you are not in it.</p>
-<pre><code>conda install -c conda-forge dockerspawner
-conda install -c conda-forge docker-py</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install <span class="at">-c</span> conda-forge dockerspawner</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install <span class="at">-c</span> conda-forge docker-py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
-<section id="check-that-the-versions-of-jupyterhub-match" class="level3">
-<h3 class="anchored" data-anchor-id="check-that-the-versions-of-jupyterhub-match">Check that the versions of jupyterhub match</h3>
-<p><em>Not sure this is necessary</em></p>
-<p>The image that we use must have the jupyterhub module installed and the version of jupyterhub on your server must match that in the image.</p>
+<section id="jupyter-images" class="level3">
+<h3 class="anchored" data-anchor-id="jupyter-images">Jupyter images</h3>
+<p>The image that we use must have the jupyterhub module installed. Also there seems to be some tweaking needed for the image to work as the image I used in a JupyterHub on Kubernetes did not work for me.</p>
 <p>Check the version on your server:</p>
-<pre><code>$JHUBENV/bin/jupyterhub -V</code></pre>
-<p>For demo purposes, we will use the <code>jupyter/scipy-notebook</code> images on DockerHub. We want to find an image with the same version of jupyterhub as we have on our server.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="va">$JHUBENV</span><span class="ex">/bin/jupyterhub</span> <span class="at">-V</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For demo purposes, we will use the <code>jupyter</code> images on DockerHub. We want to find an image with the same version of jupyterhub as we have on our server.</p>
 </section>
 <section id="edit-the-config-file" class="level3">
 <h3 class="anchored" data-anchor-id="edit-the-config-file">Edit the config file</h3>
-<p>Edit the <code>jupyterhub_config.py</code> file in <code>$JHUB-ENV/etc/jupyterhub/</code> to add that we want to use DockerSpawner and specify the image. Add these lines to <code>jupyterhub_config.py</code>. The hub bind url needs to be 0.0.0.0 because we are using a docker container for the individual user environments.</p>
+<p>Edit the <code>jupyterhub_config.py</code> file in <code>$JHUB-ENV/etc/jupyterhub/</code> to add that we want to use DockerSpawner and specify the images that users should have access to. Users will get a drop down menu. Add these lines to <code>jupyterhub_config.py</code>. The hub bind url needs to be 0.0.0.0 because we are using a docker container for the individual user environments.</p>
 <ul>
 <li>https://discourse.jupyter.org/t/whats-the-main-difference-between-hub-connect-url-vs-hub-bind-url/3596/2</li>
 </ul>
-<pre><code>c = get_config()  #noqa
-c.JupyterHub.port = 8000
-c.JupyterHub.hub_bind_url = "http://0.0.0.0:8081"
-c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
-c.DockerSpawner.remove = True
-c.Spawner.http_timeout = 3600
-c.DockerSpawner.image_whitelist = {
-    'datascience-r': 'jupyter/datascience-notebook:r-4.3.1',
-    'scipy-notebook': 'jupyter/scipy-notebook:7e1a19a8427f',
-}</code></pre>
-<p>Did not do the below. Did add 8081 as a port but not sure I needed to.</p>
-<ul>
-<li>https://serverfault.com/questions/987686/no-network-connectivity-to-from-docker-ce-container-on-centos-8</li>
-</ul>
-<pre><code>sudo nmcli connection modify docker0 connection.zone public
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="ex">c</span> = get_config<span class="er">(</span><span class="kw">)</span>  <span class="co">#noqa</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="ex">c.JupyterHub.port</span> = 8000</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="ex">c.JupyterHub.hub_bind_url</span> = <span class="st">"http://0.0.0.0:8081"</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="ex">c.JupyterHub.spawner_class</span> = <span class="st">'dockerspawner.DockerSpawner'</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="ex">c.DockerSpawner.remove</span> = True</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="ex">c.Spawner.http_timeout</span> = 3600</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="ex">c.DockerSpawner.image_whitelist</span> = {</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'datascience-r'</span><span class="ex">:</span> <span class="st">'jupyter/datascience-notebook:r-4.3.1'</span>,</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'scipy-notebook'</span><span class="ex">:</span> <span class="st">'jupyter/scipy-notebook:7e1a19a8427f'</span>,</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Do a docker pull of the images so that they don’t have to be pulled the first time that a user chooses that image.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull jupyter/datascience-notebook:r-4.3.1</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull jupyter/scipy-notebook:7e1a19a8427f</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now you can restart the service and the user can start a notebook with the specified images.</p>
+<!--
+Did not do the below. Did add 8081 as a port but not sure I needed to.
+
+* https://serverfault.com/questions/987686/no-network-connectivity-to-from-docker-ce-container-on-centos-8
+
+```
+sudo nmcli connection modify docker0 connection.zone public
 sudo firewall-cmd --zone=public --add-masquerade --permanent
-sudo firewall-cmd --reload</code></pre>
+sudo firewall-cmd --reload
+```
+
+
+## Multiple images
+
+https://github.com/jupyterhub/dockerspawner/issues/400
+
+-->
 </section>
 </section>
-<section id="multiple-images" class="level2">
-<h2 class="anchored" data-anchor-id="multiple-images">Multiple images</h2>
-<p>https://github.com/jupyterhub/dockerspawner/issues/400</p>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<p>Only the instructions. Make sure you are installing as the root user. I assume you have Python and conda installed.</p>
+<p>Create the conda environment</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> <span class="at">-i</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> create <span class="at">-n</span> jupyterhub python <span class="at">--yes</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate jupyterhub</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install <span class="at">-c</span> conda-forge jupyterhub <span class="at">--yes</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install <span class="at">-c</span> conda-forge jupyterlab notebook <span class="at">--yes</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="va">JHUBENV</span><span class="op">=</span>/opt/miniconda3/envs/jupyterhub</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> 755 <span class="va">$JHUBENV</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Create user</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="ex">useradd</span> jhub</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Open the 8000 port</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co">#sudo systemctl enable firewalld</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="co">#sudo systemctl start firewalld</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd  <span class="at">--permanent</span> <span class="at">--add-port</span> 8000/tcp</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--reload</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--list-ports</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Create the configuration file. Will be editted at end.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir <span class="at">-p</span> <span class="va">$JHUBENV</span>/etc/jupyterhub/</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$JHUBENV</span>/etc/jupyterhub/</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> <span class="va">$JHUBENV</span>/bin/jupyterhub <span class="at">--generate-config</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Install docker if needed</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> yum install <span class="at">-y</span> yum-utils</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> yum-config-manager <span class="at">--add-repo</span> https://download.docker.com/linux/centos/docker-ce.repo</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl start docker</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Not sure this is needed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--zone</span><span class="op">=</span>docker <span class="at">--add-port</span><span class="op">=</span>8081/tcp</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--reload</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl restart docker</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Install dockerspawner</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install <span class="at">-c</span> conda-forge dockerspawner <span class="at">--yes</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install <span class="at">-c</span> conda-forge docker-py <span class="at">--yes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Edit the configuration file.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$JHUBENV</span>/etc/jupyterhub/</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> jupyterhub_config.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Paste this in</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="ex">c</span> = get_config<span class="er">(</span><span class="kw">)</span>  <span class="co">#noqa</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="ex">c.JupyterHub.port</span> = 8000</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="ex">c.JupyterHub.hub_bind_url</span> = <span class="st">"http://0.0.0.0:8081"</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="ex">c.JupyterHub.spawner_class</span> = <span class="st">'dockerspawner.DockerSpawner'</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a><span class="ex">c.DockerSpawner.remove</span> = True</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a><span class="ex">c.Spawner.http_timeout</span> = 3600</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a><span class="ex">c.DockerSpawner.image_whitelist</span> = {</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'datascience-r'</span><span class="ex">:</span> <span class="st">'jupyter/datascience-notebook:r-4.3.1'</span>,</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'scipy-notebook'</span><span class="ex">:</span> <span class="st">'jupyter/scipy-notebook:7e1a19a8427f'</span>,</span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Docker pull of the images</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull jupyter/datascience-notebook:r-4.3.1</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull jupyter/scipy-notebook:7e1a19a8427f</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Make a new server service</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir <span class="at">-p</span> <span class="va">$JHUBENV</span>/etc/systemd</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$JHUBENV</span>/etc/systemd</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> jupyterhub.service</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Paste this in</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="ex">[Unit]</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="va">Description</span><span class="op">=</span>JupyterHub</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="va">After</span><span class="op">=</span>syslog.target <span class="ex">network.target</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a><span class="ex">[Service]</span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a><span class="va">User</span><span class="op">=</span>root</span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a><span class="va">Environment</span><span class="op">=</span><span class="st">"PATH=/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/miniconda3/envs/jupyterhub/bin"</span></span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a><span class="va">ExecStart</span><span class="op">=</span>/opt/miniconda3/envs/jupyterhub/bin/jupyterhub <span class="ex">-f</span> /opt/miniconda3/envs/jupyterhub/etc/jupyterhub/jupyterhub_config.py</span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a><span class="ex">[Install]</span></span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a><span class="va">WantedBy</span><span class="op">=</span>multi-user.target</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Make sure SELinux doesn’t block our service</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-Z</span> <span class="va">$JHUBENV</span>/etc/systemd/</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> chcon system_u:object_r:systemd_unit_file_t:s0 <span class="va">$JHUBENV</span>/etc/systemd/jupyterhub.service</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> find <span class="va">$JHUBENV</span>/bin <span class="at">-type</span> f <span class="at">-exec</span> chcon system_u:object_r:bin_t:s0 {} <span class="dt">\;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Enable our new service</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ln <span class="at">-s</span> <span class="va">$JHUBENV</span>/etc/systemd/jupyterhub.service /etc/systemd/system/jupyterhub.service</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl daemon-reload</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl enable jupyterhub.service</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl start jupyterhub.service</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Done! See the long instructions if anything is not working.</p>
+<!--
+Did not do the below. Did add 8081 as a port but not sure I needed to.
+
+* https://serverfault.com/questions/987686/no-network-connectivity-to-from-docker-ce-container-on-centos-8
+
+```
+sudo nmcli connection modify docker0 connection.zone public
+sudo firewall-cmd --zone=public --add-masquerade --permanent
+sudo firewall-cmd --reload
+```
+
+
+## Multiple images
+
+https://github.com/jupyterhub/dockerspawner/issues/400
+
+-->
 
 
 </section>

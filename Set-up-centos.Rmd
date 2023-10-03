@@ -4,7 +4,7 @@ description: |
   Setting up a multi-user JupyterHub on Centos 7 VM
 ---
 
-This is my notes for setting this up on a Centos 7 (Linux distribution) server. 
+This is my notes for setting this up on a Centos 7 (Linux distribution) server. Jump to the "Summary" section to see only the instructions without explanations.
 
 **All the commands are run in a shell (bash)**
 
@@ -20,7 +20,7 @@ References:
 * Once it is created, I went to the dashboard and selected my VM. The dashboard has a "Connect" button to get to the shell and it shows the public IP address.
 * I had to create a special security rule to allow me to ssh into the public IP address to connect. Normally I use the cloud shell to connect, but Azure would not let me connect via the cloud shell for a server since it wanted upgraded security and I cannot do that with my work subscription.
 * Then I saved the key somewhere on my computer and
-```
+```{bash eval=FALSE}
 chmod 400 ~/<key location>
 ssh -i ~/<key location> <vm-username>@<public key>
 ```
@@ -28,18 +28,18 @@ ssh -i ~/<key location> <vm-username>@<public key>
 ## On VM check set-up
 
 I ssh-ed into the VM with
-```
+```{bash eval=FALSE}
 ssh -i <path to key downloaded from Azure> eeholmes@<public ip address>
 ```
 
 ### Make sure you are root
 
 Getting the JupyterHub set up needs to be done as root. First make sure you have an admin password. When I set up my Azure VM, I did not set a password. So first
-```
+```{bash eval=FALSE}
 sudo passwd <your username>
 ```
 and set a password. Then switch to root if you are not signed in as root
-```
+```{bash eval=FALSE}
 sudo -i
 ```
 
@@ -49,7 +49,7 @@ You will need Python 3.6+ installed. Open a terminal window and run
 `python3 --version` or `python --version` to see if Python is installed and what the version is.
 
 Check your operating system (OS) with
-```
+```{bash eval=FALSE}
 cat /etc/os-release
 ```
 
@@ -58,14 +58,14 @@ cat /etc/os-release
 You will need conda (or miniconda) for these instructions. conda (and miniconda) take care of checking that all our packages will be inter-operable. It is best to install JupyterHub into a clean environment. That way you minimize chances of conflicts and your environment will solve (figure out any conflicts) much much faster.
 
 Check for conda with
-```
+```{bash eval=FALSE}
 conda list
 ```
 If it doesn't show a list of environments, then you need to install miniconda.
 [Installation instructions](https://docs.conda.io/projects/miniconda/en/latest/). Read about miniconda for scientists from Software Carpentries  [here](https://carpentries-incubator.github.io/introduction-to-conda-for-data-scientists/setup/).
 
 This is what I used to install miniconda from [these instructions](https://docs.conda.io/projects/miniconda/en/latest/index.html#quick-command-line-install). Note install miniconda in some place like `/opt/miniconda3` where all users will have access to ``/opt/miniconda3/bin`. We don't want to install in `/root/` for example or the admin users home directory.
-```
+```{bash eval=FALSE}
 mkdir -p /opt/miniconda3
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /opt/miniconda3/miniconda.sh
 bash /opt/miniconda3/miniconda.sh -b -u -p /opt/miniconda3
@@ -73,7 +73,7 @@ rm -rf /opt/miniconda3/miniconda.sh
 ```
 
 Then initialize to set up the path. Note I am using bash. You'll need to change if you are using zsh.
-```
+```{bash eval=FALSE}
 /opt/miniconda3/bin/conda init bash
 source ~/.bashrc
 ```
@@ -88,48 +88,48 @@ Create the conda environment for the jupyterhub installation. Installation will 
 
 Create the environment named `jupyterhub` with python and jupyterhub (module).  After creating, activate (enter) that environment. Then install jupyterlab, notebook and dockerspawner into the environment. Note the `jupyterhub` after `-n` is the name of the environment.
 
-```
+```{bash eval=FALSE}
 conda create -n jupyterhub python
 ```
 Then activate (enter) that environment
-```
+```{bash eval=FALSE}
 conda activate jupyterhub
 ```
 Then install jupyterhub here
-```
+```{bash eval=FALSE}
 conda install -c conda-forge jupyterhub
 ```
 and then jupyterlab
-```
+```{bash eval=FALSE}
 conda install -c conda-forge jupyterlab notebook
 ```
 
 ### Set a variable for env path
 
 The environment has a folder with all the packages and binaries that we install. We are going to need to know the location of that folder. Get the location with
-```
+```{bash eval=FALSE}
 conda env list
 ```
 On the VM I set up, the folder location is 
-```
+```{bash eval=FALSE}
 /opt/miniconda3/envs/jupyterhub
 ```
 Yours could be something entirely different. On another server with anaconda (a not-free conda package resolver), the folder was
-```
+```{bash eval=FALSE}
 /SHARE/anaconda3/envs/jupterhub/
 ```
 We are going to be saving the configuration files for our JupyterHub in this folder. Let's save the path to a variable so we don't have to keep entering the whole path.
-```
+```{bash eval=FALSE}
 JHUBENV=/opt/miniconda3/envs/jupyterhub
 ```
 
 Make sure users can read and execute this folder. They need to in order to be able to spawn instances for the hub.
-```
+```{bash eval=FALSE}
 chmod 755 $JHUBENV
 ```
 
 You should now be able to start the hub, but you will not be able to access it yet because you need to open the 8000 port. Type 
-```
+```{bash eval=FALSE}
 $JHUBENV/bin/jupyterhub
 ```
 and check that it starts. Then use Cntl-C to stop the hub.
@@ -138,7 +138,7 @@ and check that it starts. Then use Cntl-C to stop the hub.
 
 By default, any user on the server will be able to login. Let's create a test user so that we are not logging into our hub with the root user password. We will be using "http" until we secure it so passwords are potentially exposed.
 
-```
+```{bash eval=FALSE}
 useradd jhub
 ```
 and give it a password when it asks.
@@ -147,7 +147,7 @@ and give it a password when it asks.
 
 FirewallD was not running on my Azure Centos server, so I started it up to manage the ports.
 
-```
+```{bash eval=FALSE}
 sudo systemctl enable firewalld
 sudo systemctl start firewalld
 ```
@@ -155,11 +155,11 @@ sudo systemctl start firewalld
 Find out the Public IP address for the server you are on; it's listed on the Azure overview and networking page for the VM in the Azure portal. Then open the 8000 port.
 
 First find out what ports are open through the firewall
-```
+```{bash eval=FALSE}
 sudo firewall-cmd --list-ports
 ```
 Add the 8000 port, reload and recheck that it appears.
-```
+```{bash eval=FALSE}
 sudo firewall-cmd  --permanent --add-port 8000/tcp
 sudo firewall-cmd --reload
 sudo firewall-cmd --list-ports
@@ -188,22 +188,21 @@ At this point, you should be able to login with the `jhub` test account.
 
 So far, we have started the hub with the default configuration. We are going to need to customize it. For that we need a configuration file. We will create this in the folder where the environment files are.
 
-```
+```{bash eval=FALSE}
 sudo mkdir -p $JHUBENV/etc/jupyterhub/
 cd $JHUBENV/etc/jupyterhub/
 ```
 
 Next create the default configuration file `jupyterhub_config.py`.
-```
+```{bash eval=FALSE}
 sudo $JHUBENV/bin/jupyterhub --generate-config
 ```
 Because we `cd`-d into the `$JHUBENV/etc/jupyterhub/` directory, the file is created there. This default file is very long. Open up with
-```
+```{bash eval=FALSE}
 nano jupyterhub_config.py
 ```
 Use F6 to find lines. Uncomment these two lines and save (Cntl-O, Enter, Cntl-X).
-```
-c.Spawner.default_url = '/lab'
+```{bash eval=FALSE}
 c.Spawner.http_timeout = 3600
 ```
 
@@ -214,16 +213,16 @@ c.Spawner.http_timeout = 3600
 At this point, after opening the port, you should be able to get to your JupyterHub by starting it with `jupyterhub --ip XXX.XX.XX.XX --port=8000` and then browsing to `http://XXX.XX.XX.XX:8000`. But you hub is going to be stopped whenever the server is rebooted. So next we need to set up a service for your service so that our hub starts automatically.
 
 Create a new directory for the service unit file, 
-```
+```{bash eval=FALSE}
 sudo mkdir -p $JHUBENV/etc/systemd
 cd $JHUBENV/etc/systemd
 ```
 Create the file and name `jupyterhub.service`. For example, using nano editor, we do
-```
+```{bash eval=FALSE}
 nano jupyterhub.service
 ```
 And into that file we put the following. Replace `/opt/miniconda3/envs/jupyterhub` with the actual path to the jupyterhub environment folder.
-```
+```{bash eval=FALSE}
 [Unit]
 Description=JupyterHub
 After=syslog.target network.target
@@ -240,7 +239,7 @@ WantedBy=multi-user.target
 Next we make systemd aware of the new service. 
 
 Create a symlink file in the folder where all the server services are kept. And tell `systemd` to reload its configuration files
-```
+```{bash eval=FALSE}
 sudo ln -s $JHUBENV/etc/systemd/jupyterhub.service /etc/systemd/system/jupyterhub.service
 sudo systemctl daemon-reload
 ```
@@ -248,22 +247,22 @@ sudo systemctl daemon-reload
 ### Make sure SELinux doesn't block our service
 
 SELinux (security for the server) checks that files that are used have the correct label. All our files have generic file labels. If you do,
-```
+```{bash eval=FALSE}
 ls -Z $JHUBENV/etc/systemd/
 ```
 You will see that the file label is `unconfined_u:object_r:usr_t:s0`. We need it to be
-```
+```{bash eval=FALSE}
 systemd_unit_file_t
 ```
 We change the file label with
-```
+```{bash eval=FALSE}
 sudo chcon system_u:object_r:systemd_unit_file_t:s0 $JHUBENV/etc/systemd/jupyterhub.service
 ```
 
 SELinux will also object to the file label on all the binaries that we use to start up the JupyterHub (like `jupyterhub`) so we need to fix those file labels.
 
 This will add `bin_t` label to all the binaries and check that it worked.
-```
+```{bash eval=FALSE}
 sudo find $JHUBENV/bin -type f -exec chcon system_u:object_r:bin_t:s0 {} \;
 ls -Z $JHUBENV/bin
 ```
@@ -271,26 +270,26 @@ It got all the binaries but not the simlinks. Nonetheless it seemed to run ok.
 
 ## Enable our new service
 
-```
+```{bash eval=FALSE}
 sudo systemctl enable jupyterhub.service
 ```
 
 The service will start on reboot, but we can start it straight away using `start`:
-```
+```{bash eval=FALSE}
 sudo systemctl start jupyterhub.service
 ```
 Check that it is running.
-```
+```{bash eval=FALSE}
 sudo systemctl status jupyterhub.service
 ```
 If it fails, try 
-```
+```{bash eval=FALSE}
 audit2why < /var/log/audit/audit.log
 ```
 to debug. It is likely to be an issue with SELinux blocking the service from starting.
 
 Now our hub should be available on `http:\\XXX.XX.XX.XX:8000`. You can double check that it is listen on this port by running
-```
+```{bash eval=FALSE}
 netstat -tuln
 ```
 At this point, you will need to address security if your hub is open to the web, as opposed to being on an internal network and only accessible to that network. Learn about that [here](https://jupyterhub.readthedocs.io/en/1.2.0/installation-guide-hard.html).
@@ -305,18 +304,18 @@ We are going to use [dockerspawner](https://jupyterhub-dockerspawner.readthedocs
 
 I am using Centos in this example
 
-```
+```{bash eval=FALSE}
 sudo yum install -y yum-utils
 sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 ```
 
 Then we need to start docker
-```
+```{bash eval=FALSE}
 sudo systemctl start docker
 ```
 
 Not sure this is needed.
-```
+```{bash eval=FALSE}
 sudo firewall-cmd --zone=docker --add-port=8081/tcp
 sudo firewall-cmd --reload
 sudo systemctl restart docker
@@ -326,30 +325,28 @@ sudo systemctl restart docker
 
 I am going to be creating the user environment from a docker image, so I also want dockerspawner.  Note dockerspawner installed docker-py but it was really old and threw errors so I installed separately to get the latest version. Note make sure you are in the jupyterhub conda env. You can run `conda env list` and use `conda activate jupyterhub` if you are not in it.
 
-```
+```{bash eval=FALSE}
 conda install -c conda-forge dockerspawner
 conda install -c conda-forge docker-py
 ```
 
-### Check that the versions of jupyterhub match
+### Jupyter images
 
-*Not sure this is necessary*
-
-The image that we use must have the jupyterhub module installed and the version of jupyterhub on your server must match that in the image.
+The image that we use must have the jupyterhub module installed. Also there seems to be some tweaking needed for the image to work as the image I used in a JupyterHub on Kubernetes did not work for me.
 
 Check the version on your server:
-```
+```{bash eval=FALSE}
 $JHUBENV/bin/jupyterhub -V
 ```
-For demo purposes, we will use the `jupyter/scipy-notebook` images on DockerHub. We want to find an image with the same version of jupyterhub as we have on our server.
+For demo purposes, we will use the `jupyter` images on DockerHub. We want to find an image with the same version of jupyterhub as we have on our server.
 
 ### Edit the config file
 
-Edit the `jupyterhub_config.py` file in `$JHUB-ENV/etc/jupyterhub/` to add that we want to use DockerSpawner and specify the image. Add these lines to `jupyterhub_config.py`. The hub bind url needs to be 0.0.0.0 because we are using a docker container for the individual user environments.
+Edit the `jupyterhub_config.py` file in `$JHUB-ENV/etc/jupyterhub/` to add that we want to use DockerSpawner and specify the images that users should have access to. Users will get a drop down menu. Add these lines to `jupyterhub_config.py`. The hub bind url needs to be 0.0.0.0 because we are using a docker container for the individual user environments.
 
 * https://discourse.jupyter.org/t/whats-the-main-difference-between-hub-connect-url-vs-hub-bind-url/3596/2
 
-```
+```{bash eval=FALSE}
 c = get_config()  #noqa
 c.JupyterHub.port = 8000
 c.JupyterHub.hub_bind_url = "http://0.0.0.0:8081"
@@ -362,6 +359,18 @@ c.DockerSpawner.image_whitelist = {
 }
 ```
 
+Do a docker pull of the images so that they don't have to be pulled the first time that a user chooses that image.
+
+```{bash eval=FALSE}
+docker pull jupyter/datascience-notebook:r-4.3.1
+docker pull jupyter/scipy-notebook:7e1a19a8427f
+```
+
+Now you can restart the service and the user can start a notebook with the specified images.
+
+
+
+<!--
 Did not do the below. Did add 8081 as a port but not sure I needed to.
 
 * https://serverfault.com/questions/987686/no-network-connectivity-to-from-docker-ce-container-on-centos-8
@@ -376,3 +385,151 @@ sudo firewall-cmd --reload
 ## Multiple images
 
 https://github.com/jupyterhub/dockerspawner/issues/400
+
+-->
+
+## Summary
+
+Only the instructions. Make sure you are installing as the root user. I assume you have Python and conda installed.
+
+Create the conda environment
+```{bash eval=FALSE}
+sudo -i
+
+conda create -n jupyterhub python --yes
+conda activate jupyterhub
+conda install -c conda-forge jupyterhub --yes
+conda install -c conda-forge jupyterlab notebook --yes
+
+JHUBENV=/opt/miniconda3/envs/jupyterhub
+chmod 755 $JHUBENV
+```
+
+Create user
+```{bash eval=FALSE}
+useradd jhub
+```
+
+Open the 8000 port
+```{bash eval=FALSE}
+#sudo systemctl enable firewalld
+#sudo systemctl start firewalld
+
+sudo firewall-cmd  --permanent --add-port 8000/tcp
+sudo firewall-cmd --reload
+sudo firewall-cmd --list-ports
+```
+
+Create the configuration file. Will be editted at end.
+```{bash eval=FALSE}
+sudo mkdir -p $JHUBENV/etc/jupyterhub/
+cd $JHUBENV/etc/jupyterhub/
+sudo $JHUBENV/bin/jupyterhub --generate-config
+```
+
+Install docker if needed
+```{bash eval=FALSE}
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+sudo systemctl start docker
+```
+
+Not sure this is needed.
+```{bash eval=FALSE}
+sudo firewall-cmd --zone=docker --add-port=8081/tcp
+sudo firewall-cmd --reload
+sudo systemctl restart docker
+```
+
+Install dockerspawner
+```{bash eval=FALSE}
+conda install -c conda-forge dockerspawner --yes
+conda install -c conda-forge docker-py --yes
+```
+
+Edit the configuration file.
+```{bash eval=FALSE}
+cd $JHUBENV/etc/jupyterhub/
+nano jupyterhub_config.py
+```
+
+Paste this in
+```{bash eval=FALSE}
+c = get_config()  #noqa
+c.JupyterHub.port = 8000
+c.JupyterHub.hub_bind_url = "http://0.0.0.0:8081"
+c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
+c.DockerSpawner.remove = True
+c.Spawner.http_timeout = 3600
+c.DockerSpawner.image_whitelist = {
+    'datascience-r': 'jupyter/datascience-notebook:r-4.3.1',
+    'scipy-notebook': 'jupyter/scipy-notebook:7e1a19a8427f',
+}
+```
+
+Docker pull of the images
+```{bash eval=FALSE}
+docker pull jupyter/datascience-notebook:r-4.3.1
+docker pull jupyter/scipy-notebook:7e1a19a8427f
+```
+
+Make a new server service
+```{bash eval=FALSE}
+sudo mkdir -p $JHUBENV/etc/systemd
+cd $JHUBENV/etc/systemd
+nano jupyterhub.service
+```
+Paste this in
+```{bash eval=FALSE}
+[Unit]
+Description=JupyterHub
+After=syslog.target network.target
+
+[Service]
+User=root
+Environment="PATH=/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/miniconda3/envs/jupyterhub/bin"
+ExecStart=/opt/miniconda3/envs/jupyterhub/bin/jupyterhub -f /opt/miniconda3/envs/jupyterhub/etc/jupyterhub/jupyterhub_config.py
+
+[Install]
+WantedBy=multi-user.target
+```
+
+
+Make sure SELinux doesn't block our service
+```{bash eval=FALSE}
+ls -Z $JHUBENV/etc/systemd/
+sudo chcon system_u:object_r:systemd_unit_file_t:s0 $JHUBENV/etc/systemd/jupyterhub.service
+sudo find $JHUBENV/bin -type f -exec chcon system_u:object_r:bin_t:s0 {} \;
+```
+
+Enable our new service
+```{bash eval=FALSE}
+sudo ln -s $JHUBENV/etc/systemd/jupyterhub.service /etc/systemd/system/jupyterhub.service
+sudo systemctl daemon-reload
+sudo systemctl enable jupyterhub.service
+sudo systemctl start jupyterhub.service
+```
+
+Done! See the long instructions if anything is not working.
+
+
+<!--
+Did not do the below. Did add 8081 as a port but not sure I needed to.
+
+* https://serverfault.com/questions/987686/no-network-connectivity-to-from-docker-ce-container-on-centos-8
+
+```
+sudo nmcli connection modify docker0 connection.zone public
+sudo firewall-cmd --zone=public --add-masquerade --permanent
+sudo firewall-cmd --reload
+```
+
+
+## Multiple images
+
+https://github.com/jupyterhub/dockerspawner/issues/400
+
+-->
+
+
