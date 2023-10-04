@@ -525,6 +525,8 @@ nano jupyterhub_config.py
 
 Paste this in
 ```{bash eval=FALSE}
+# Configuration file for jupyterhub.
+
 c = get_config()  #noqa
 c.JupyterHub.port = 8000
 c.JupyterHub.hub_bind_url = "http://0.0.0.0:8081"
@@ -532,13 +534,22 @@ c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 c.DockerSpawner.remove = True
 c.Spawner.http_timeout = 3600
 c.DockerSpawner.image_whitelist = {
+    'iorocker': 'eeholmes/iorocker-standalone:20231003',
+    'rocker-binder': 'eeholmes/rocker-binder:20231003',
+    'openscapes-rocker': 'eeholmes/minimal-jhub:20231004',
     'datascience-r': 'jupyter/datascience-notebook:r-4.3.1',
     'scipy-notebook': 'jupyter/scipy-notebook:7e1a19a8427f',
 }
-c.Spawner.cmd = 'jupyterhub-singleuser'
+
+notebook_dir = '/home/jovyan'
+c.DockerSpawner.notebook_dir = notebook_dir
+
+# Mount the real user's Docker volume on the host to the notebook user's
+# notebook directory in the container
+c.DockerSpawner.volumes = { 'jupyter-{username}': notebook_dir }
 ```
 
-Docker pull of the images
+Docker pull of the images. Do all.
 ```{bash eval=FALSE}
 docker pull jupyter/datascience-notebook:r-4.3.1
 docker pull jupyter/scipy-notebook:7e1a19a8427f
@@ -582,20 +593,6 @@ sudo systemctl start jupyterhub.service
 ```
 
 Done! See the long instructions if anything is not working.
-
-To use your own docker images
-Add the following to your Docker image
-```{bash eval=FALSE}
-FROM <your image with python 3+>
-
-RUN pip3 install \
-    'jupyter-rsession-proxy' \
-    'jupyterhub==3.1.*' \
-    'notebook==6.*' \
-    'jupyterlab'
-
-CMD ["jupyterhub-singleuser"]
-```
 
 <!--
 Did not do the below. Did add 8081 as a port but not sure I needed to.

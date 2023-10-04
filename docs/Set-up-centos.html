@@ -688,19 +688,30 @@ https://github.com/jupyterhub/dockerspawner/issues/400
 </div>
 <p>Paste this in</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="ex">c</span> = get_config<span class="er">(</span><span class="kw">)</span>  <span class="co">#noqa</span></span>
-<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="ex">c.JupyterHub.port</span> = 8000</span>
-<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="ex">c.JupyterHub.hub_bind_url</span> = <span class="st">"http://0.0.0.0:8081"</span></span>
-<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a><span class="ex">c.JupyterHub.spawner_class</span> = <span class="st">'dockerspawner.DockerSpawner'</span></span>
-<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="ex">c.DockerSpawner.remove</span> = True</span>
-<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a><span class="ex">c.Spawner.http_timeout</span> = 3600</span>
-<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a><span class="ex">c.DockerSpawner.image_whitelist</span> = {</span>
-<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'datascience-r'</span><span class="ex">:</span> <span class="st">'jupyter/datascience-notebook:r-4.3.1'</span>,</span>
-<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'scipy-notebook'</span><span class="ex">:</span> <span class="st">'jupyter/scipy-notebook:7e1a19a8427f'</span>,</span>
-<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span>
-<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a><span class="ex">c.Spawner.cmd</span> = <span class="st">'jupyterhub-singleuser'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Configuration file for jupyterhub.</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="ex">c</span> = get_config<span class="er">(</span><span class="kw">)</span>  <span class="co">#noqa</span></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a><span class="ex">c.JupyterHub.port</span> = 8000</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="ex">c.JupyterHub.hub_bind_url</span> = <span class="st">"http://0.0.0.0:8081"</span></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a><span class="ex">c.JupyterHub.spawner_class</span> = <span class="st">'dockerspawner.DockerSpawner'</span></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a><span class="ex">c.DockerSpawner.remove</span> = True</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a><span class="ex">c.Spawner.http_timeout</span> = 3600</span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a><span class="ex">c.DockerSpawner.image_whitelist</span> = {</span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'iorocker'</span><span class="ex">:</span> <span class="st">'eeholmes/iorocker-standalone:20231003'</span>,</span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'rocker-binder'</span><span class="ex">:</span> <span class="st">'eeholmes/rocker-binder:20231003'</span>,</span>
+<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'openscapes-rocker'</span><span class="ex">:</span> <span class="st">'eeholmes/minimal-jhub:20231004'</span>,</span>
+<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">'datascience-r'</span><span class="ex">:</span> <span class="st">'jupyter/datascience-notebook:r-4.3.1'</span>,</span>
+<span id="cb59-14"><a href="#cb59-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">'scipy-notebook'</span><span class="ex">:</span> <span class="st">'jupyter/scipy-notebook:7e1a19a8427f'</span>,</span>
+<span id="cb59-15"><a href="#cb59-15" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span>
+<span id="cb59-16"><a href="#cb59-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-17"><a href="#cb59-17" aria-hidden="true" tabindex="-1"></a><span class="ex">notebook_dir</span> = <span class="st">'/home/jovyan'</span></span>
+<span id="cb59-18"><a href="#cb59-18" aria-hidden="true" tabindex="-1"></a><span class="ex">c.DockerSpawner.notebook_dir</span> = notebook_dir</span>
+<span id="cb59-19"><a href="#cb59-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-20"><a href="#cb59-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Mount the real user's Docker volume on the host to the notebook user's</span></span>
+<span id="cb59-21"><a href="#cb59-21" aria-hidden="true" tabindex="-1"></a><span class="co"># notebook directory in the container</span></span>
+<span id="cb59-22"><a href="#cb59-22" aria-hidden="true" tabindex="-1"></a><span class="ex">c.DockerSpawner.volumes</span> = { <span class="st">'jupyter-{username}'</span>: notebook_dir }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Docker pull of the images</p>
+<p>Docker pull of the images. Do all.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb60"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull jupyter/datascience-notebook:r-4.3.1</span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull jupyter/scipy-notebook:7e1a19a8427f</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -739,18 +750,6 @@ https://github.com/jupyterhub/dockerspawner/issues/400
 <span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl start jupyterhub.service</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Done! See the long instructions if anything is not working.</p>
-<p>To use your own docker images Add the following to your Docker image</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="ex">FROM</span> <span class="op">&lt;</span>your image with python 3+<span class="op">&gt;</span></span>
-<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a><span class="ex">RUN</span> pip3 install <span class="dt">\</span></span>
-<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'jupyter-rsession-proxy'</span> <span class="dt">\</span></span>
-<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'jupyterhub==3.1.*'</span> <span class="dt">\</span></span>
-<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'notebook==6.*'</span> <span class="dt">\</span></span>
-<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'jupyterlab'</span></span>
-<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a><span class="ex">CMD</span> <span class="pp">[</span><span class="st">"jupyterhub-singleuser"</span><span class="pp">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 <!--
 Did not do the below. Did add 8081 as a port but not sure I needed to.
 

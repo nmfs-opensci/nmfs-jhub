@@ -28,10 +28,5 @@ RUN R -e 'install.packages(c("geodata", "ggspatial", "rnaturalearth"))'
 # general
 RUN R -e 'install.packages(c("corrplot", "here", "matrixcalc", "cmocean", "DT", "janitor"))'
 
-# for JUPYTERHUB
-RUN conda install -c conda-forge jupyterhub
-RUN conda install -c conda-forge notebook
-
-
 # ENV JUPYTERHUB_HTTP_REFERER=https://dhub.opensci.live/
 ENV JUPYTERHUB_HTTP_REFERER=https://itcoocean.2i2c.cloud/
