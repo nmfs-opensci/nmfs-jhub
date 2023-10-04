@@ -1,5 +1,4 @@
-#FROM openscapes/rocker:a7596b5
-FROM eeholmes/py-rocket:20231004
+FROM openscapes/rocker:a7596b5
 
 RUN pip3 install \
     'jupyter-rsession-proxy' \
@@ -7,7 +6,9 @@ RUN pip3 install \
     'notebook==6.*' \
     'jupyterlab'
 
-#RUN R --quiet -e 'remotes::install_github("IRkernel/IRkernel@*release")'
-#RUN R --quiet -e 'IRkernel::installspec(user = FALSE)'
+USER root
+RUN mkdir /home/jovyan
+RUN chown rstudio:rstudio /home/jovyan
+USER rstudio
 
 CMD ["jupyterhub-singleuser"]

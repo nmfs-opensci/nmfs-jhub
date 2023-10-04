@@ -383,6 +383,61 @@ RUN pip3 install \
 CMD ["jupyterhub-singleuser"]
 ```
 
+Example using rocker image. Code added to make the home directory `home/jovyan`.
+```{bash eval=FALSE}
+FROM rocker/binder:4.3
+
+USER root
+RUN usermod -d /home/jovyan rstudio
+RUN mkdir /home/jovyan
+RUN chown rstudio:rstudio /home/jovyan
+USER rstudio
+
+RUN pip3 install \
+    'jupyter-rsession-proxy' \
+    'jupyterhub==3.1.*' \
+    'notebook==6.*' \
+    'jupyterlab'
+
+WORKDIR /home/jovyan
+
+CMD ["jupyterhub-singleuser"]
+```
+
+Example using openscapes/rocker
+```{bash eval=FALSE}
+FROM openscapes/rocker:a7596b5
+
+RUN pip3 install \
+    'jupyter-rsession-proxy' \
+    'jupyterhub==3.1.*' \
+    'notebook==6.*' \
+    'jupyterlab'
+
+USER root
+RUN mkdir /home/jovyan
+RUN chown rstudio:rstudio /home/jovyan
+USER rstudio
+
+CMD ["jupyterhub-singleuser"]
+```
+
+## Persistent volume
+
+Add the following to the config file to create a persistent volume.
+```
+notebook_dir = '/home/jovyan'
+c.DockerSpawner.notebook_dir = notebook_dir
+
+# Mount the real user's Docker volume on the host to the notebook user's
+# notebook directory in the container
+c.DockerSpawner.volumes = { 'jupyter-{username}': notebook_dir }
+```
+
+### Special note regarding rocker images
+
+The default home directory for rocker images is `home/rstudio` but the default for JupyterHub is `home/jovyan`. 
+
 <!--
 Did not do the below. Did add 8081 as a port but not sure I needed to.
 
