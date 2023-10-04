@@ -1,6 +1,6 @@
 # Indian Ocean Summer Docker Images
 
-https://hub.docker.com/repository/docker/eeholmes/iopython/general
+<https://hub.docker.com/repository/docker/eeholmes/iorocker/general>
 
 The one to use is the dated one. The `main` tag doesn't seem to always be recognized as a new tag when it changes.
 

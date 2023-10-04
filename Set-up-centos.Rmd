@@ -268,7 +268,7 @@ ls -Z $JHUBENV/bin
 ```
 It got all the binaries but not the simlinks. Nonetheless it seemed to run ok.
 
-## Enable our new service
+### Enable our new service
 
 ```{bash eval=FALSE}
 sudo systemctl enable jupyterhub.service
@@ -294,7 +294,7 @@ netstat -tuln
 ```
 At this point, you will need to address security if your hub is open to the web, as opposed to being on an internal network and only accessible to that network. Learn about that [here](https://jupyterhub.readthedocs.io/en/1.2.0/installation-guide-hard.html).
 
-## Create the base user environment
+## Set up Docker for user environment
 
 When you log in the jupyter notebooks will be trying to use the Python environment that was created to install JupyterHub, this is not what we want. We will use a docker image to "spawn" the user environment. Read  [here](https://jupyterhub.readthedocs.io/en/1.2.0/installation-guide-hard.html#part-2-conda-environments) for other approaches.
 
@@ -332,7 +332,7 @@ conda install -c conda-forge docker-py
 
 ### Jupyter images
 
-The image that we use must have the jupyterhub module installed. Also there seems to be some tweaking needed for the image to work as the image I used in a JupyterHub on Kubernetes did not work for me.
+The image that we use must have the jupyterhub and notebook module installed. The jupyterhub version needs to also match what you have on your hub.
 
 Check the version on your server:
 ```{bash eval=FALSE}
@@ -368,7 +368,20 @@ docker pull jupyter/scipy-notebook:7e1a19a8427f
 
 Now you can restart the service and the user can start a notebook with the specified images.
 
+### Create your own Docker images
 
+Docker images that work with JupyterHub with Kubernetes will work with this set-up with the addition of jupyterhub and notebook.
+
+Add the following to your Docker image
+```{bash eval=FALSE}
+RUN pip3 install \
+    'jupyter-rsession-proxy' \
+    'jupyterhub==3.1.*' \
+    'notebook==6.*' \
+    'jupyterlab'
+
+CMD ["jupyterhub-singleuser"]
+```
 
 <!--
 Did not do the below. Did add 8081 as a port but not sure I needed to.
@@ -410,12 +423,13 @@ Create user
 useradd jhub
 ```
 
-Open the 8000 port
+Open the 8000 (for jupyterhub) and 8787 (for RStudio) port
 ```{bash eval=FALSE}
 #sudo systemctl enable firewalld
 #sudo systemctl start firewalld
 
 sudo firewall-cmd  --permanent --add-port 8000/tcp
+sudo firewall-cmd  --permanent --add-port 8787/tcp
 sudo firewall-cmd --reload
 sudo firewall-cmd --list-ports
 ```
@@ -466,6 +480,7 @@ c.DockerSpawner.image_whitelist = {
     'datascience-r': 'jupyter/datascience-notebook:r-4.3.1',
     'scipy-notebook': 'jupyter/scipy-notebook:7e1a19a8427f',
 }
+c.Spawner.cmd = 'jupyterhub-singleuser'
 ```
 
 Docker pull of the images
@@ -513,6 +528,19 @@ sudo systemctl start jupyterhub.service
 
 Done! See the long instructions if anything is not working.
 
+To use your own docker images
+Add the following to your Docker image
+```{bash eval=FALSE}
+FROM <your image with python 3+>
+
+RUN pip3 install \
+    'jupyter-rsession-proxy' \
+    'jupyterhub==3.1.*' \
+    'notebook==6.*' \
+    'jupyterlab'
+
+CMD ["jupyterhub-singleuser"]
+```
 
 <!--
 Did not do the below. Did add 8081 as a port but not sure I needed to.
