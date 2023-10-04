@@ -347,7 +347,7 @@
     "href": "Set-up-centos.html#persistent-volume",
     "title": "Centos Set-up",
     "section": "Persistent volume",
-    "text": "Persistent volume\nAdd the following to the config file to create a persistent volume.\nnotebook_dir = '/home/jovyan'\nc.DockerSpawner.notebook_dir = notebook_dir\n\n# Mount the real user's Docker volume on the host to the notebook user's\n# notebook directory in the container\nc.DockerSpawner.volumes = { 'jupyter-{username}': notebook_dir }\n\nSpecial note regarding rocker images\nThe default home directory for rocker images is home/rstudio but the default for JupyterHub is home/jovyan."
+    "text": "Persistent volume\nAdd the following to the config file to create a persistent volume.\n\nnotebook_dir = '/home/jovyan'\nc.DockerSpawner.notebook_dir = notebook_dir\n\n# Mount the real user's Docker volume on the host to the notebook user's\n# notebook directory in the container\nc.DockerSpawner.volumes = { 'jupyter-{username}': notebook_dir }\n\n\nSpecial note regarding rocker images\nThe default home directory for rocker images is home/rstudio but the default for JupyterHub is home/jovyan."
   },
   {
     "objectID": "Set-up-centos.html#summary",

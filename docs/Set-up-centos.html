@@ -598,12 +598,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="persistent-volume" class="level2">
 <h2 class="anchored" data-anchor-id="persistent-volume">Persistent volume</h2>
 <p>Add the following to the config file to create a persistent volume.</p>
-<pre><code>notebook_dir = '/home/jovyan'
-c.DockerSpawner.notebook_dir = notebook_dir
-
-# Mount the real user's Docker volume on the host to the notebook user's
-# notebook directory in the container
-c.DockerSpawner.volumes = { 'jupyter-{username}': notebook_dir }</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="ex">notebook_dir</span> = <span class="st">'/home/jovyan'</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="ex">c.DockerSpawner.notebook_dir</span> = notebook_dir</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Mount the real user's Docker volume on the host to the notebook user's</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="co"># notebook directory in the container</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a><span class="ex">c.DockerSpawner.volumes</span> = { <span class="st">'jupyter-{username}'</span>: notebook_dir }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <section id="special-note-regarding-rocker-images" class="level3">
 <h3 class="anchored" data-anchor-id="special-note-regarding-rocker-images">Special note regarding rocker images</h3>
 <p>The default home directory for rocker images is <code>home/rstudio</code> but the default for JupyterHub is <code>home/jovyan</code>.</p>

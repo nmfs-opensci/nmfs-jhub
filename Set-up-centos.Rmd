@@ -425,7 +425,7 @@ CMD ["jupyterhub-singleuser"]
 ## Persistent volume
 
 Add the following to the config file to create a persistent volume.
-```
+```{bash eval=FALSE}
 notebook_dir = '/home/jovyan'
 c.DockerSpawner.notebook_dir = notebook_dir
 
