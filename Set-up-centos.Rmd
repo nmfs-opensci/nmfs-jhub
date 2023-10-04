@@ -25,6 +25,10 @@ chmod 400 ~/<key location>
 ssh -i ~/<key location> <vm-username>@<public key>
 ```
 
+<!--
+ssh -i ~/Downloads/Centos8.cer eeholmes@20.127.203.178
+-->
+
 ## On VM check set-up
 
 I ssh-ed into the VM with
