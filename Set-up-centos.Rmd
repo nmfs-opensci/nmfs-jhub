@@ -318,13 +318,6 @@ Then we need to start docker
 sudo systemctl start docker
 ```
 
-Not sure this is needed.
-```{bash eval=FALSE}
-sudo firewall-cmd --zone=docker --add-port=8081/tcp
-sudo firewall-cmd --reload
-sudo systemctl restart docker
-```
-
 ### Install dockerspawner
 
 I am going to be creating the user environment from a docker image, so I also want dockerspawner.  Note dockerspawner installed docker-py but it was really old and threw errors so I installed separately to get the latest version. Note make sure you are in the jupyterhub conda env. You can run `conda env list` and use `conda activate jupyterhub` if you are not in it.
@@ -482,13 +475,12 @@ Create user
 useradd jhub
 ```
 
-Open the 8000 (for jupyterhub) and 8787 (for RStudio) port
+Open the 8000 port for access to the application.
 ```{bash eval=FALSE}
 #sudo systemctl enable firewalld
 #sudo systemctl start firewalld
 
 sudo firewall-cmd  --permanent --add-port 8000/tcp
-sudo firewall-cmd  --permanent --add-port 8787/tcp
 sudo firewall-cmd --reload
 sudo firewall-cmd --list-ports
 ```
