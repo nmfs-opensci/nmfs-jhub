@@ -1,14 +1,17 @@
 ---
-title: "Centos Set-up"
+title: "Centos Set-up with TLJH"
 description: |
   Setting up a multi-user JupyterHub on Centos 7 VM
 ---
 
-This is my notes for setting this up on a Centos 7 (Linux distribution) server. Jump to the "Summary" section to see only the instructions without explanations.
+This is my notes for setting this up on a Centos 8 (Linux distribution) server. Jump to the "Summary" section to see only the instructions without explanations.
 
 **All the commands are run in a shell (bash)**
 
 References:
+
+* Installation <https://tljh.jupyter.org/en/latest/>
+* Add dockerspawner <https://discourse.jupyter.org/t/dockerspawner-systemuserspawner-requries-allow-root-in-tljh/6967>
 
 * <https://jupyterhub.readthedocs.io/en/1.2.0/installation-guide-hard.html> This is an old version (1.2.0) while the newest verson of JupyterHub is 4+. However the 4+ docs do not cover a simple bare metal (own server installation).
 * <https://jupyterhub-dockerspawner.readthedocs.io/en/latest/install.html>
@@ -18,11 +21,11 @@ References:
 * Created a Centos 8.3 server on Azure: https://portal.azure.com/#create/cloud-infrastructure-services.centos-8-3centos-8-3
 * I didn't do anything special for set-up. Choose SSH with key.
 * Once it is created, I went to the dashboard and selected my VM. The dashboard has a "Connect" button to get to the shell and it shows the public IP address.
-* I had to create a special security rule to allow me to ssh into the public IP address to connect. Normally I use the cloud shell to connect, but Azure would not let me connect via the cloud shell for a server since it wanted upgraded security and I cannot do that with my work subscription.
+* I had to create a special security rule to allow me to ssh into the public IP address to connect. Normally I use the cloud shell to connect, but Azure would not let me connect via the cloud shell for a server since it wanted upgraded security package and I cannot do that with my work subscription.
 * Then I saved the key somewhere on my computer and
 ```{bash eval=FALSE}
 chmod 400 ~/<key location>
-ssh -i ~/<key location> <vm-username>@<public key>
+ssh -i ~/<key location>/Centos8.cer <vm-username>@<public ip-address>
 ```
 
 <!--
@@ -342,6 +345,7 @@ For demo purposes, we will use the `jupyter` images on DockerHub. We want to fin
 Edit the `jupyterhub_config.py` file in `$JHUB-ENV/etc/jupyterhub/` to add that we want to use DockerSpawner and specify the images that users should have access to. Users will get a drop down menu. Add these lines to `jupyterhub_config.py`. The hub bind url needs to be 0.0.0.0 because we are using a docker container for the individual user environments.
 
 * https://discourse.jupyter.org/t/whats-the-main-difference-between-hub-connect-url-vs-hub-bind-url/3596/2
+* Note `image_whitelist` [is deprecated](https://jupyterhub-dockerspawner.readthedocs.io/en/latest/api/index.html#dockerspawner.DockerSpawner.allowed_images) as of dockerspawner 12.0. New name is `allowed_images`.
 
 ```{bash eval=FALSE}
 c = get_config()  #noqa
@@ -419,6 +423,11 @@ USER rstudio
 CMD ["jupyterhub-singleuser"]
 ```
 
+### Special note regarding rocker images
+
+The default home directory for rocker images is `home/rstudio` but the default for JupyterHub is `home/jovyan`. 
+
+
 ## Persistent volume
 
 Add the following to the config file to create a persistent volume.
@@ -431,27 +440,110 @@ c.DockerSpawner.notebook_dir = notebook_dir
 c.DockerSpawner.volumes = { 'jupyter-{username}': notebook_dir }
 ```
 
-### Special note regarding rocker images
+## User environment customization
 
-The default home directory for rocker images is `home/rstudio` but the default for JupyterHub is `home/jovyan`. 
+### Memory limits and guarantees
 
-<!--
-Did not do the below. Did add 8081 as a port but not sure I needed to.
+You can set memory limits on the containers that are spawned for users by adding limits. Read the documentation [here](https://jupyterhub-dockerspawner.readthedocs.io/en/latest/api/index.html#dockerspawner.DockerSpawner.mem_limit).
 
-* https://serverfault.com/questions/987686/no-network-connectivity-to-from-docker-ce-container-on-centos-8
-
+For example:
+```{bash eval=FALSE}
+c.DockerSpawner.mem_limit = '8G'
+c.DockerSpawner.mem_guarantee = '1G'
+c.DockerSpawner.cpu_guarantee = 0.5
+c.DockerSpawner.cpu_limit = 1
 ```
-sudo nmcli connection modify docker0 connection.zone public
-sudo firewall-cmd --zone=public --add-masquerade --permanent
-sudo firewall-cmd --reload
+
+If that doesn't work try
+```{bash eval=FALSE}
+c.Spawner.mem_limit = '2G'
 ```
 
+I believe you can specify as a drop-down to give the user choices:
+```{bash eval=FALSE}
+c.DockerSpawner.mem_guarantee = {
+    '1G': '1G',
+    '2G': '2G',
+    '8G': '8G',
+}
+```
 
-## Multiple images
+### Creating a shared volume
 
-https://github.com/jupyterhub/dockerspawner/issues/400
+One read-only shared volume:
 
--->
+<https://github.com/jupyterhub/dockerspawner/issues/172>
+
+```{bash eval=FALSE}
+c.DockerSpawner.volumes = {  'jupyterhub-user-{username}':'/home/jovyan',   '/path/to/shared': {"bind": '/home/jovyan/shared', "mode": "ro"} }
+```
+
+A volume that is read-only for some and read-write for others:
+
+<https://github.com/jupyterhub/dockerspawner/issues/172>
+
+More discussions around shared volumes
+
+<https://github.com/jupyterhub/dockerspawner/issues/453>
+
+## Setting up https
+
+If you are using a public IP address, rather than being on a private network, you will want to set up https.
+
+### Create a domain name
+
+Find a domain name provider and set one up. It is not expensive. I used GoDaddy. You only need one. Later you can use it for multiple hubs using subdomains where are created by the next step (DNS entry). For example, let's say you get the domain `bluemountain123.live`. You can have as many subdomains as you want and they will be `subdomain.bluemountain123.live`.
+
+### Create a DNS entry
+
+Let's pretend you set up `bluemountain123.live` as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let's say you create, `dhub` as the type A DNS entry. Put `dhub` in the name and the public IP address of the server (leaving off `:8000`) in the value section. Then `dhub.bluemountain123.live` will be the url.
+
+![](images/img8.png)
+
+### Test if the url is working
+
+`http:\\dhub.bluemountain123.live:8000` would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:
+
+![](images/img9.png)
+
+### Set-up https on your JupyterHub
+
+Log back into your Kubernetes cluster: go to portal.azure.com, click on your Kubernetes cluster name, and then click on "Connect". Then click on "Open Cloud Shell". [Read documentation about https](https://tljh.jupyter.org/en/latest/howto/admin/https.html)
+
+Once you are on the shell, type
+
+```         
+nano dconfig.yaml
+```
+
+to edit the config file. Paste this in and save. Note the additional `jupyterhub:` in the yaml file. This is not in a plain JupyterHub with Kubernetes config file (i.e. in a non-daskhub, the `jupyterhub:` bit is not there and everything is moved to left by 2 spaces).
+
+```         
+jupyterhub:
+  proxy:
+    https:
+      enabled: true
+      hosts:
+        - dhub.bluemountain123.live
+      letsencrypt:
+        contactEmail: your@email.com
+```
+
+### Update the JupyterHub installation
+
+Anytime you change `dconfig.yaml` you need to run this code.
+
+```         
+helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml
+```
+
+### Test if https is working
+
+Try `https:\\dhub.bluemountain123.live` and you should see the JupyterHub login without that http warning.
+
+## Authentication
+
+https://oauthenticator.readthedocs.io/en/latest/tutorials/provider-specific-setup/providers/github.html
 
 ## Summary
 
@@ -589,23 +681,4 @@ sudo systemctl start jupyterhub.service
 ```
 
 Done! See the long instructions if anything is not working.
-
-<!--
-Did not do the below. Did add 8081 as a port but not sure I needed to.
-
-* https://serverfault.com/questions/987686/no-network-connectivity-to-from-docker-ce-container-on-centos-8
-
-```
-sudo nmcli connection modify docker0 connection.zone public
-sudo firewall-cmd --zone=public --add-masquerade --permanent
-sudo firewall-cmd --reload
-```
-
-
-## Multiple images
-
-https://github.com/jupyterhub/dockerspawner/issues/400
-
--->
-
 

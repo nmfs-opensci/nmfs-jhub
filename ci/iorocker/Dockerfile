@@ -1,4 +1,6 @@
 FROM openscapes/rocker:a7596b5
+# tell RStudio the right path so it is in the conda environment
+RUN echo "PATH=${PATH}" >>"${R_HOME}/etc/Renviron.site"
 
 # install additional package...
 
@@ -29,4 +31,4 @@ RUN R -e 'install.packages(c("geodata", "ggspatial", "rnaturalearth"))'
 RUN R -e 'install.packages(c("corrplot", "here", "matrixcalc", "cmocean", "DT", "janitor"))'
 
 # ENV JUPYTERHUB_HTTP_REFERER=https://dhub.opensci.live/
-ENV JUPYTERHUB_HTTP_REFERER=https://itcoocean.2i2c.cloud/
+# ENV JUPYTERHUB_HTTP_REFERER=https://itcoocean.2i2c.cloud/

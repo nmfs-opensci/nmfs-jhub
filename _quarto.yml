@@ -24,13 +24,15 @@ website:
       - text: "Home"
         href: index.Rmd
       - text: "JHub User Guide"
-        href: JHub-User-Guide.Rmd
+        href: posts/JHub-User-Guide.Rmd
       - text: "JHub Set-up"
-        href: Set-up-daskhub.Rmd
+        href: posts/Set-up-daskhub.Rmd
       - text: "Centos Set-up"
-        href: Set-up-centos.Rmd
+        href: posts/Set-up-centos.Rmd
+      - text: "Centos Set-up https"
+        href: posts/Set-up-centos-security.Rmd
       - text: "Set-up VM on mac"
-        href: set-up-vm.Rmd
+        href: posts/set-up-vm.Rmd
 
 format:
   html:

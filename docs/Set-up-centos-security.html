@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Setting up Linux VM for testing">
+<meta name="description" content="Securing our JupyterHub on our Centos server">
 
-<title>Eli’s JupyterHub notes - Set up VM</title>
+<title>Eli’s JupyterHub notes - Set-up CentOS https</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,7 +64,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./Set-up-centos-security.html" rel="prev">
+<link href="./set-up-vm.html" rel="next">
+<link href="./Set-up-centos.html" rel="prev">
 <link href="./images/nmfs-opensci-logo2-notext.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -76,7 +111,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./set-up-vm.html">Set-up VM on mac</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Set-up-centos-security.html">Centos Set-up https</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -130,13 +165,13 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Set-up-centos-security.html" class="sidebar-item-text sidebar-link">
+  <a href="./Set-up-centos-security.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Centos Set-up https</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./set-up-vm.html" class="sidebar-item-text sidebar-link active">
+  <a href="./set-up-vm.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Set-up VM on mac</span></a>
   </div>
 </li>
@@ -150,21 +185,24 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#azure" id="toc-azure" class="nav-link active" data-scroll-target="#azure">Azure</a></li>
+  <li><a href="#create-a-domain-name" id="toc-create-a-domain-name" class="nav-link active" data-scroll-target="#create-a-domain-name">Create a domain name</a></li>
+  <li><a href="#prep-the-server" id="toc-prep-the-server" class="nav-link" data-scroll-target="#prep-the-server">Prep the server</a></li>
+  <li><a href="#install-certbot" id="toc-install-certbot" class="nav-link" data-scroll-target="#install-certbot">Install certbot</a></li>
+  <li><a href="#update-the-jupyterhub-config-file" id="toc-update-the-jupyterhub-config-file" class="nav-link" data-scroll-target="#update-the-jupyterhub-config-file">Update the JupyterHub config file</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/nmfs-opensci/nmfs-jhub/edit/main/set-up-vm.Rmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/nmfs-opensci/nmfs-jhub/issues/new" class="toc-action">Report an issue</a></p><p><a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/set-up-vm.Rmd" class="toc-action">View source</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/nmfs-opensci/nmfs-jhub/edit/main/Set-up-centos-security.Rmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/nmfs-opensci/nmfs-jhub/issues/new" class="toc-action">Report an issue</a></p><p><a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/Set-up-centos-security.Rmd" class="toc-action">View source</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Set up VM</h1>
+<h1 class="title">Set-up CentOS https</h1>
 </div>
 
 <div>
   <div class="description">
-    <p>Setting up Linux VM for testing</p>
+    <p>Securing our JupyterHub on our Centos server</p>
   </div>
 </div>
 
@@ -179,31 +217,126 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>For testing JupyterHub set-ups, I start various Linux machines. Here is how to set up a virtual machines.</p>
-<section id="azure" class="level2">
-<h2 class="anchored" data-anchor-id="azure">Azure</h2>
+<p>Now that our basic JupyterHub is running, we want to secure it. We are going to use Let’s Encrypt. Prerequisites:</p>
 <ul>
-<li>Created a Centos 8.3 server on Azure: https://portal.azure.com/#create/cloud-infrastructure-services.centos-8-3centos-8-3</li>
-<li>I didn’t do anything special for set-up. Choose SSH with key.</li>
-<li>Once it is created, I went to the dashboard and selected my VM. The dashboard has a “Connect” button to get to the shell and it shows the public IP address.</li>
-<li>I had to create a special security rule to allow me to ssh into the public IP address to connect. Normally I use the cloud shell to connect, but Azure would not let me connect via the cloud shell for a server since it wanted upgraded security and I cannot do that with my work subscription.</li>
-<li>Then I saved the key somewhere on my computer and</li>
+<li>We need to have set up a domain (URL) that points to the public IP of our JupyterHub</li>
+<li>We need to ssh into our server and have <code>sudo</code> access</li>
+<li>We need to open port 80 (temporarily)</li>
 </ul>
-<pre><code>chmod 400 ~/&lt;key location&gt;
-ssh -i ~/&lt;key location&gt; &lt;vm-username&gt;@&lt;public key&gt;</code></pre>
+<p>References:</p>
 <ul>
-<li>I downloaded <a href="https://www.vmware.com/products/fusion.html">VMware Fusion</a> 13.0.2 for M1 macs.</li>
-<li>Then I downloaded a Centos 9 server image from <a href="https://sourceforge.net/projects/osboxes/files/v/vm/10-Cn-t/9/Server/64bit.7z/download">here</a></li>
-<li>https://www.centos.org/download/</li>
-<li>Open VMWare and create a new VM. Choose other Linux. Doesn’t actually matter since it will be removed.</li>
-<li>Shut down the VM.</li>
-<li>Go to settings and remove the hard drive.</li>
-<li>Add a new hardrive. For me, I used ‘Add Device’ in the upper right of the Settings box. Choose ‘existing harddrive’</li>
-<li><a href="https://communities.vmware.com/t5/VMware-Fusion-Documents/The-Unofficial-Fusion-13-for-Apple-Silicon-Companion-Guide/ta-p/2939907">Help for M1</a> <a href="https://medium.com/@thehippieandtheboss/how-to-create-a-linux-virtual-machine-on-macos-1278ec1ef327" class="uri">https://medium.com/@thehippieandtheboss/how-to-create-a-linux-virtual-machine-on-macos-1278ec1ef327</a></li>
-<li><a href="https://tomcudd.com/how-i-set-up-a-centos-7-virtual-machine/" class="uri">https://tomcudd.com/how-i-set-up-a-centos-7-virtual-machine/</a></li>
+<li><a href="https://professorkazarinoff.github.io/jupyterhub-ENGR114-2019Q4/install_jupyterhub/" class="uri">https://professorkazarinoff.github.io/jupyterhub-ENGR114-2019Q4/install_jupyterhub/</a> This is a similar JupyterHub installation</li>
+<li><a href="https://leangaurav.medium.com/simplest-https-setup-nginx-reverse-proxy-letsencrypt-ssl-certificate-aws-cloud-docker-4b74569b3c61" class="uri">https://leangaurav.medium.com/simplest-https-setup-nginx-reverse-proxy-letsencrypt-ssl-certificate-aws-cloud-docker-4b74569b3c61</a></li>
+<li><a href="https://certbot.eff.org/instructions?ws=other&amp;os=centosrhel8" class="uri">https://certbot.eff.org/instructions?ws=other&amp;os=centosrhel8</a></li>
 </ul>
+<section id="create-a-domain-name" class="level2">
+<h2 class="anchored" data-anchor-id="create-a-domain-name">Create a domain name</h2>
+<p>Find a domain name provider and set one up. It is not expensive. I used GoDaddy. You only need one. Later you can use it for multiple hubs using subdomains where are created by the next step (DNS entry). For example, let’s say you get the domain <code>bluemountain123.live</code>. You can have as many subdomains as you want and they will be <code>subdomain.bluemountain123.live</code>.</p>
+<section id="create-a-dns-entry" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-dns-entry">Create a DNS entry</h3>
+<p>Let’s pretend you set up <code>bluemountain123.live</code> as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let’s say you create, <code>dhub</code> as the type A DNS entry. Put <code>dhub</code> in the name and the public IP address of the server (leaving off <code>:8000</code>) in the value section. Then <code>dhub.bluemountain123.live</code> will be the url.</p>
+<p><img src="images/img8.png" class="img-fluid"></p>
+</section>
+<section id="test-if-the-url-is-working" class="level3">
+<h3 class="anchored" data-anchor-id="test-if-the-url-is-working">Test if the url is working</h3>
+<p><code>http:\\dhub.bluemountain123.live:8000</code> would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:</p>
+<p><img src="images/img9.png" class="img-fluid"></p>
+</section>
+</section>
+<section id="prep-the-server" class="level2">
+<h2 class="anchored" data-anchor-id="prep-the-server">Prep the server</h2>
+<section id="open-port-80" class="level3">
+<h3 class="anchored" data-anchor-id="open-port-80">Open port 80</h3>
+<p>This is the default port for http and certbot is going to spin up a temporary webserver on this port and get the SSL certificates. We will close this port when we are done.</p>
+<ul>
+<li>Go to the Azure dashboard (Networking section) for your CentOS server and make sure port 80 is open.</li>
+<li>Check that the firewall is not blocking port 80: <code>sudo firewall-cmd --list-ports</code>. If 80 is not listed, we need to add it and reload:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd  <span class="at">--permanent</span> <span class="at">--add-port</span> 80/tcp</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--reload</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--list-ports</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="stop-our-jupyterhub" class="level3">
+<h3 class="anchored" data-anchor-id="stop-our-jupyterhub">Stop our JupyterHub</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl start jupyterhub.service</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="install-certbot" class="level2">
+<h2 class="anchored" data-anchor-id="install-certbot">Install certbot</h2>
+<p>Per Let’s Encrypt recommendations, we will use certbot to get our SSL certificates. <a href="https://certbot.eff.org/" class="uri">https://certbot.eff.org/</a>.</p>
+<p>Here are the instructions for certbot on CentOS 8: <a href="https://certbot.eff.org/instructions?ws=other&amp;os=centosrhel8" class="uri">https://certbot.eff.org/instructions?ws=other&amp;os=centosrhel8</a> We choose “other” as the software.</p>
+<section id="update-the-centos-repos" class="level3">
+<h3 class="anchored" data-anchor-id="update-the-centos-repos">Update the CentOS repos</h3>
+<p>I am using an End-of-Life CentOS distribution (sigh), and the repositories have been archived. This <a href="https://forums.centos.org/viewtopic.php?f=54&amp;t=78708#p330705">solution</a> worked.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">dnf</span> <span class="at">--disablerepo</span> <span class="st">'*'</span> <span class="at">--enablerepo</span><span class="op">=</span>extras swap centos-linux-repos centos-stream-repos</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">dnf</span> distro-sync</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Note the last line, suggesting updating a bunch of packages and I said NO to that.</p>
+</section>
+<section id="install-snap" class="level3">
+<h3 class="anchored" data-anchor-id="install-snap">Install snap</h3>
+<p>Per instructions here: <a href="https://snapcraft.io/docs/installing-snap-on-centos" class="uri">https://snapcraft.io/docs/installing-snap-on-centos</a> This updated some SELinux packages, which seemed a bit alarming but nothing seemed to break.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> yum install snapd</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl enable <span class="at">--now</span> snapd.socket</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ln <span class="at">-s</span> /var/lib/snapd/snap /snap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="install-certbot-1" class="level3">
+<h3 class="anchored" data-anchor-id="install-certbot-1">Install certbot</h3>
+<p>I had to run this twice. First time it complained.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> snap install <span class="at">--classic</span> certbot</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ln <span class="at">-s</span> /snap/bin/certbot /usr/bin/certbot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="create-the-ssl-certs." class="level3">
+<h3 class="anchored" data-anchor-id="create-the-ssl-certs.">Create the SSL certs.</h3>
+<p>Have certbot create the SSL certs by spinning up a temporary webserver listening on port 80. Per instructions on the certbot website.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> certbot certonly <span class="at">--standalone</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>It’ll ask for your email and the URL of your website. In my toy example, I created the domain <code>dhub.bluemountain123.live</code>.</p>
+</section>
+<section id="ssl-cert-renewal" class="level3">
+<h3 class="anchored" data-anchor-id="ssl-cert-renewal">SSL cert renewal</h3>
+<p>With certbot running, the certificates should auto renew, but I haven’t tested this.</p>
+</section>
+</section>
+<section id="update-the-jupyterhub-config-file" class="level2">
+<h2 class="anchored" data-anchor-id="update-the-jupyterhub-config-file">Update the JupyterHub config file</h2>
+<p>Edit with something like</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /opt/miniconda3/envs/jupyterhub/etc/jupyterhub/</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> jupyterhub_config.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then add this to the config file. The port that is configured for SSL by default is 443. https is not going to work on 8000 which we had configured for http (on Azure).</p>
+<pre><code>c.JupyterHub.port = 443
+c.JupyterHub.ssl_key = '/etc/letsencrypt/live/dhub.bluemountain123.live/privkey.pem'
+c.JupyterHub.ssl_cert = '/etc/letsencrypt/live/dhub.bluemountain123.live/fullchain.pem'</code></pre>
+<section id="restart-and-test" class="level3">
+<h3 class="anchored" data-anchor-id="restart-and-test">Restart and Test</h3>
+<p>We need to open 443 in the firewall, and we can close 80 and 8000 now.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd  <span class="at">--permanent</span> <span class="at">--add-port</span> 443/tcp</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd  <span class="at">--permanent</span> <span class="at">--remove-port</span><span class="op">=</span>80/tcp</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd  <span class="at">--permanent</span> <span class="at">--remove-port</span><span class="op">=</span>8000/tcp</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--reload</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--list-ports</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next we restart our JupyterHub service.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl start jupyterhub.service</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Try <code>https:\\dhub.bluemountain123.live</code> and you should see the JupyterHub login without the http warning.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -557,11 +690,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./Set-up-centos-security.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Centos Set-up https</span>
+      <a href="./Set-up-centos.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Centos Set-up</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./set-up-vm.html" class="pagination-link">
+        <span class="nav-page-text">Set-up VM on mac</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

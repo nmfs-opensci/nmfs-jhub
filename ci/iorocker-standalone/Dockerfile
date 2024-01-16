@@ -7,8 +7,12 @@ RUN pip3 install \
     'jupyterlab'
 
 USER root
+ENV HOME=/home/jovyan
+RUN usermod -d /home/jovyan rstudio
 RUN mkdir /home/jovyan
 RUN chown rstudio:rstudio /home/jovyan
 USER rstudio
+
+WORKDIR /home/jovyan
 
 CMD ["jupyterhub-singleuser"]

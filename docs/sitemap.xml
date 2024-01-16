@@ -1,43 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://nmfs-opensci.github.io/nmfs-jhub/Set-up-centos-tljh.html</loc>
+    <lastmod>2023-10-10T21:16:11.405Z</lastmod>
+  </url>
+  <url>
     <loc>https://nmfs-opensci.github.io/nmfs-jhub/Set-up-daskhub.html</loc>
-    <lastmod>2023-10-05T06:01:05.393Z</lastmod>
+    <lastmod>2023-10-10T21:16:12.402Z</lastmod>
   </url>
   <url>
     <loc>https://nmfs-opensci.github.io/nmfs-jhub/index.html</loc>
-    <lastmod>2023-10-05T06:01:06.074Z</lastmod>
+    <lastmod>2023-10-10T21:16:13.083Z</lastmod>
   </url>
   <url>
     <loc>https://nmfs-opensci.github.io/nmfs-jhub/ci/iorocker/instructions.html</loc>
-    <lastmod>2023-10-05T06:01:06.505Z</lastmod>
+    <lastmod>2023-10-10T21:16:13.510Z</lastmod>
   </url>
   <url>
     <loc>https://nmfs-opensci.github.io/nmfs-jhub/ci/iopython-tf/instructions.html</loc>
-    <lastmod>2023-10-05T06:01:06.920Z</lastmod>
+    <lastmod>2023-10-10T21:16:13.935Z</lastmod>
   </url>
   <url>
     <loc>https://nmfs-opensci.github.io/nmfs-jhub/ci/iosdmTMB/instructions.html</loc>
-    <lastmod>2023-10-05T06:01:07.330Z</lastmod>
+    <lastmod>2023-10-10T21:16:14.364Z</lastmod>
   </url>
   <url>
     <loc>https://nmfs-opensci.github.io/nmfs-jhub/ci/iopython/instructions.html</loc>
-    <lastmod>2023-10-05T06:01:07.750Z</lastmod>
+    <lastmod>2023-10-10T21:16:14.784Z</lastmod>
   </url>
   <url>
     <loc>https://nmfs-opensci.github.io/nmfs-jhub/Set-up-centos.html</loc>
-    <lastmod>2023-10-05T06:01:09.332Z</lastmod>
+    <lastmod>2023-10-10T21:16:16.241Z</lastmod>
   </url>
   <url>
     <loc>https://nmfs-opensci.github.io/nmfs-jhub/JHub-User-Guide.html</loc>
-    <lastmod>2023-10-05T06:01:10.072Z</lastmod>
+    <lastmod>2023-10-10T21:16:16.940Z</lastmod>
   </url>
   <url>
     <loc>https://nmfs-opensci.github.io/nmfs-jhub/set-up-vm.html</loc>
-    <lastmod>2023-10-05T06:01:10.780Z</lastmod>
+    <lastmod>2023-10-10T21:16:17.616Z</lastmod>
   </url>
   <url>
     <loc>https://nmfs-opensci.github.io/nmfs-jhub/Setup-Notes.html</loc>
-    <lastmod>2023-10-05T06:01:11.553Z</lastmod>
+    <lastmod>2023-10-10T21:16:18.270Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmfs-opensci.github.io/nmfs-jhub/Set-up-centos-security.html</loc>
+    <lastmod>2023-10-10T21:16:19.161Z</lastmod>
   </url>
 </urlset>
