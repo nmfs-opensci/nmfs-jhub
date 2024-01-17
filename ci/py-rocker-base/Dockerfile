@@ -1,9 +1,12 @@
 # This is a base geospatial R and Python image
-FROM rocker/geospatial:dev-osgeo
+FROM rocker/rstudio:4.3
 
+# Conda set up see https://github.com/pangeo-data/pangeo-docker-images/blob/master/base-image/Dockerfile
 ENV CONDA_ENV=notebook \
     DEBIAN_FRONTEND=noninteractive \
-    NB_USER=rstudio \
+    NB_USER=jovyan \
+    # uid=1000 is rstudio I think
+    NB_UID=1001 \ 
     SHELL=/bin/bash \
     # Setup locale to be UTF-8, avoiding gnarly hard to debug encoding errors
     LANG=C.UTF-8  \
@@ -29,17 +32,34 @@ RUN echo "PATH=${PATH}" >>"${R_HOME}/etc/Renviron.site"
 # to ${CONDA_DIR}/etc but not to /etc
 ENV DASK_ROOT_CONFIG=${CONDA_DIR}/etc
 
-RUN usermod -aG sudo ${NB_USER} && chown -R ${NB_USER}:${NB_USER} /srv
-# This is to make home/jovyan the home dir for user rstudio
-RUN usermod -d /home/jovyan rstudio
+RUN echo "Create ${NB_USER} user..." \
+    # Create a group for the user to be part of, with gid same as uid
+    && groupadd --gid ${NB_UID} ${NB_USER}  \
+    # Create non-root user, with given gid, uid and create $HOME
+    && useradd --create-home --gid ${NB_UID} --no-log-init --uid ${NB_UID} ${NB_USER} \
+    # Make sure that /srv is owned by non-root user, so we can install things there
+    && chown -R ${NB_USER}:${NB_USER} /srv
 
+# This is to make home/jovyan the home dir for user rstudio
+#RUN usermod -d /home/jovyan rstudio
+
+# Run conda activate each time a bash shell starts, so users don't have to manually type conda activate
+# Note this is only read by shell, but not by the jupyter notebook - that relies
+# on us starting the correct `python` process, which we do by adding the notebook conda environment's
 # bin to PATH earlier ($NB_PYTHON_PREFIX/bin)
 RUN echo ". ${CONDA_DIR}/etc/profile.d/conda.sh ; conda activate ${CONDA_ENV}" > /etc/profile.d/init_conda.sh
 
+# Install basic apt packages
+RUN echo "Installing Apt-get packages..." \
+    && apt-get update --fix-missing > /dev/null \
+    && apt-get install -y apt-utils wget zip tzdata > /dev/null \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 USER ${NB_USER}
 
-COPY --chown=rstudio:rstudio . /tmp/build
-#COPY --chown=jovyan:jovyan . /tmp/build
+#COPY --chown=rstudio:rstudio . /tmp/build
+COPY --chown=jovyan:jovyan . /tmp/build
 
 WORKDIR /tmp/build
 
@@ -66,8 +86,6 @@ RUN echo "Creating conda environment ..." \
     ; if [ -d ${NB_PYTHON_PREFIX}/lib/python*/site-packages/bokeh/server/static ]; then \
     find ${NB_PYTHON_PREFIX}/lib/python*/site-packages/bokeh/server/static -follow -type f -name '*.js' ! -name '*.min.js' -delete \
     ; fi
-
-RUN pip install jupyter-rsession-proxy
 
 WORKDIR ${HOME}
 

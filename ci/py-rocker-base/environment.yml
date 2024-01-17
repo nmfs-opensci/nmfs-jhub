@@ -1,0 +1,22 @@
+name: py-rocket-base
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - jupyter-server-proxy
+  - jupyterlab>4
+  - jupyterlab-myst
+  - jupyterhub-singleuser
+  - jupyterlab-geojson
+  - jupyterlab-favorites
+  - jupyterlab-git
+  - jupyter-resource-usage
+  - conda-lock
+  - git >=2.39
+  - nbgitpuller
+  - jupyter-vscode-proxy
+  - jupyter-rsession-proxy
+  - code-server >=3.2
+  - pip
+platforms:
+  - linux-64

@@ -1,8 +1,29 @@
 # This is based on the openscapes/py-rocket
 
-<https://hub.docker.com/repository/docker/eeholmes/iorocker/general>
+<https://hub.docker.com/repository/docker/eeholmes/py-rocket/general>
 
 The one to use is the dated one. The `main` tag doesn't seem to always be recognized as a new tag when it changes.
+
+# tldr;
+
+```
+cd ci/py-rocket
+DOCKER_TAG="20230901"
+docker build --platform linux/amd64 -t eeholmes/py-rocket:${DOCKER_TAG} -t eeholmes/py-rocket:main .
+docker push eeholmes/py-rocket:${DOCKER_TAG}
+docker push eeholmes/py-rocket:main
+```
+
+Log into Azure portal, go to DaskHub, Connect, Cloud Shell, and edit `dconfig2.yaml` (`nano dconfig2.yaml`) to update the `py-rocket` tag. Then run this command.
+
+```
+helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig2.yaml
+```
+
+Tip: if things fill up use
+```
+docker system prune --all
+```
 
 # Requirements
 
@@ -22,21 +43,21 @@ RUN R -e 'install.packages("gtools", repos = "http://cran.us.r-project.org")'
 1. Make sure Docker app is running, not just installed. So if you are on a local computer, start up the app (open it).
 1. Go to a terminal and cd to the directory with the Dockerfile. So to the `ci` directory in the `nmfs-jhub` repo.
 ```
-cd ci/iorocker
+cd ci/py-rocket
 ```
 2. Update the docker tag to the date.
 ```
 DOCKER_TAG="20230901"
 ```
-2. Build the image. `.` means current directory. `eeholmes/iorocker` is the name of the repo on DockerHub. `--platform` is added if you are building on an Mac with Apple chip. 
+2. Build the image. `.` means current directory. `eeholmes/py-rocket` is the name of the repo on DockerHub. `--platform` is added if you are building on an Mac with Apple chip. 
 ```
-docker build --platform linux/amd64 -t eeholmes/iorocker:${DOCKER_TAG} -t eeholmes/iorocker:main .
+docker build --platform linux/amd64 -t eeholmes/py-rocket:${DOCKER_TAG} -t eeholmes/py-rocket:main .
 ```
 
 3. Push the image up to DockerHub. Make sure you are logged into DockerHub in the Docker app otherwise you'll get "access denied". Open the Docker app and look that it shows that you are signed in.
 ```
-docker push eeholmes/iorocker:${DOCKER_TAG}
-docker push eeholmes/iorocker:main
+docker push eeholmes/py-rocket:${DOCKER_TAG}
+docker push eeholmes/py-rocket:main
 ```
 
 Notes: https://help.valohai.com/hc/en-us/articles/4421364087569-Build-your-own-Docker-image
@@ -55,26 +76,7 @@ helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --names
 ```
 
 
-# Asides
 
-## To set docker tag to latest commit
-
-```
-SHA7="$(git rev-parse --short HEAD)"
-DOCKER_TAG=$SHA7
-```
-I am not doing that since this repo has lots of commits unrelated to the docker image.
-
-## To set up your own Docker repo
-
-1. Make an account on DockerHub. Free is fine.
-2. Create a repo and give it a name. For example, for this project, my account is `eeholmes` and my repo is `iopython` (Indian Ocean Python) as it is specific a particular project I am working on.
-
-DockerHub will want to you to buy the premium account but you only need that if you are doing continuous integration, like using a GitHub Action to autobuild your image. If you are manually building, you don't need this.
-
-## Why is `--platform` needed in the build command
-
-You won't see this on docker build tutorials. But if you are on a Mac with Apple chip, then you'll build arm64 images and that's not going to work on Ubuntu VMs. The vanilla images you see are amd64 so we want to make sure we are building for that platform. This only matters if you are on a Mac with Apple chip, but it won't break things for unix and PC so I added to make the instructions more robust.
 
 ## If an specific image tag is in config
 
@@ -131,4 +133,25 @@ Add to Docker file
 # it can't find new.yml in home/joyvan/.kernels
 # need to get that into the container somehow (git clone?)
 # RUN conda env update --file new.yml
+
+# Asides
+
+## To set docker tag to latest commit
+
+```
+SHA7="$(git rev-parse --short HEAD)"
+DOCKER_TAG=$SHA7
+```
+I am not doing that since this repo has lots of commits unrelated to the docker image.
+
+## To set up your own Docker repo
+
+1. Make an account on DockerHub. Free is fine.
+2. Create a repo and give it a name. For example, for this project, my account is `eeholmes` and my repo is `iopython` (Indian Ocean Python) as it is specific a particular project I am working on.
+
+DockerHub will want to you to buy the premium account but you only need that if you are doing continuous integration, like using a GitHub Action to autobuild your image. If you are manually building, you don't need this.
+
+## Why is `--platform` needed in the build command
+
+You won't see this on docker build tutorials. But if you are on a Mac with Apple chip, then you'll build arm64 images and that's not going to work on Ubuntu VMs. The vanilla images you see are amd64 so we want to make sure we are building for that platform. This only matters if you are on a Mac with Apple chip, but it won't break things for unix and PC so I added to make the instructions more robust.
 ```
