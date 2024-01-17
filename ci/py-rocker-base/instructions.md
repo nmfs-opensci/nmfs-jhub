@@ -11,10 +11,16 @@ The one to use is the dated one. The `main` tag doesn't seem to always be recogn
 ```
 cd ci/py-rocket-base
 DOCKER_TAG="20230901"
-DOCKER_TAG="$(git rev-parse --short HEAD)"
 docker build --platform linux/amd64 -t eeholmes/py-rocket-base:${DOCKER_TAG} -t eeholmes/py-rocket-base:main .
 docker push eeholmes/py-rocket-base:${DOCKER_TAG}
 docker push eeholmes/py-rocket-base:main
+```
+
+Testing
+```
+DOCKER_TAG="$(git rev-parse --short HEAD)"
+docker build --platform linux/amd64 -t eeholmes/py-rocket-base:${DOCKER_TAG} .
+docker push eeholmes/py-rocket-base:${DOCKER_TAG}
 ```
 
 Log into Azure portal, go to DaskHub, Connect, Cloud Shell, and edit `dconfig2.yaml` (`nano dconfig2.yaml`) to update the image tag. Then run this command.
