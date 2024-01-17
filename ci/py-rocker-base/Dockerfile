@@ -4,9 +4,10 @@ FROM rocker/rstudio:4.3
 # Conda set up see https://github.com/pangeo-data/pangeo-docker-images/blob/master/base-image/Dockerfile
 ENV CONDA_ENV=notebook \
     DEBIAN_FRONTEND=noninteractive \
+    DEFAULT_USER=jovyan \
     NB_USER=jovyan \
     # uid=1000 is rstudio I think
-    NB_UID=1001 \ 
+    NB_UID=1000 \ 
     SHELL=/bin/bash \
     # Setup locale to be UTF-8, avoiding gnarly hard to debug encoding errors
     LANG=C.UTF-8  \
@@ -34,9 +35,9 @@ ENV DASK_ROOT_CONFIG=${CONDA_DIR}/etc
 
 RUN echo "Create ${NB_USER} user..." \
     # Create a group for the user to be part of, with gid same as uid
-    && groupadd --gid ${NB_UID} ${NB_USER}  \
+#    && groupadd --gid ${NB_UID} ${NB_USER}  \
     # Create non-root user, with given gid, uid and create $HOME
-    && useradd --create-home --gid ${NB_UID} --no-log-init --uid ${NB_UID} ${NB_USER} \
+#    && useradd --create-home --gid ${NB_UID} --no-log-init --uid ${NB_UID} ${NB_USER} \
     # Make sure that /srv is owned by non-root user, so we can install things there
     && chown -R ${NB_USER}:${NB_USER} /srv
 
