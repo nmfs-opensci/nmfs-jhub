@@ -1,0 +1,9 @@
+conda create --prefix ~/conda/envs/test-env python=3.9
+python -m ipykernel install --user --name=test-env
+conda activate ~/conda/envs/test-env
+
+Removing
+jupyter kernelspec list
+jupyter kernelspec remove test-env
+conda env remove -p /home/rstudio/conda/envs/test-env
+
