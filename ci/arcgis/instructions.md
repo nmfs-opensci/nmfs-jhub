@@ -16,6 +16,6 @@ docker push eeholmes/py-rocket-gis:${DOCKER_TAG}
 Testing
 ```
 DOCKER_TAG="$(git rev-parse --short HEAD)"
-docker build --platform linux/amd64 -t eeholmes/py-rocket-base:${DOCKER_TAG} .
-docker push eeholmes/py-rocket-base:${DOCKER_TAG}
+docker build --platform linux/amd64 -t eeholmes/py-rocket-gis:${DOCKER_TAG} .
+docker push eeholmes/py-rocket-gis:${DOCKER_TAG}
 ```
