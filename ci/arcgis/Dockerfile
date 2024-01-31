@@ -7,9 +7,15 @@ RUN mamba install --yes 'jupyter-server-proxy' && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
     
+USER root
+# Create dirs for startup hooks
+RUN mkdir /usr/local/bin/before-notebook.d
+RUN echo 'eval "$(conda shell.bash hook)"' > /usr/local/bin/before-notebook.d/10activate-conda-env.sh
+USER ${NB_UID}
+
 # Name your environment and choose the Python version
 ARG env_name=base
-# Note: uncommenting this section makes "${env_name}" default both for Jupyter Notebook and Terminals
+# Note: this section makes "${env_name}" default both for Jupyter Notebook and Terminals
 # More information here: https://github.com/jupyter/docker-stacks/pull/2047
 USER root
 RUN \
