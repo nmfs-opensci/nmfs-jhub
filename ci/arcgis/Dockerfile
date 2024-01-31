@@ -11,7 +11,7 @@ ENV CONDA_ENV=base \
     SHELL=/bin/bash \
     # Setup locale to be UTF-8, avoiding gnarly hard to debug encoding errors
     LANG=C.UTF-8  \
-    LC_ALL=C.UTF-8 \
+    LC_ALL=C.UTF-8
 
 # All env vars that reference other env vars need to be in their own ENV block
 # Path to the python environment where the jupyter notebook packages are installed
@@ -25,7 +25,9 @@ ENV NB_PYTHON_PREFIX=${CONDA_DIR}/envs/${CONDA_ENV} \
 # first here.
 ENV PATH=${NB_PYTHON_PREFIX}/bin:${CONDA_DIR}/bin:${PATH}
 
+USER root
 RUN echo ". ${CONDA_DIR}/etc/profile.d/conda.sh ; conda activate ${CONDA_ENV}" > /etc/profile.d/init_conda.sh
+USER ${NB_UID}
 
 #FROM pangeo/base-image:2023.01.13
 
