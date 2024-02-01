@@ -3,16 +3,21 @@ FROM ghcr.io/esri/arcgis-python-api-notebook
 RUN mamba install --yes 'jupyter-server-proxy' && \
     mamba clean --all -f -y
     
-# Name your environment and choose the Python version
+# Clone base
 ARG env_name=arcgis
-
-# You can add additional libraries here
-RUN conda create --name "${CONDA_DIR}/envs/${env_name}" --clone base
+RUN conda create --name "${env_name}" --clone base
 
 # Create Python kernel and link it to jupyter
 RUN "${CONDA_DIR}/envs/${env_name}/bin/python" -m ipykernel install --user --name="${env_name}" && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
+    
+USER root
+# Create dirs for startup hooks
+RUN mkdir /usr/local/bin/before-notebook.d && \
+    fix-permissions "/usr/local/bin/before-notebook.d"
+RUN echo 'eval "$(conda shell.bash hook)"' > /usr/local/bin/before-notebook.d/10activate-conda-env.sh
+USER ${NB_UID}
 
 # Note: uncommenting this section makes "${env_name}" default both for Jupyter Notebook and Terminals
 # More information here: https://github.com/jupyter/docker-stacks/pull/2047
