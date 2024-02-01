@@ -1,5 +1,5 @@
-FROM ghcr.io/esri/arcgis-python-api-notebook
-#FROM quay.io/jupyter/base-notebook:latest
+# This works; requires the newer base-notebook not Python 3.9
+FROM quay.io/jupyter/base-notebook:latest
 
 RUN mamba install --yes 'jupyter-server-proxy' && \
     mamba clean --all -f -y && \

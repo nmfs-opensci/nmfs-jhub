@@ -1,8 +1,12 @@
-# This is based on the openscapes/py-rocket
+# Testing
 
-<https://hub.docker.com/repository/docker/eeholmes/py-rocket/general>
+This was testing. Discovered that 
 
-The one to use is the dated one. The `main` tag doesn't seem to always be recognized as a new tag when it changes.
+* jupyter-server-proxy is needed
+* works in docker but not in jupyterhub I think due to the server app being different. I tried to change to old server but no luck.
+* doesn't work with the juptyer/base-notebook:python-3.9. Everything I tried failed.
+
+
 
 # tldr;
 
