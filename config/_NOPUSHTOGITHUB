@@ -1,0 +1,3 @@
+dconfig2.yaml (dhub) and config.yaml (jhub) has the keys for OAuth and IP for the hub.
+
+Actually nothing all that bad would happen, but why expose that to the bots.

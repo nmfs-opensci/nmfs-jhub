@@ -1,0 +1,98 @@
+jupyterhub:
+  # custom:
+  #   singleuser:
+  #     extraVolumeMounts:
+  #       - name: home
+  #         mountPath: /home/jovyan/shared
+  hub:
+    config:
+      GitHubOAuthenticator:
+        client_id: xxxxxxx
+        client_secret: xxxxxxx
+        oauth_callback_url: https://dhub.opensci.live/hub/oauth_callback
+        allowed_organizations:
+          - nmfs-opensci:DaskHub
+        scope:
+          - read:org
+      Authenticator:
+        admin_users:
+          - eeholmes
+      JupyterHub:
+        authenticator_class: github
+      KubeSpawner:
+        working_dir: /home/jovyan
+    allowNamedServers: true
+    networkPolicy:
+      enabled: false
+    readinessProbe:
+      enabled: false
+  proxy:
+    https:
+      enabled: true
+      hosts:
+        - dhub.opensci.live
+      letsencrypt:
+        contactEmail: eli.holmes@noaa.gov        
+  singleuser:
+    startTimeout: 3600
+    defaultUrl: /lab
+    # Defines the default image
+    storage:
+      capacity: 100Gi
+      extraVolumes:
+        - name: jupyterhub-shared
+          persistentVolumeClaim:
+            claimName: daskhub-pvc
+      extraVolumeMounts:
+        - name: jupyterhub-shared
+          mountPath: /home/jovyan/shared
+    image:
+      name: openscapes/python
+      tag: 6ee57a9
+    profileList:
+      - display_name: "4 CPU / 32 GB RAM"
+        description: &profile_list_description "Start a container with at least a chosen share of capacity on a node of this type"
+        default: true
+        slug: small
+        profile_options:
+          image: &profile_options_image
+            display_name: Image
+            choices:
+              python:
+                display_name: Openscapes python image
+                slug: python
+                default: true
+                kubespawner_override:
+                  image: openscapes/python:6ee57a9
+              pyrbase:
+                display_name: Py-R base image
+                slug: pyrbase
+                kubespawner_override:
+                  image: eeholmes/py-rocket-base:20240116
+              iopython:
+                display_name: Python with tensorflow
+                slug: iopython
+                kubespawner_override:
+                  image: eeholmes/iopython:20230714
+              iorocker:
+                display_name: R with sdmTMB
+                slug: iorocker
+                kubespawner_override:
+                  image: eeholmes/iorocker:20230729
+              rocker:
+                display_name: Openscapes R image
+                slug: rocker
+                kubespawner_override:
+                  image: openscapes/rocker:a7596b5
+        kubespawner_override:
+          cpu_limit: null
+          mem_limit: null
+          node_selector:
+            topology.kubernetes.io/zone: westus2-1
+            node.kubernetes.io/instance-type: Standard_D8s_v3 
+dask-gateway:
+  gateway:
+    extraConfig:
+      idle: |-
+        # timeout after 30 minutes of inactivity
+        c.KubeClusterConfig.idle_timeout = 1800  
