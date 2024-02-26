@@ -1,6 +1,6 @@
 # Testing
 
-This was testing. Discovered that 
+This was testing. Doesn't work. Discovered that 
 
 * jupyter-server-proxy is needed
 * works in docker but not in jupyterhub I think due to the server app being different. I tried to change to old server but no luck.
