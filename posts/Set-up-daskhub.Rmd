@@ -166,7 +166,7 @@ helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --names
 
 ### Test if https is working
 
-Try `https:\\dhub.bluemountain123.live` and you should see the JupyterHub login without that http warning.
+Try `https:\\dhub.bluemountain123.live` and you should see the JupyterHub login without that http warning. This might take 30 minutes to an hour.
 
 ## Step 3 Set up GitHub authentication
 
