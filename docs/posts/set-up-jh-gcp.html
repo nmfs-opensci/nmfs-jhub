@@ -170,6 +170,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#connect-to-the-jupyterhub" id="toc-connect-to-the-jupyterhub" class="nav-link" data-scroll-target="#connect-to-the-jupyterhub">Connect to the JupyterHub</a></li>
   <li><a href="#set-up-https" id="toc-set-up-https" class="nav-link" data-scroll-target="#set-up-https">Set-up https</a></li>
   <li><a href="#set-up-authentication" id="toc-set-up-authentication" class="nav-link" data-scroll-target="#set-up-authentication">Set up authentication</a></li>
+  <li><a href="#deleting-the-kubernetes-cluster" id="toc-deleting-the-kubernetes-cluster" class="nav-link" data-scroll-target="#deleting-the-kubernetes-cluster">Deleting the Kubernetes cluster</a></li>
   <li><a href="#post-installation-checklist" id="toc-post-installation-checklist" class="nav-link" data-scroll-target="#post-installation-checklist">Post-installation checklist</a></li>
   </ul>
 <div class="toc-actions"><ul class="collapse"><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/edit/main/posts/set-up-jh-gcp.Rmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/posts/set-up-jh-gcp.Rmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
@@ -329,6 +330,16 @@ helm repo update</code></pre>
 <section id="set-up-authentication" class="level2">
 <h2 class="anchored" data-anchor-id="set-up-authentication">Set up authentication</h2>
 <p>See the post on <a href="set-up-authentication.html">setting up authentication</a> for instructions.</p>
+</section>
+<section id="deleting-the-kubernetes-cluster" class="level2">
+<h2 class="anchored" data-anchor-id="deleting-the-kubernetes-cluster">Deleting the Kubernetes cluster</h2>
+<ul>
+<li>Go to dashboard. Make sure you are in the project with the Kubernetes cluster.</li>
+<li>Click on the Kubernetes API button and then click on the cluster with your JHub</li>
+<li>At that point, you will see the delete button at the top. Click that.</li>
+<li>Wait awhile and make sure all the associated VMs and storage are deleted.</li>
+<li>Go back onto billing in a few days and make sure it is not charging you. If it is, something associated with the JHub didn’t get deleted.</li>
+</ul>
 </section>
 <section id="post-installation-checklist" class="level2">
 <h2 class="anchored" data-anchor-id="post-installation-checklist">Post-installation checklist</h2>

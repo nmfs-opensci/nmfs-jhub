@@ -629,6 +629,13 @@
     "text": "Set up authentication\nSee the post on setting up authentication for instructions."
   },
   {
+    "objectID": "posts/set-up-jh-gcp.html#deleting-the-kubernetes-cluster",
+    "href": "posts/set-up-jh-gcp.html#deleting-the-kubernetes-cluster",
+    "title": "Set up JupyterHub on GCP",
+    "section": "Deleting the Kubernetes cluster",
+    "text": "Deleting the Kubernetes cluster\n\nGo to dashboard. Make sure you are in the project with the Kubernetes cluster.\nClick on the Kubernetes API button and then click on the cluster with your JHub\nAt that point, you will see the delete button at the top. Click that.\nWait awhile and make sure all the associated VMs and storage are deleted.\nGo back onto billing in a few days and make sure it is not charging you. If it is, something associated with the JHub didn’t get deleted."
+  },
+  {
     "objectID": "posts/set-up-jh-gcp.html#post-installation-checklist",
     "href": "posts/set-up-jh-gcp.html#post-installation-checklist",
     "title": "Set up JupyterHub on GCP",
