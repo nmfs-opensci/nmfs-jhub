@@ -498,13 +498,13 @@ Find a domain name provider and set one up. It is not expensive. I used GoDaddy.
 
 Let's pretend you set up `bluemountain123.live` as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let's say you create, `dhub` as the type A DNS entry. Put `dhub` in the name and the public IP address of the server (leaving off `:8000`) in the value section. Then `dhub.bluemountain123.live` will be the url.
 
-![](images/img8.png)
+![](../images/img8.png)
 
 ### Test if the url is working
 
 `http:\\dhub.bluemountain123.live:8000` would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:
 
-![](images/img9.png)
+![](../images/img9.png)
 
 ### Set-up https on your JupyterHub
 

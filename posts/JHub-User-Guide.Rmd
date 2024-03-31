@@ -26,29 +26,29 @@ Instructions: It should be pretty self-explanatory.
 
 After you get paste the login page, you will see this. Choose Python for Python only; choose R for Python and R.
 
-![](images/user-guide/img1.png)
+![](../images/user-guide/img1.png)
 
 ## Spin up your server
 
 You will see this as your server spins up
 
-![](images/user-guide/img1b.png)
+![](../images/user-guide/img1b.png)
 
 ## Choose your platform
 
 You can code in RStudio, JupyterLab or Terminal.
 
-![](images/user-guide/img2.png)
+![](../images/user-guide/img2.png)
 
 ## Let's choose RStudio
 
-![](images/user-guide/img3.png)
+![](../images/user-guide/img3.png)
 
 ### Clone a repo
 
 Choose 'new project' (top right) and Version Control.
 
-![](images/user-guide/img4.png)
+![](../images/user-guide/img4.png)
 
 ### Tell Git who you are
 
@@ -94,7 +94,7 @@ Be careful because you can be in RStudio with one GitHub repository and you coul
 
 Open a terminal. You do this from the Launcher window. You can always open a new launcher window by clicking the little + tab
 
-![](images/user-guide/img5.png)
+![](../images/user-guide/img5.png)
 
 Now click Terminal and run this code
 
@@ -112,7 +112,7 @@ git config --global credential.helper store
 
 Click the Git icon on the left and you can clone a repo.
 
-![](images/user-guide/img6.png)
+![](../images/user-guide/img6.png)
 
 ## Stop your server
 

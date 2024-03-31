@@ -7,6 +7,14 @@ output:
     toc: true
 ---
 
+## Requirements
+
+- Documentation:  [https://z2jh.jupyter.org](https://z2jh.jupyter.org)
+
+See examples of full `config.yaml` files in the `config` directory in the [nmfs-opensci/nmfs-jhub](https://github.com/nmfs-opensci/nmfs-jhub) GitHub repo.
+
+## Set up on Azure
+
 This is my notes for setting this up on Azure. Attempting to replicate the Openscapes 2i2c JupyterHub: https://github.com/2i2c-org/infrastructure/tree/master/config/clusters/openscapes 
 
 That hub is on AWS and is designed for large workshops (100+) however the NMFS OpenSci JHub is quite similar. Main difference at the moment is that I don't have a shared drive set-up and the user persistent volume (storage) is on the same VM as the user node for their Jupyter Notebook. This means that I cannot have multiple VM sizes. Need to fix so that user can pick a larger VM for a task if needed.
@@ -17,11 +25,11 @@ Log into `https:\\portal.azure.com`
 
 1.  Get to the dashboard that looks similar to this.
 
-![](images/img1.png)
+![](../images/img1.png)
 
 2.  Click on the Kubernetes Services button and you should see something like this
 
-![](images/img2.png)
+![](../images/img2.png)
 
 3.  Click Create Kubernetes Cluster
 
@@ -42,7 +50,7 @@ Wait for validation tests to pass.
 
 Once it is done deploying, you will see this.
 
-![](images/img3.png)
+![](../images/img3.png)
 
 ## Install DaskHub on your cluster
 
@@ -52,17 +60,17 @@ These next steps are done in the shell after connecting to your cluster. First y
 
 Once you have created your Kubernetes cluster, you want to go to its dashboard (by clicking on the name you gave it). You'll see something like this (I named mine `daskhub`).
 
-![](images/img4.png)
+![](../images/img4.png)
 
 Click on the Connect icon in the nav bar at top.
 
 You then see this
 
-![](images/img5.png)
+![](../images/img5.png)
 
 Click on the link that says "Open Cloud Shell".
 
-![](images/img6.png)
+![](../images/img6.png)
 
 You will get to a terminal. Paste in the two commands in the previous image (the commands that show up for you that is).
 
@@ -102,7 +110,7 @@ helm upgrade --wait --install --render-subchart-notes \
     --values=dconfig.yaml
 ```
 
-You will see this on successful installation (it's long. much has been cut). ![](images/img7.png)
+You will see this on successful installation (it's long. much has been cut). ![](../images/img7.png)
 
 ### Set-up your external IP address
 
@@ -125,13 +133,13 @@ You will need a domain name for `https` which you want for security (and JHub wo
 
 Let's pretend you set up `bluemountain123.live` as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let's say you create, `dhub` as the type A DNS entry. Then `dhub.bluemountain123.live` will be the url. You can have as many subdomains as you need.
 
-![](images/img8.png)
+![](../images/img8.png)
 
 ### Test if the url is working
 
 `http:\\dhub.bluemountain123.live` would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:
 
-![](images/img9.png)
+![](../images/img9.png)
 
 ### Set-up https on your JupyterHub
 
@@ -180,11 +188,11 @@ Log into GitHub and go to GitHub \> Settings \> Developer Settings \> New Oauth 
 
 Look carefully at how I filled in the boxes.
 
-![](images/img10.png)
+![](../images/img10.png)
 
 Next you will see something like this
 
-![](images/img11.png)
+![](../images/img11.png)
 
 You need to copy the ID and then click the create secrets button and save the secret. Save those for later.
 
@@ -235,7 +243,7 @@ helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --names
 
 You should now see this and can authenticate with GitHub.
 
-![](images/img12.png)
+![](../images/img12.png)
 
 ## Set up the container image
 
@@ -300,7 +308,7 @@ helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --names
 
 **NOT WORKING YET** I am stuck on creating the persistent volumes. Needed because you need the user storage somewhere if you have multiple node pools.
 
-![](images/img13.png)
+![](../images/img13.png)
 
 ```         
 kubectl get nodes --show-labels | grep instance-type

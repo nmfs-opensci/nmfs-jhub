@@ -4,7 +4,7 @@ description: |
   Setting up Linux VM for testing
 ---
 
-For testing JupyterHub set-ups, I start various Linux machines. Here is how to set up a virtual machines.
+For testing JupyterHub set-ups, I start various Linux machines. Here is how to set up a virtual machine.
 
 ## Azure
 

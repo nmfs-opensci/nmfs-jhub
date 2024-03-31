@@ -1,7 +1,11 @@
 project: 
   type: website
   output-dir: docs
-
+  render:
+    - "posts/*.Rmd"
+    - "!ci/"
+    - "!config/"
+    - "!config-template/"
 website:
   page-navigation: true  
   title: "Eli's JupyterHub notes"
@@ -25,14 +29,16 @@ website:
         href: index.Rmd
       - text: "JHub User Guide"
         href: posts/JHub-User-Guide.Rmd
-      - text: "JHub Set-up"
+      - text: "Set-up JHub on Azure"
         href: posts/Set-up-daskhub.Rmd
-      - text: "Centos Set-up"
+      - text: "Set-up JHub on Google Cloud"
+        href: posts/Set-up-jh-gcp.html
+      - text: "Set-up JHub on Centos"
         href: posts/Set-up-centos.Rmd
-      - text: "Centos Set-up https"
+      - text: "Set-up https on Centos"
         href: posts/Set-up-centos-security.Rmd
-      - text: "Set-up VM on mac"
-        href: posts/set-up-vm.Rmd
+      - text: "Set-up authentication"
+        href: posts/set-up-authentication.Rmd
 
 format:
   html:

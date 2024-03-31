@@ -1,0 +1,27 @@
+hub:
+  config:
+    GitHubOAuthenticator:
+      client_id: 5872d2b7ea348ff2f8c0
+      client_secret: 6dafc2820264b4d8602e632e891f078481d4927a
+      oauth_callback_url: https://gcp.opensci.live/hub/oauth_callback
+      allowed_organizations:
+        - nmfs-opensci:DaskHub
+      scope:
+        - read:org
+    JupyterHub:
+      authenticator_class: github
+
+proxy:
+  traefik:
+    extraInitContainers:
+      # This startup delay can help the k8s container network find the 
+      # https certificate and allow letsencrypt to work
+      - name: startup-delay
+        image: busybox:stable
+        command: ["sh", "-c", "sleep 10"]
+  https:
+    enabled: true
+    hosts:
+      - gcp.opensci.live
+    letsencrypt:
+      contactEmail: eli.holmes@noaa.gov

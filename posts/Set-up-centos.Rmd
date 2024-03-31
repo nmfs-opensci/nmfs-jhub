@@ -505,11 +505,11 @@ Log into GitHub and go to GitHub \> Settings \> Developer Settings \> New Oauth 
 
 Look carefully at how I filled in the boxes. Change the URL and the name of the application.
 
-![](images/img10.png)
+![](../images/img10.png)
 
 Next you will see something like this
 
-![](images/img11.png)
+![](../images/img11.png)
 
 You need to copy the ID and then click the create secrets button and save the secret. You will need those in the next step.
 
