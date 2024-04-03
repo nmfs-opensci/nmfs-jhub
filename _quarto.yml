@@ -32,7 +32,7 @@ website:
       - text: "Set-up JHub on Azure"
         href: posts/Set-up-daskhub.Rmd
       - text: "Set-up JHub on Google Cloud"
-        href: posts/Set-up-jh-gcp.html
+        href: posts/set-up-jh-gcp.Rmd
       - text: "Set-up JHub on Centos"
         href: posts/Set-up-centos.Rmd
       - text: "Set-up https on Centos"

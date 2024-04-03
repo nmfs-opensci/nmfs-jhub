@@ -1,4 +1,4 @@
-# This is a base geospatial R and Python image
+# This is a base tidyverse R and Python image
 FROM rocker/geospatial:dev-osgeo
 
 ENV CONDA_ENV=notebook \

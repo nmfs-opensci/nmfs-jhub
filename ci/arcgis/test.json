@@ -1,0 +1,22 @@
+{
+"created": "2024-02-29T22:52:17.647410+00:00", 
+"modified": "2024-02-29T22:52:17.932383+00:00", 
+"id": 10729731, 
+"conceptrecid": "10719406", 
+"doi": "10.5281/zenodo.10729731", 
+"conceptdoi": "10.5281/zenodo.10719406", 
+"doi_url": "https://doi.org/10.5281/zenodo.10729731", 
+"metadata": {
+  "title": "Zenodo Release Action", 
+  "doi": "10.5281/zenodo.10729731", 
+  "publication_date": "2024-02-29", 
+  "description": "This is a test", 
+  "access_right": "open", 
+  "creators": [{"name": "test", "affiliation": "test"}], 
+  "keywords": ["test"], 
+  "related_identifiers": [{"identifier": "https://github.com/Rgovys/test-integration/tree/test2", "relation": "isSupplementTo", "resource_type": "software", "scheme": "url"}], 
+  "version": "test19", 
+  "resource_type": {"title": "Software", "type": "software"}, 
+  "license": {"id": "mit-license"}, 
+  "relations": {"version": [{"index": 11, "is_last": true, "parent": {"pid_type": "recid", "pid_value": "10719406"}}]}
+}, "title": "Zenodo Release Action", "links": {"self": "https://zenodo.org/api/records/10729731", "self_html": "https://zenodo.org/records/10729731", "self_doi": "https://zenodo.org/doi/10.5281/zenodo.10729731", "doi": "https://doi.org/10.5281/zenodo.10729731", "parent": "https://zenodo.org/api/records/10719406", "parent_html": "https://zenodo.org/records/10719406", "parent_doi": "https://zenodo.org/doi/10.5281/zenodo.10719406", "self_iiif_manifest": "https://zenodo.org/api/iiif/record:10729731/manifest", "self_iiif_sequence": "https://zenodo.org/api/iiif/record:10729731/sequence/default", "files": "https://zenodo.org/api/records/10729731/files", "media_files": "https://zenodo.org/api/records/10729731/media-files", "archive": "https://zenodo.org/api/records/10729731/files-archive", "archive_media": "https://zenodo.org/api/records/10729731/media-files-archive", "latest": "https://zenodo.org/api/records/10729731/versions/latest", "latest_html": "https://zenodo.org/records/10729731/latest", "draft": "https://zenodo.org/api/records/10729731/draft", "versions": "https://zenodo.org/api/records/10729731/versions", "access_links": "https://zenodo.org/api/records/10729731/access/links", "access_users": "https://zenodo.org/api/records/10729731/access/users", "access_request": "https://zenodo.org/api/records/10729731/access/request", "access": "https://zenodo.org/api/records/10729731/access", "reserve_doi": "https://zenodo.org/api/records/10729731/draft/pids/doi", "communities": "https://zenodo.org/api/records/10729731/communities", "communities-suggestions": "https://zenodo.org/api/records/10729731/communities-suggestions", "requests": "https://zenodo.org/api/records/10729731/requests"}, "updated": "2024-02-29T22:52:17.932383+00:00", "recid": "10729731", "revision": 4, "files": [{"id": "54fd2ae5-bc67-4d81-9b7d-06937230b945", "key": "test19.zip", "size": 1738, "checksum": "md5:b33eedda7a38a54d422ed61c2a8ec09a", "links": {"self": "https://zenodo.org/api/records/10729731/files/test19.zip/content"}}], "owners": [{"id": 1075630}], "status": "published", "stats": {"downloads": 5, "unique_downloads": 4, "views": 44, "unique_views": 24, "version_downloads": 0, "version_unique_downloads": 0, "version_unique_views": 1, "version_views": 1}, "state": "done", "submitted": true}

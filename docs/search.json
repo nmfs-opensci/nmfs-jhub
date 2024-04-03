@@ -570,76 +570,109 @@
     "href": "posts/set-up-jh-gcp.html",
     "title": "Set up JupyterHub on GCP",
     "section": "",
-    "text": "Documentation: https://z2jh.jupyter.org\nHelp forum: https://discourse.jupyter.org\nIssue tracking: https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues\n\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo."
+    "text": "Documentation: https://z2jh.jupyter.org\nHelp forum: https://discourse.jupyter.org\nIssue tracking: https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues\n\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo.",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
   },
   {
     "objectID": "posts/set-up-jh-gcp.html#background",
     "href": "posts/set-up-jh-gcp.html#background",
     "title": "Set up JupyterHub on GCP",
     "section": "",
-    "text": "Documentation: https://z2jh.jupyter.org\nHelp forum: https://discourse.jupyter.org\nIssue tracking: https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues\n\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo."
+    "text": "Documentation: https://z2jh.jupyter.org\nHelp forum: https://discourse.jupyter.org\nIssue tracking: https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues\n\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo.",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
   },
   {
     "objectID": "posts/set-up-jh-gcp.html#set-up-google-cloud",
     "href": "posts/set-up-jh-gcp.html#set-up-google-cloud",
     "title": "Set up JupyterHub on GCP",
     "section": "Set-up Google Cloud",
-    "text": "Set-up Google Cloud\n\nCreate a Google Cloud account. Activate Compute API. It’ll be one of the options.\nCreate a project. There is a button somewhere.\nOpen the Cloud Shell. Look for ‘Connect’ or if you don’t see that look for the icon in top right that looks like box with &gt;_ in it."
+    "text": "Set-up Google Cloud\n\nCreate a Google Cloud account. Activate Compute API. It’ll be one of the options.\nCreate a project. There is a button somewhere.\nOpen the Cloud Shell. Look for ‘Connect’ or if you don’t see that look for the icon in top right that looks like box with &gt;_ in it.",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
   },
   {
     "objectID": "posts/set-up-jh-gcp.html#set-up-kubernetes-cluster",
     "href": "posts/set-up-jh-gcp.html#set-up-kubernetes-cluster",
     "title": "Set up JupyterHub on GCP",
     "section": "Set-up Kubernetes cluster",
-    "text": "Set-up Kubernetes cluster\nNote, you’ll likely be asked to activate the Kubernetes API. It gave me a link to do so and I clicked that.\nOnce you are inside the Cloud Shell, you create a Kubernetes cluster. This is a simple example. Create the cluster and add the admin. Use your email that you use for your Google Cloud account. You don’t need a big machine type here. This just runs the Kubernetes bit; it is not running computations.\ngcloud container clusters create \\\n  --machine-type n1-standard-2 \\\n  --num-nodes 2 \\\n  --zone us-west1-a \\\n  --cluster-version latest \\\n  jhub\n\nkubectl create clusterrolebinding cluster-admin-binding \\\n  --clusterrole=cluster-admin \\\n  --user=yourname@gmail.com\nHere jhub is the name I gave the cluster. You will need this name in many places so don’t make it too long. Choose a zone with a region and letter. For me, I have run into problems if I don’t pin the region (us-west1, us-east1, etc) to a zone (a, b, c).\nNext create the node pools for users. Here is where you might want bigger machines. How much RAM users get will be specified in your config.yaml and that will determine how many users per node. So if you will have lots of users, then you need to have a big max-nodes.\ngcloud beta container node-pools create user-pool \\\n  --machine-type n1-standard-2 \\\n  --num-nodes 0 \\\n  --enable-autoscaling \\\n  --min-nodes 0 \\\n  --max-nodes 3 \\\n  --node-labels hub.jupyter.org/node-purpose=user \\\n  --node-taints hub.jupyter.org_dedicated=user:NoSchedule \\\n  --zone us-west1-a \\\n  --preemptible \\\n  --cluster jhub\nThe jhub is the name of the cluster I set when I created the cluster."
+    "text": "Set-up Kubernetes cluster\nNote, you’ll likely be asked to activate the Kubernetes API. It gave me a link to do so and I clicked that.\nOnce you are inside the Cloud Shell, you create a Kubernetes cluster. This is a simple example. Create the cluster and add the admin. Use your email that you use for your Google Cloud account. You don’t need a big machine type here. This just runs the Kubernetes bit; it is not running computations.\ngcloud container clusters create \\\n  --machine-type n1-standard-2 \\\n  --num-nodes 2 \\\n  --zone us-west1-a \\\n  --cluster-version latest \\\n  jhub\n\nkubectl create clusterrolebinding cluster-admin-binding \\\n  --clusterrole=cluster-admin \\\n  --user=yourname@gmail.com\nHere jhub is the name I gave the cluster. You will need this name in many places so don’t make it too long. Choose a zone with a region and letter. For me, I have run into problems if I don’t pin the region (us-west1, us-east1, etc) to a zone (a, b, c).\nNext create the node pools for users. Here is where you might want bigger machines. How much RAM users get will be specified in your config.yaml and that will determine how many users per node. So if you will have lots of users, then you need to have a big max-nodes.\ngcloud beta container node-pools create user-pool \\\n  --machine-type n1-standard-2 \\\n  --num-nodes 0 \\\n  --enable-autoscaling \\\n  --min-nodes 0 \\\n  --max-nodes 3 \\\n  --node-labels hub.jupyter.org/node-purpose=user \\\n  --node-taints hub.jupyter.org_dedicated=user:NoSchedule \\\n  --zone us-west1-a \\\n  --preemptible \\\n  --cluster jhub\nThe jhub is the name of the cluster I set when I created the cluster.",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
   },
   {
     "objectID": "posts/set-up-jh-gcp.html#install-helm-3",
     "href": "posts/set-up-jh-gcp.html#install-helm-3",
     "title": "Set up JupyterHub on GCP",
     "section": "install helm 3",
-    "text": "install helm 3\nInstall and check version installed.\ncurl https://raw.githubusercontent.com/helm/helm/HEAD/scripts/get-helm-3 | bash\nhelm version\nSet up the config.yaml file. Just dummy for now.\nnano config.yaml\nCopy this in and then Cntl-O and return to save and then Cntl-X to exit\n# Chart config reference:   https://zero-to-jupyterhub.readthedocs.io/en/stable/resources/reference.html\n# Chart default values:     https://github.com/jupyterhub/zero-to-jupyterhub-k8s/blob/HEAD/jupyterhub/values.yaml\n#"
+    "text": "install helm 3\nInstall and check version installed.\ncurl https://raw.githubusercontent.com/helm/helm/HEAD/scripts/get-helm-3 | bash\nhelm version\nSet up the config.yaml file. Just dummy for now.\nnano config.yaml\nCopy this in and then Cntl-O and return to save and then Cntl-X to exit\n# Chart config reference:   https://zero-to-jupyterhub.readthedocs.io/en/stable/resources/reference.html\n# Chart default values:     https://github.com/jupyterhub/zero-to-jupyterhub-k8s/blob/HEAD/jupyterhub/values.yaml\n#",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
   },
   {
     "objectID": "posts/set-up-jh-gcp.html#install-jupyterhub",
     "href": "posts/set-up-jh-gcp.html#install-jupyterhub",
     "title": "Set up JupyterHub on GCP",
     "section": "Install JupyterHub",
-    "text": "Install JupyterHub\nAdd the repository where we will install from.\nhelm repo add jupyterhub https://hub.jupyter.org/helm-chart/\nhelm repo update\nInstall\nhelm upgrade --cleanup-on-fail \\\n  --install jhub1 jupyterhub/jupyterhub \\\n  --namespace jhubk8 \\\n  --create-namespace \\\n  --version=3.3.4 \\\n  --values config.yaml\nThe variables: jhub1 is the name of the JupyterHub. You could have many on this Kubernetes cluster. We will only have 1 however. jhubk8 is the namespace of all the assets that will be associated with this JupyterHub. All your storage (pvc) will appear in this namespace and you will have to add --namespace jhubk8 to commands where you are trying to list or debug assets (like storage or killing nodes that are stuck). config.yaml is the file that has all the configuration settings."
+    "text": "Install JupyterHub\nAdd the repository where we will install from.\nhelm repo add jupyterhub https://hub.jupyter.org/helm-chart/\nhelm repo update\nInstall\nhelm upgrade --cleanup-on-fail \\\n  --install jhub1 jupyterhub/jupyterhub \\\n  --namespace jhubk8 \\\n  --create-namespace \\\n  --version=3.3.4 \\\n  --values config.yaml\nThe variables: jhub1 is the name of the JupyterHub. You could have many on this Kubernetes cluster. We will only have 1 however. jhubk8 is the namespace of all the assets that will be associated with this JupyterHub. All your storage (pvc) will appear in this namespace and you will have to add --namespace jhubk8 to commands where you are trying to list or debug assets (like storage or killing nodes that are stuck). config.yaml is the file that has all the configuration settings.",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
   },
   {
     "objectID": "posts/set-up-jh-gcp.html#connect-to-the-jupyterhub",
     "href": "posts/set-up-jh-gcp.html#connect-to-the-jupyterhub",
     "title": "Set up JupyterHub on GCP",
     "section": "Connect to the JupyterHub",
-    "text": "Connect to the JupyterHub\nNow it is running. Let’s try connecting via IP address\nkubectl --namespace jhubk8 get service proxy-public\nWill show you the public IP address. You should be able to go to that and log in with any username (no password)."
+    "text": "Connect to the JupyterHub\nNow it is running. Let’s try connecting via IP address\nkubectl --namespace jhubk8 get service proxy-public\nWill show you the public IP address. You should be able to go to that and log in with any username (no password).",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
   },
   {
     "objectID": "posts/set-up-jh-gcp.html#set-up-https",
     "href": "posts/set-up-jh-gcp.html#set-up-https",
     "title": "Set up JupyterHub on GCP",
     "section": "Set-up https",
-    "text": "Set-up https\nThis will be required for setting up authentication and also security.\n\nCreate a domain name\nFind a domain name provider and set one up. It is not expensive. I used GoDaddy.\n\n\nCreate a DNS entry\nLet’s pretend you set up bluemountain123.live as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let’s say you create, dhub as the type A DNS entry. Then dhub.bluemountain123.live will be the url. You can have as many subdomains as you need.\n\n\n\nTest if the url is working\nhttp:\\\\dhub.bluemountain123.live would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:\n\n\n\nSet-up https on your JupyterHub\nLog back into your Kubernetes cluster, by going to your project on Google Cloud and clicking the Cloud Shell icon in the top right (box with &gt;_). Once you are on the shell, type\nnano config.yaml\nPaste this in and save (Cntl-O, return and then Cntl-X to exit). The traefik bit is specific to GCP. Often people have trouble with GCP cluster spinning up too fast and it can’t find the letsencrypt certificate. A small delay prevents that problem. This is just for GCP. I never had that problem on Azure.\nproxy:\n  traefik:\n    extraInitContainers:\n      # This startup delay can help the k8s container network find the \n      # https certificate and allow letsencrypt to work in GCP\n      - name: startup-delay\n        image: busybox:stable\n        command: [\"sh\", \"-c\", \"sleep 10\"]\n  https:\n    enabled: true\n    hosts:\n      - dhub.bluemountain123.live\n    letsencrypt:\n      contactEmail: yourname@gmail.com\n\n\nUpdate the JupyterHub installation\nAnytime you change config.yaml you need to run this code. Replace the variables (like jhub1) with your names. jupyterhub/jupyterhub is specific to the helm chart; don’t change that.\nhelm upgrade --cleanup-on-fail   --install jhub1 jupyterhub/jupyterhub   --namespace jhubk8   --create-namespace   --version=3.3.4   --values config.yaml\n\n\nTest if https is working\nTry https:\\\\dhub.bluemountain123.live and you should see the JupyterHub login without that http warning."
+    "text": "Set-up https\nThis will be required for setting up authentication and also security.\n\nCreate a domain name\nFind a domain name provider and set one up. It is not expensive. I used GoDaddy.\n\n\nCreate a DNS entry\nLet’s pretend you set up bluemountain123.live as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let’s say you create, dhub as the type A DNS entry. Then dhub.bluemountain123.live will be the url. You can have as many subdomains as you need.\n\n\n\nTest if the url is working\nhttp:\\\\dhub.bluemountain123.live would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:\n\n\n\nSet-up https on your JupyterHub\nLog back into your Kubernetes cluster, by going to your project on Google Cloud and clicking the Cloud Shell icon in the top right (box with &gt;_). Once you are on the shell, type\nnano config.yaml\nPaste this in and save (Cntl-O, return and then Cntl-X to exit). The traefik bit is specific to GCP. Often people have trouble with GCP cluster spinning up too fast and it can’t find the letsencrypt certificate. A small delay prevents that problem. This is just for GCP. I never had that problem on Azure.\nproxy:\n  traefik:\n    extraInitContainers:\n      # This startup delay can help the k8s container network find the \n      # https certificate and allow letsencrypt to work in GCP\n      - name: startup-delay\n        image: busybox:stable\n        command: [\"sh\", \"-c\", \"sleep 10\"]\n  https:\n    enabled: true\n    hosts:\n      - dhub.bluemountain123.live\n    letsencrypt:\n      contactEmail: yourname@gmail.com\n\n\nUpdate the JupyterHub installation\nAnytime you change config.yaml you need to run this code. Replace the variables (like jhub1) with your names. jupyterhub/jupyterhub is specific to the helm chart; don’t change that.\nhelm upgrade --cleanup-on-fail   --install jhub1 jupyterhub/jupyterhub   --namespace jhubk8   --create-namespace   --version=3.3.4   --values config.yaml\n\n\nTest if https is working\nTry https:\\\\dhub.bluemountain123.live and you should see the JupyterHub login without that http warning.",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
   },
   {
     "objectID": "posts/set-up-jh-gcp.html#set-up-authentication",
     "href": "posts/set-up-jh-gcp.html#set-up-authentication",
     "title": "Set up JupyterHub on GCP",
     "section": "Set up authentication",
-    "text": "Set up authentication\nSee the post on setting up authentication for instructions."
+    "text": "Set up authentication\nSee the post on setting up authentication for instructions.",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
   },
   {
     "objectID": "posts/set-up-jh-gcp.html#deleting-the-kubernetes-cluster",
     "href": "posts/set-up-jh-gcp.html#deleting-the-kubernetes-cluster",
     "title": "Set up JupyterHub on GCP",
     "section": "Deleting the Kubernetes cluster",
-    "text": "Deleting the Kubernetes cluster\n\nGo to dashboard. Make sure you are in the project with the Kubernetes cluster.\nClick on the Kubernetes API button and then click on the cluster with your JHub\nAt that point, you will see the delete button at the top. Click that.\nWait awhile and make sure all the associated VMs and storage are deleted.\nGo back onto billing in a few days and make sure it is not charging you. If it is, something associated with the JHub didn’t get deleted."
+    "text": "Deleting the Kubernetes cluster\n\nGo to dashboard. Make sure you are in the project with the Kubernetes cluster.\nClick on the Kubernetes API button and then click on the cluster with your JHub\nAt that point, you will see the delete button at the top. Click that.\nWait awhile and make sure all the associated VMs and storage are deleted.\nGo back onto billing in a few days and make sure it is not charging you. If it is, something associated with the JHub didn’t get deleted.",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
   },
   {
     "objectID": "posts/set-up-jh-gcp.html#post-installation-checklist",
     "href": "posts/set-up-jh-gcp.html#post-installation-checklist",
     "title": "Set up JupyterHub on GCP",
     "section": "Post-installation checklist",
-    "text": "Post-installation checklist\n\nVerify that created Pods enter a Running state: kubectl --namespace=jhubk8 get pod\nIf a pod is stuck with a Pending or ContainerCreating status, diagnose with: kubectl --namespace=jhubk8 describe pod &lt;name of pod&gt;\nIf a pod keeps restarting, diagnose with: kubectl --namespace=jhubk8 logs --previous &lt;name of pod&gt;\nVerify an external IP is provided for the k8s Service proxy-public. kubectl --namespace=jhubk8 get service proxy-public\nIf the external ip remains , diagnose with: kubectl --namespace=jhubk8 describe service proxy-public"
+    "text": "Post-installation checklist\n\nVerify that created Pods enter a Running state: kubectl --namespace=jhubk8 get pod\nIf a pod is stuck with a Pending or ContainerCreating status, diagnose with: kubectl --namespace=jhubk8 describe pod &lt;name of pod&gt;\nIf a pod keeps restarting, diagnose with: kubectl --namespace=jhubk8 logs --previous &lt;name of pod&gt;\nVerify an external IP is provided for the k8s Service proxy-public. kubectl --namespace=jhubk8 get service proxy-public\nIf the external ip remains , diagnose with: kubectl --namespace=jhubk8 describe service proxy-public",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
   }
 ]
