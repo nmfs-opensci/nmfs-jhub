@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Securing our JupyterHub on our Centos server">
+<meta name="description" content="Setting up JupyterHub on AWS (Amazon Web Services)">
 
-<title>Eli’s JupyterHub notes - Set-up CentOS https</title>
+<title>Eli’s JupyterHub notes - Set up JupyterHub on AWS</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,40 +21,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -64,8 +30,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../posts/set-up-authentication.html" rel="next">
-<link href="../posts/Set-up-centos.html" rel="prev">
+<link href="../posts/Set-up-centos.html" rel="next">
+<link href="../posts/set-up-jh-gcp.html" rel="prev">
 <link href="../images/nmfs-opensci-logo2-notext.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -118,7 +84,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../posts/Set-up-centos-security.html">Set-up https on Centos</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../posts/set-up-jh-aws.html">Set-up JHub on AWS</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -172,7 +138,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../posts/set-up-jh-aws.html" class="sidebar-item-text sidebar-link">
+  <a href="../posts/set-up-jh-aws.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Set-up JHub on AWS</span></a>
   </div>
 </li>
@@ -184,7 +150,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../posts/Set-up-centos-security.html" class="sidebar-item-text sidebar-link active">
+  <a href="../posts/Set-up-centos-security.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Set-up https on Centos</span></a>
   </div>
 </li>
@@ -204,24 +170,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#create-a-domain-name" id="toc-create-a-domain-name" class="nav-link active" data-scroll-target="#create-a-domain-name">Create a domain name</a></li>
-  <li><a href="#prep-the-server" id="toc-prep-the-server" class="nav-link" data-scroll-target="#prep-the-server">Prep the server</a></li>
-  <li><a href="#install-certbot" id="toc-install-certbot" class="nav-link" data-scroll-target="#install-certbot">Install certbot</a></li>
-  <li><a href="#update-the-jupyterhub-config-file" id="toc-update-the-jupyterhub-config-file" class="nav-link" data-scroll-target="#update-the-jupyterhub-config-file">Update the JupyterHub config file</a></li>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background">Background</a></li>
+  <li><a href="#set-up-amazon-web-services-aws" id="toc-set-up-amazon-web-services-aws" class="nav-link" data-scroll-target="#set-up-amazon-web-services-aws">Set-up Amazon Web Services (AWS)</a></li>
+  <li><a href="#set-up-kubernetes-cluster" id="toc-set-up-kubernetes-cluster" class="nav-link" data-scroll-target="#set-up-kubernetes-cluster">Set-up Kubernetes cluster</a></li>
+  <li><a href="#install-helm-3" id="toc-install-helm-3" class="nav-link" data-scroll-target="#install-helm-3">install helm 3</a></li>
+  <li><a href="#install-jupyterhub" id="toc-install-jupyterhub" class="nav-link" data-scroll-target="#install-jupyterhub">Install JupyterHub</a></li>
+  <li><a href="#connect-to-the-jupyterhub" id="toc-connect-to-the-jupyterhub" class="nav-link" data-scroll-target="#connect-to-the-jupyterhub">Connect to the JupyterHub</a></li>
+  <li><a href="#set-up-https" id="toc-set-up-https" class="nav-link" data-scroll-target="#set-up-https">Set-up https</a></li>
+  <li><a href="#set-up-authentication" id="toc-set-up-authentication" class="nav-link" data-scroll-target="#set-up-authentication">Set up authentication</a></li>
+  <li><a href="#deleting-the-kubernetes-cluster" id="toc-deleting-the-kubernetes-cluster" class="nav-link" data-scroll-target="#deleting-the-kubernetes-cluster">Deleting the Kubernetes cluster</a></li>
+  <li><a href="#post-installation-checklist" id="toc-post-installation-checklist" class="nav-link" data-scroll-target="#post-installation-checklist">Post-installation checklist</a></li>
   </ul>
-<div class="toc-actions"><ul class="collapse"><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/edit/main/posts/Set-up-centos-security.Rmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/posts/Set-up-centos-security.Rmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+<div class="toc-actions"><ul class="collapse"><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/edit/main/posts/set-up-jh-aws.md" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/posts/set-up-jh-aws.md" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Set-up CentOS https</h1>
+<h1 class="title">Set up JupyterHub on AWS</h1>
 </div>
 
 <div>
   <div class="description">
-    <p>Securing our JupyterHub on our Centos server</p>
+    <p>Setting up JupyterHub on AWS (Amazon Web Services)</p>
   </div>
 </div>
 
@@ -238,126 +210,168 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Now that our basic JupyterHub is running, we want to secure it. We are going to use Let’s Encrypt. Prerequisites:</p>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">Background</h2>
 <ul>
-<li>We need to have set up a domain (URL) that points to the public IP of our JupyterHub</li>
-<li>We need to ssh into our server and have <code>sudo</code> access</li>
-<li>We need to open port 80 (temporarily)</li>
+<li>Jupyter AWS setup instruction: <a href="https://saturncloud.io/blog/jupyterhub_aws/">https://saturncloud.io/blog/jupyterhub_aws/</a></li>
+<li>Documentation: <a href="https://z2jh.jupyter.org">https://z2jh.jupyter.org</a></li>
+<li>Help forum: <a href="https://discourse.jupyter.org">https://discourse.jupyter.org</a></li>
+<li>Issue tracking: <a href="https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues">https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues</a></li>
 </ul>
-<p>References:</p>
+<p>See examples of full <code>config.yaml</code> files in the <code>config</code> directory in the <a href="https://github.com/nmfs-opensci/nmfs-jhub">nmfs-opensci/nmfs-jhub</a> GitHub repo.</p>
+</section>
+<section id="set-up-amazon-web-services-aws" class="level2">
+<h2 class="anchored" data-anchor-id="set-up-amazon-web-services-aws">Set-up Amazon Web Services (AWS)</h2>
+<ol type="1">
+<li><p>Create a AWS account.</p></li>
+<li><p>Create VPC (Virtual Private Cloud) from AWS Cloud Formation using VPC template from the Jupyter AWS setup instruction or <a href="amazon-eks-vpc-private-subnets.yaml">amazon-eks-vpc-private-subnets.yaml</a></p></li>
+<li><p>Create IAM (Identity Access Management) user and roles<br>
+</p></li>
+</ol>
 <ul>
-<li><a href="https://professorkazarinoff.github.io/jupyterhub-ENGR114-2019Q4/install_jupyterhub/" class="uri">https://professorkazarinoff.github.io/jupyterhub-ENGR114-2019Q4/install_jupyterhub/</a> This is a similar JupyterHub installation</li>
-<li><a href="https://leangaurav.medium.com/simplest-https-setup-nginx-reverse-proxy-letsencrypt-ssl-certificate-aws-cloud-docker-4b74569b3c61" class="uri">https://leangaurav.medium.com/simplest-https-setup-nginx-reverse-proxy-letsencrypt-ssl-certificate-aws-cloud-docker-4b74569b3c61</a></li>
-<li><a href="https://certbot.eff.org/instructions?ws=other&amp;os=centosrhel8" class="uri">https://certbot.eff.org/instructions?ws=other&amp;os=centosrhel8</a></li>
+<li>user to access the system using <code>aws cli</code></li>
+<li>EBS (Elastic Block Storage) role<br>
+</li>
+<li>EKS (Elastic Kubernetes Service) role</li>
+<li>cluster node group role</li>
 </ul>
-<section id="create-a-domain-name" class="level2">
-<h2 class="anchored" data-anchor-id="create-a-domain-name">Create a domain name</h2>
-<p>Find a domain name provider and set one up. It is not expensive. I used GoDaddy. You only need one. Later you can use it for multiple hubs using subdomains where are created by the next step (DNS entry). For example, let’s say you get the domain <code>bluemountain123.live</code>. You can have as many subdomains as you want and they will be <code>subdomain.bluemountain123.live</code>.</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Note">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>the IAM user and roles are created to interact with AWS resources. Appropriate policies must be added to the IAM roles.</p>
+</div>
+</div>
+</section>
+<section id="set-up-kubernetes-cluster" class="level2">
+<h2 class="anchored" data-anchor-id="set-up-kubernetes-cluster">Set-up Kubernetes cluster</h2>
+<ol type="1">
+<li><p>Create AWS EKS cluster with Add-on <strong>AmazonEBS</strong></p></li>
+<li><p>Create node group with min and max number of nodes</p></li>
+<li><p>Add crediential of IAM user to a machine you are connecting from and connect to the cluster</p></li>
+</ol>
+<pre><code>export AWS_ACCESS_KEY_ID=[YOUR_ACCESS_KEY_ID]
+export AWS_SECRET_ACCESS_KEY=[YOUR_AWS_SECRET_ACCESS_KEY]
+export AWS_DEFAULT_REGION=[YOUR_REGION]
+
+aws sts get-caller-identity
+aws eks update-kubeconfig --region [YOUR_REGION] --name [YOUR_CLUSTER_NAME]</code></pre>
+<ol start="5" type="1">
+<li>Check cluster</li>
+</ol>
+<pre><code>kubectl get svc  # get a list of services in the kubernetes clusteer
+Kubectl get node  # get a list of nodes in the cluster</code></pre>
+</section>
+<section id="install-helm-3" class="level2">
+<h2 class="anchored" data-anchor-id="install-helm-3">install helm 3</h2>
+<p>Install and check version installed.</p>
+<pre><code>curl https://raw.githubusercontent.com/helm/helm/HEAD/scripts/get-helm-3 | bash
+helm version</code></pre>
+<p>Set up the <code>config.yaml</code> file. Just dummy for now.</p>
+<pre><code>nano config.yaml</code></pre>
+<p>Copy this in and then Cntl-O and return to save and then Cntl-X to exit</p>
+<pre><code># Chart config reference:   https://zero-to-jupyterhub.readthedocs.io/en/stable/resources/reference.html
+# Chart default values:     https://github.com/jupyterhub/zero-to-jupyterhub-k8s/blob/HEAD/jupyterhub/values.yaml
+#</code></pre>
+</section>
+<section id="install-jupyterhub" class="level2">
+<h2 class="anchored" data-anchor-id="install-jupyterhub">Install JupyterHub</h2>
+<p>Add the repository where we will install from.</p>
+<pre><code>helm repo add jupyterhub https://hub.jupyter.org/helm-chart/
+helm repo update</code></pre>
+<p>Install</p>
+<pre><code>helm upgrade --cleanup-on-fail \
+  --install jhub1 jupyterhub/jupyterhub \
+  --namespace jhubk8 \
+  --create-namespace \
+  --version=3.3.4 \
+  --values config.yaml</code></pre>
+<p>The variables: <code>jhub1</code> is the name of the JupyterHub. You could have many on this Kubernetes cluster. We will only have 1 however. <code>jhubk8</code> is the namespace of all the assets that will be associated with this JupyterHub. All your storage (pvc) will appear in this namespace and you will have to add <code>--namespace jhubk8</code> to commands where you are trying to list or debug assets (like storage or killing nodes that are stuck). <code>config.yaml</code> is the file that has all the configuration settings.</p>
+</section>
+<section id="connect-to-the-jupyterhub" class="level2">
+<h2 class="anchored" data-anchor-id="connect-to-the-jupyterhub">Connect to the JupyterHub</h2>
+<p>Now it is running. Let’s try connecting via IP address</p>
+<pre><code>kubectl --namespace jhubk8 get service proxy-public</code></pre>
+<p>Will show you the public IP address. You should be able to go to that and log in with any username (no password).</p>
+</section>
+<section id="set-up-https" class="level2">
+<h2 class="anchored" data-anchor-id="set-up-https">Set-up https</h2>
+<p>This will be required for setting up authentication and also security.</p>
+<section id="create-a-domain-name" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-domain-name">Create a domain name</h3>
+<p>Find a domain name provider and set one up. It is not expensive. I used GoDaddy.</p>
+</section>
 <section id="create-a-dns-entry" class="level3">
 <h3 class="anchored" data-anchor-id="create-a-dns-entry">Create a DNS entry</h3>
-<p>Let’s pretend you set up <code>bluemountain123.live</code> as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let’s say you create, <code>dhub</code> as the type A DNS entry. Put <code>dhub</code> in the name and the public IP address of the server (leaving off <code>:8000</code>) in the value section. Then <code>dhub.bluemountain123.live</code> will be the url.</p>
+<p>Let’s pretend you set up <code>bluemountain123.live</code> as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let’s say you create, <code>dhub</code> as the type A DNS entry. Then <code>dhub.bluemountain123.live</code> will be the url. You can have as many subdomains as you need.</p>
 <p><img src="../images/img8.png" class="img-fluid"></p>
 </section>
 <section id="test-if-the-url-is-working" class="level3">
 <h3 class="anchored" data-anchor-id="test-if-the-url-is-working">Test if the url is working</h3>
-<p><code>http://dhub.bluemountain123.live:8000</code> would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:</p>
+<p><code>http:\\dhub.bluemountain123.live</code> would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:</p>
 <p><img src="../images/img9.png" class="img-fluid"></p>
 </section>
+<section id="set-up-https-on-your-jupyterhub" class="level3">
+<h3 class="anchored" data-anchor-id="set-up-https-on-your-jupyterhub">Set-up https on your JupyterHub</h3>
+<p>Log back into your Kubernetes cluster, by going to your project on Google Cloud and clicking the Cloud Shell icon in the top right (box with <code>&gt;_</code>). Once you are on the shell, type</p>
+<pre><code>nano config.yaml</code></pre>
+<p>Paste this in and save (Cntl-O, return and then Cntl-X to exit). The <code>traefik</code> bit is specific to GCP. Often people have trouble with GCP cluster spinning up too fast and it can’t find the letsencrypt certificate. A small delay prevents that problem. This is just for GCP. I never had that problem on Azure.</p>
+<pre><code>proxy:
+  traefik:
+    extraInitContainers:
+      # This startup delay can help the k8s container network find the 
+      # https certificate and allow letsencrypt to work in GCP
+      - name: startup-delay
+        image: busybox:stable
+        command: ["sh", "-c", "sleep 10"]
+  https:
+    enabled: true
+    hosts:
+      - dhub.bluemountain123.live
+    letsencrypt:
+      contactEmail: yourname@gmail.com</code></pre>
 </section>
-<section id="prep-the-server" class="level2">
-<h2 class="anchored" data-anchor-id="prep-the-server">Prep the server</h2>
-<section id="open-port-80" class="level3">
-<h3 class="anchored" data-anchor-id="open-port-80">Open port 80</h3>
-<p>This is the default port for http and certbot is going to spin up a temporary webserver on this port and get the SSL certificates. We will close this port when we are done.</p>
+<section id="update-the-jupyterhub-installation" class="level3">
+<h3 class="anchored" data-anchor-id="update-the-jupyterhub-installation">Update the JupyterHub installation</h3>
+<p>Anytime you change <code>config.yaml</code> you need to run this code. Replace the variables (like <code>jhub1</code>) with your names. <code>jupyterhub/jupyterhub</code> is specific to the helm chart; don’t change that.</p>
+<pre><code>helm upgrade --cleanup-on-fail   --install jhub1 jupyterhub/jupyterhub   --namespace jhubk8   --create-namespace   --version=3.3.4   --values config.yaml</code></pre>
+</section>
+<section id="test-if-https-is-working" class="level3">
+<h3 class="anchored" data-anchor-id="test-if-https-is-working">Test if https is working</h3>
+<p>Try <code>https:\\dhub.bluemountain123.live</code> and you should see the JupyterHub login without that http warning.</p>
+</section>
+</section>
+<section id="set-up-authentication" class="level2">
+<h2 class="anchored" data-anchor-id="set-up-authentication">Set up authentication</h2>
+<p>See the post on <a href="set-up-authentication.html">setting up authentication</a> for instructions.</p>
+</section>
+<section id="deleting-the-kubernetes-cluster" class="level2">
+<h2 class="anchored" data-anchor-id="deleting-the-kubernetes-cluster">Deleting the Kubernetes cluster</h2>
 <ul>
-<li>Go to the Azure dashboard (Networking section) for your CentOS server and make sure port 80 is open.</li>
-<li>Check that the firewall is not blocking port 80: <code>sudo firewall-cmd --list-ports</code>. If 80 is not listed, we need to add it and reload:</li>
+<li>Go to EKS Console</li>
+<li>Select the cluster and delete all associated node groups</li>
+<li>Once node groups are deleted, then delete the cluster</li>
+<li>Wait awhile and make sure all the associated VMs and storage are deleted.</li>
+<li>Go back onto billing in a few days and make sure it is not charging you. If it is, something associated with the JHub didn’t get deleted.</li>
 </ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd  <span class="at">--permanent</span> <span class="at">--add-port</span> 80/tcp</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--reload</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--list-ports</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 </section>
-<section id="stop-our-jupyterhub" class="level3">
-<h3 class="anchored" data-anchor-id="stop-our-jupyterhub">Stop our JupyterHub</h3>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl start jupyterhub.service</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-</section>
-<section id="install-certbot" class="level2">
-<h2 class="anchored" data-anchor-id="install-certbot">Install certbot</h2>
-<p>Per Let’s Encrypt recommendations, we will use certbot to get our SSL certificates. <a href="https://certbot.eff.org/" class="uri">https://certbot.eff.org/</a>.</p>
-<p>Here are the instructions for certbot on CentOS 8: <a href="https://certbot.eff.org/instructions?ws=other&amp;os=centosrhel8" class="uri">https://certbot.eff.org/instructions?ws=other&amp;os=centosrhel8</a> We choose “other” as the software.</p>
-<section id="update-the-centos-repos" class="level3">
-<h3 class="anchored" data-anchor-id="update-the-centos-repos">Update the CentOS repos</h3>
-<p>I am using an End-of-Life CentOS distribution (sigh), and the repositories have been archived. This <a href="https://forums.centos.org/viewtopic.php?f=54&amp;t=78708#p330705">solution</a> worked.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">dnf</span> <span class="at">--disablerepo</span> <span class="st">'*'</span> <span class="at">--enablerepo</span><span class="op">=</span>extras swap centos-linux-repos centos-stream-repos</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">dnf</span> distro-sync</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Note the last line, suggesting updating a bunch of packages and I said NO to that.</p>
-</section>
-<section id="install-snap" class="level3">
-<h3 class="anchored" data-anchor-id="install-snap">Install snap</h3>
-<p>Per instructions here: <a href="https://snapcraft.io/docs/installing-snap-on-centos" class="uri">https://snapcraft.io/docs/installing-snap-on-centos</a> This updated some SELinux packages, which seemed a bit alarming but nothing seemed to break.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> yum install snapd</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl enable <span class="at">--now</span> snapd.socket</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ln <span class="at">-s</span> /var/lib/snapd/snap /snap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="install-certbot-1" class="level3">
-<h3 class="anchored" data-anchor-id="install-certbot-1">Install certbot</h3>
-<p>I had to run this twice. First time it complained.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> snap install <span class="at">--classic</span> certbot</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ln <span class="at">-s</span> /snap/bin/certbot /usr/bin/certbot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="create-the-ssl-certs." class="level3">
-<h3 class="anchored" data-anchor-id="create-the-ssl-certs.">Create the SSL certs.</h3>
-<p>Have certbot create the SSL certs by spinning up a temporary webserver listening on port 80. Per instructions on the certbot website.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> certbot certonly <span class="at">--standalone</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>It’ll ask for your email and the URL of your website. In my toy example, I created the domain <code>dhub.bluemountain123.live</code>.</p>
-</section>
-<section id="ssl-cert-renewal" class="level3">
-<h3 class="anchored" data-anchor-id="ssl-cert-renewal">SSL cert renewal</h3>
-<p>With certbot running, the certificates should auto renew, but I haven’t tested this.</p>
-</section>
-</section>
-<section id="update-the-jupyterhub-config-file" class="level2">
-<h2 class="anchored" data-anchor-id="update-the-jupyterhub-config-file">Update the JupyterHub config file</h2>
-<p>Edit with something like</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /opt/miniconda3/envs/jupyterhub/etc/jupyterhub/</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> jupyterhub_config.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Then add this to the config file. The port that is configured for SSL by default is 443. https is not going to work on 8000 which we had configured for http (on Azure).</p>
-<pre><code>c.JupyterHub.port = 443
-c.JupyterHub.ssl_key = '/etc/letsencrypt/live/dhub.bluemountain123.live/privkey.pem'
-c.JupyterHub.ssl_cert = '/etc/letsencrypt/live/dhub.bluemountain123.live/fullchain.pem'</code></pre>
-<section id="restart-and-test" class="level3">
-<h3 class="anchored" data-anchor-id="restart-and-test">Restart and Test</h3>
-<p>We need to open 443 in the firewall, and we can close 80 and 8000 now.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd  <span class="at">--permanent</span> <span class="at">--add-port</span> 443/tcp</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd  <span class="at">--permanent</span> <span class="at">--remove-port</span><span class="op">=</span>80/tcp</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd  <span class="at">--permanent</span> <span class="at">--remove-port</span><span class="op">=</span>8000/tcp</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--reload</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> firewall-cmd <span class="at">--list-ports</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Next we restart our JupyterHub service.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl start jupyterhub.service</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Try <code>https://dhub.bluemountain123.live</code> and you should see the JupyterHub login without the http warning.</p>
+<section id="post-installation-checklist" class="level2">
+<h2 class="anchored" data-anchor-id="post-installation-checklist">Post-installation checklist</h2>
+<ul>
+<li>Verify that created Pods enter a Running state: <code>kubectl --namespace=jhubk8 get pod</code></li>
+<li>If a pod is stuck with a Pending or ContainerCreating status, diagnose with: <code>kubectl --namespace=jhubk8 describe pod &lt;name of pod&gt;</code></li>
+<li>If a pod keeps restarting, diagnose with: <code>kubectl --namespace=jhubk8 logs --previous &lt;name of pod&gt;</code></li>
+<li>Verify an external IP is provided for the k8s Service proxy-public. <code>kubectl --namespace=jhubk8 get service proxy-public</code></li>
+<li>If the external ip remains <pending>, diagnose with: <code>kubectl --namespace=jhubk8 describe service proxy-public</code></pending></li>
+</ul>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -897,13 +911,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../posts/Set-up-centos.html" class="pagination-link  aria-label=" set-up="" jhub="" on="" centos"="">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Set-up JHub on Centos</span>
+      <a href="../posts/set-up-jh-gcp.html" class="pagination-link  aria-label=" set-up="" jhub="" on="" google="" cloud"="">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Set-up JHub on Google Cloud</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../posts/set-up-authentication.html" class="pagination-link" aria-label="Set-up authentication">
-        <span class="nav-page-text">Set-up authentication</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../posts/Set-up-centos.html" class="pagination-link" aria-label="Set-up JHub on Centos">
+        <span class="nav-page-text">Set-up JHub on Centos</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

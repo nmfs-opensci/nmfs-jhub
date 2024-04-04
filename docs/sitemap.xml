@@ -1,39 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/set-up-vm.html</loc>
-    <lastmod>2024-03-31T14:24:39.162Z</lastmod>
+    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/set-up-jh-aws.html</loc>
+    <lastmod>2024-04-04T15:29:50.856Z</lastmod>
   </url>
   <url>
-    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/set-up-authentication.html</loc>
-    <lastmod>2024-03-31T16:00:40.544Z</lastmod>
-  </url>
-  <url>
-    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/Set-up-daskhub.html</loc>
-    <lastmod>2024-03-31T16:02:35.659Z</lastmod>
-  </url>
-  <url>
-    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/Set-up-centos-tljh.html</loc>
-    <lastmod>2024-03-31T15:55:59.619Z</lastmod>
-  </url>
-  <url>
-    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/JHub-User-Guide.html</loc>
-    <lastmod>2024-03-31T15:57:05.124Z</lastmod>
-  </url>
-  <url>
-    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/Set-up-centos-security.html</loc>
-    <lastmod>2024-03-31T15:56:17.960Z</lastmod>
-  </url>
-  <url>
-    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/Set-up-centos.html</loc>
-    <lastmod>2024-03-31T15:57:33.946Z</lastmod>
+    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/set-up-jh-gcp.html</loc>
+    <lastmod>2024-03-31T16:10:36.737Z</lastmod>
   </url>
   <url>
     <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/Setup-Notes.html</loc>
     <lastmod>2023-06-14T16:35:11.167Z</lastmod>
   </url>
   <url>
-    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/set-up-jh-gcp.html</loc>
-    <lastmod>2024-03-31T16:10:36.737Z</lastmod>
+    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/Set-up-centos.html</loc>
+    <lastmod>2024-03-31T15:57:33.946Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/Set-up-centos-security.html</loc>
+    <lastmod>2024-03-31T15:56:17.960Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/JHub-User-Guide.html</loc>
+    <lastmod>2024-03-31T15:57:05.124Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/Set-up-centos-tljh.html</loc>
+    <lastmod>2024-03-31T15:55:59.619Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/Set-up-daskhub.html</loc>
+    <lastmod>2024-03-31T16:02:35.659Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/set-up-authentication.html</loc>
+    <lastmod>2024-03-31T16:00:40.544Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmfs-opensci.github.io/nmfs-jhub/posts/set-up-vm.html</loc>
+    <lastmod>2024-03-31T14:24:39.162Z</lastmod>
   </url>
 </urlset>

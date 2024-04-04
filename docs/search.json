@@ -1,412 +1,230 @@
 [
   {
-    "objectID": "posts/set-up-vm.html",
-    "href": "posts/set-up-vm.html",
-    "title": "Set up VM",
+    "objectID": "posts/set-up-jh-aws.html",
+    "href": "posts/set-up-jh-aws.html",
+    "title": "Set up JupyterHub on AWS",
     "section": "",
-    "text": "For testing JupyterHub set-ups, I start various Linux machines. Here is how to set up a virtual machine."
+    "text": "Jupyter AWS setup instruction: https://saturncloud.io/blog/jupyterhub_aws/\nDocumentation: https://z2jh.jupyter.org\nHelp forum: https://discourse.jupyter.org\nIssue tracking: https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues\n\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo.",
+    "crumbs": [
+      "Set-up JHub on AWS"
+    ]
   },
   {
-    "objectID": "posts/set-up-vm.html#azure",
-    "href": "posts/set-up-vm.html#azure",
-    "title": "Set up VM",
-    "section": "Azure",
-    "text": "Azure\n\nCreated a Centos 8.3 server on Azure: https://portal.azure.com/#create/cloud-infrastructure-services.centos-8-3centos-8-3\nI didn’t do anything special for set-up. Choose SSH with key.\nOnce it is created, I went to the dashboard and selected my VM. The dashboard has a “Connect” button to get to the shell and it shows the public IP address.\nI had to create a special security rule to allow me to ssh into the public IP address to connect. Normally I use the cloud shell to connect, but Azure would not let me connect via the cloud shell for a server since it wanted upgraded security and I cannot do that with my work subscription.\nThen I saved the key somewhere on my computer and\n\nchmod 400 ~/&lt;key location&gt;\nssh -i ~/&lt;key location&gt; &lt;vm-username&gt;@&lt;public key&gt;\n\nI downloaded VMware Fusion 13.0.2 for M1 macs.\nThen I downloaded a Centos 9 server image from here\nhttps://www.centos.org/download/\nOpen VMWare and create a new VM. Choose other Linux. Doesn’t actually matter since it will be removed.\nShut down the VM.\nGo to settings and remove the hard drive.\nAdd a new hardrive. For me, I used ‘Add Device’ in the upper right of the Settings box. Choose ‘existing harddrive’\nHelp for M1 https://medium.com/@thehippieandtheboss/how-to-create-a-linux-virtual-machine-on-macos-1278ec1ef327\nhttps://tomcudd.com/how-i-set-up-a-centos-7-virtual-machine/"
-  },
-  {
-    "objectID": "posts/set-up-authentication.html",
-    "href": "posts/set-up-authentication.html",
-    "title": "Set up JupyterHub Authentication",
+    "objectID": "posts/set-up-jh-aws.html#background",
+    "href": "posts/set-up-jh-aws.html#background",
+    "title": "Set up JupyterHub on AWS",
     "section": "",
-    "text": "Documentation: https://z2jh.jupyter.org\n\nI assume you have https set-up and your JuptyerHub is installed with a config.yaml file. You will need to know your upgrade command when you make changes to the config.yaml file. For example, but yours will look different.\nhelm upgrade --cleanup-on-fail   --install jhub1 jupyterhub/jupyterhub   --namespace jhubk8   --create-namespace   --version=3.3.4   --values config.yaml\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo.",
+    "text": "Jupyter AWS setup instruction: https://saturncloud.io/blog/jupyterhub_aws/\nDocumentation: https://z2jh.jupyter.org\nHelp forum: https://discourse.jupyter.org\nIssue tracking: https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues\n\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo.",
     "crumbs": [
-      "Set-up authentication"
+      "Set-up JHub on AWS"
     ]
   },
   {
-    "objectID": "posts/set-up-authentication.html#requirements",
-    "href": "posts/set-up-authentication.html#requirements",
-    "title": "Set up JupyterHub Authentication",
+    "objectID": "posts/set-up-jh-aws.html#set-up-amazon-web-services-aws",
+    "href": "posts/set-up-jh-aws.html#set-up-amazon-web-services-aws",
+    "title": "Set up JupyterHub on AWS",
+    "section": "Set-up Amazon Web Services (AWS)",
+    "text": "Set-up Amazon Web Services (AWS)\n\nCreate a AWS account.\nCreate VPC (Virtual Private Cloud) from AWS Cloud Formation using VPC template from the Jupyter AWS setup instruction or amazon-eks-vpc-private-subnets.yaml\nCreate IAM (Identity Access Management) user and roles\n\n\n\nuser to access the system using aws cli\nEBS (Elastic Block Storage) role\n\nEKS (Elastic Kubernetes Service) role\ncluster node group role\n\n\n\n\n\n\n\nNote\n\n\n\nthe IAM user and roles are created to interact with AWS resources. Appropriate policies must be added to the IAM roles.",
+    "crumbs": [
+      "Set-up JHub on AWS"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-aws.html#set-up-kubernetes-cluster",
+    "href": "posts/set-up-jh-aws.html#set-up-kubernetes-cluster",
+    "title": "Set up JupyterHub on AWS",
+    "section": "Set-up Kubernetes cluster",
+    "text": "Set-up Kubernetes cluster\n\nCreate AWS EKS cluster with Add-on AmazonEBS\nCreate node group with min and max number of nodes\nAdd crediential of IAM user to a machine you are connecting from and connect to the cluster\n\nexport AWS_ACCESS_KEY_ID=[YOUR_ACCESS_KEY_ID]\nexport AWS_SECRET_ACCESS_KEY=[YOUR_AWS_SECRET_ACCESS_KEY]\nexport AWS_DEFAULT_REGION=[YOUR_REGION]\n\naws sts get-caller-identity\naws eks update-kubeconfig --region [YOUR_REGION] --name [YOUR_CLUSTER_NAME]\n\nCheck cluster\n\nkubectl get svc  # get a list of services in the kubernetes clusteer\nKubectl get node  # get a list of nodes in the cluster",
+    "crumbs": [
+      "Set-up JHub on AWS"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-aws.html#install-helm-3",
+    "href": "posts/set-up-jh-aws.html#install-helm-3",
+    "title": "Set up JupyterHub on AWS",
+    "section": "install helm 3",
+    "text": "install helm 3\nInstall and check version installed.\ncurl https://raw.githubusercontent.com/helm/helm/HEAD/scripts/get-helm-3 | bash\nhelm version\nSet up the config.yaml file. Just dummy for now.\nnano config.yaml\nCopy this in and then Cntl-O and return to save and then Cntl-X to exit\n# Chart config reference:   https://zero-to-jupyterhub.readthedocs.io/en/stable/resources/reference.html\n# Chart default values:     https://github.com/jupyterhub/zero-to-jupyterhub-k8s/blob/HEAD/jupyterhub/values.yaml\n#",
+    "crumbs": [
+      "Set-up JHub on AWS"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-aws.html#install-jupyterhub",
+    "href": "posts/set-up-jh-aws.html#install-jupyterhub",
+    "title": "Set up JupyterHub on AWS",
+    "section": "Install JupyterHub",
+    "text": "Install JupyterHub\nAdd the repository where we will install from.\nhelm repo add jupyterhub https://hub.jupyter.org/helm-chart/\nhelm repo update\nInstall\nhelm upgrade --cleanup-on-fail \\\n  --install jhub1 jupyterhub/jupyterhub \\\n  --namespace jhubk8 \\\n  --create-namespace \\\n  --version=3.3.4 \\\n  --values config.yaml\nThe variables: jhub1 is the name of the JupyterHub. You could have many on this Kubernetes cluster. We will only have 1 however. jhubk8 is the namespace of all the assets that will be associated with this JupyterHub. All your storage (pvc) will appear in this namespace and you will have to add --namespace jhubk8 to commands where you are trying to list or debug assets (like storage or killing nodes that are stuck). config.yaml is the file that has all the configuration settings.",
+    "crumbs": [
+      "Set-up JHub on AWS"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-aws.html#connect-to-the-jupyterhub",
+    "href": "posts/set-up-jh-aws.html#connect-to-the-jupyterhub",
+    "title": "Set up JupyterHub on AWS",
+    "section": "Connect to the JupyterHub",
+    "text": "Connect to the JupyterHub\nNow it is running. Let’s try connecting via IP address\nkubectl --namespace jhubk8 get service proxy-public\nWill show you the public IP address. You should be able to go to that and log in with any username (no password).",
+    "crumbs": [
+      "Set-up JHub on AWS"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-aws.html#set-up-https",
+    "href": "posts/set-up-jh-aws.html#set-up-https",
+    "title": "Set up JupyterHub on AWS",
+    "section": "Set-up https",
+    "text": "Set-up https\nThis will be required for setting up authentication and also security.\n\nCreate a domain name\nFind a domain name provider and set one up. It is not expensive. I used GoDaddy.\n\n\nCreate a DNS entry\nLet’s pretend you set up bluemountain123.live as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let’s say you create, dhub as the type A DNS entry. Then dhub.bluemountain123.live will be the url. You can have as many subdomains as you need.\n\n\n\nTest if the url is working\nhttp:\\\\dhub.bluemountain123.live would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:\n\n\n\nSet-up https on your JupyterHub\nLog back into your Kubernetes cluster, by going to your project on Google Cloud and clicking the Cloud Shell icon in the top right (box with &gt;_). Once you are on the shell, type\nnano config.yaml\nPaste this in and save (Cntl-O, return and then Cntl-X to exit). The traefik bit is specific to GCP. Often people have trouble with GCP cluster spinning up too fast and it can’t find the letsencrypt certificate. A small delay prevents that problem. This is just for GCP. I never had that problem on Azure.\nproxy:\n  traefik:\n    extraInitContainers:\n      # This startup delay can help the k8s container network find the \n      # https certificate and allow letsencrypt to work in GCP\n      - name: startup-delay\n        image: busybox:stable\n        command: [\"sh\", \"-c\", \"sleep 10\"]\n  https:\n    enabled: true\n    hosts:\n      - dhub.bluemountain123.live\n    letsencrypt:\n      contactEmail: yourname@gmail.com\n\n\nUpdate the JupyterHub installation\nAnytime you change config.yaml you need to run this code. Replace the variables (like jhub1) with your names. jupyterhub/jupyterhub is specific to the helm chart; don’t change that.\nhelm upgrade --cleanup-on-fail   --install jhub1 jupyterhub/jupyterhub   --namespace jhubk8   --create-namespace   --version=3.3.4   --values config.yaml\n\n\nTest if https is working\nTry https:\\\\dhub.bluemountain123.live and you should see the JupyterHub login without that http warning.",
+    "crumbs": [
+      "Set-up JHub on AWS"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-aws.html#set-up-authentication",
+    "href": "posts/set-up-jh-aws.html#set-up-authentication",
+    "title": "Set up JupyterHub on AWS",
+    "section": "Set up authentication",
+    "text": "Set up authentication\nSee the post on setting up authentication for instructions.",
+    "crumbs": [
+      "Set-up JHub on AWS"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-aws.html#deleting-the-kubernetes-cluster",
+    "href": "posts/set-up-jh-aws.html#deleting-the-kubernetes-cluster",
+    "title": "Set up JupyterHub on AWS",
+    "section": "Deleting the Kubernetes cluster",
+    "text": "Deleting the Kubernetes cluster\n\nGo to EKS Console\nSelect the cluster and delete all associated node groups\nOnce node groups are deleted, then delete the cluster\nWait awhile and make sure all the associated VMs and storage are deleted.\nGo back onto billing in a few days and make sure it is not charging you. If it is, something associated with the JHub didn’t get deleted.",
+    "crumbs": [
+      "Set-up JHub on AWS"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-aws.html#post-installation-checklist",
+    "href": "posts/set-up-jh-aws.html#post-installation-checklist",
+    "title": "Set up JupyterHub on AWS",
+    "section": "Post-installation checklist",
+    "text": "Post-installation checklist\n\nVerify that created Pods enter a Running state: kubectl --namespace=jhubk8 get pod\nIf a pod is stuck with a Pending or ContainerCreating status, diagnose with: kubectl --namespace=jhubk8 describe pod &lt;name of pod&gt;\nIf a pod keeps restarting, diagnose with: kubectl --namespace=jhubk8 logs --previous &lt;name of pod&gt;\nVerify an external IP is provided for the k8s Service proxy-public. kubectl --namespace=jhubk8 get service proxy-public\nIf the external ip remains , diagnose with: kubectl --namespace=jhubk8 describe service proxy-public",
+    "crumbs": [
+      "Set-up JHub on AWS"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-gcp.html",
+    "href": "posts/set-up-jh-gcp.html",
+    "title": "Set up JupyterHub on GCP",
     "section": "",
-    "text": "Documentation: https://z2jh.jupyter.org\n\nI assume you have https set-up and your JuptyerHub is installed with a config.yaml file. You will need to know your upgrade command when you make changes to the config.yaml file. For example, but yours will look different.\nhelm upgrade --cleanup-on-fail   --install jhub1 jupyterhub/jupyterhub   --namespace jhubk8   --create-namespace   --version=3.3.4   --values config.yaml\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo.",
+    "text": "Documentation: https://z2jh.jupyter.org\nHelp forum: https://discourse.jupyter.org\nIssue tracking: https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues\n\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo.",
     "crumbs": [
-      "Set-up authentication"
+      "Set-up JHub on Google Cloud"
     ]
   },
   {
-    "objectID": "posts/set-up-authentication.html#set-up-github-authentication",
-    "href": "posts/set-up-authentication.html#set-up-github-authentication",
-    "title": "Set up JupyterHub Authentication",
-    "section": "Set up GitHub authentication",
-    "text": "Set up GitHub authentication\nI am going to show an example where I use a team on a GitHub organization to manage authentication. There are many other ways to manage users. See the JupyterHub documentation.\n\nCreate a new Oauth Application on GitHub\nThis is going to be associated with your (personal) GitHub account, but you can use a team on a GitHub org that you are owner of.\nLog into GitHub and go to GitHub &gt; Settings &gt; Developer Settings &gt; New Oauth Application\nLook carefully at how I filled in the boxes.\n\nNext you will see something like this\n\nYou need to copy the ID and then click the create secrets button and save the secret. Save those for later.\n\n\nCreate a team in your GitHub org\nYou will be added by default and add anyone else who needs access to the hub. Let’s say your org is MyOrg and the team is called DaskHub. So then the allowed organization is MyOrg:DaskHub. You can leave off :DaskHub if you want to allow all members of the organization to log in.\n\n\nEdit the config.yaml file\nnano config.yaml\nAdd the following to your config file (nano config.yaml). Replace the id, secret and url with your values. We need to set the KubeSpawner working directory because the Openscapes Docker image sets it to home/jovyan/.kernels–which is fine but annoying since .kernels is hidden and not $HOME.\nMake sure you have “myteam” created as a team in your GitHub org (“myorg”) and that you have added yourself to that team.\nhub:\n  config:\n    GitHubOAuthenticator:\n      client_id: &lt;replace by what is on GitHub&gt;\n      client_secret: &lt;replace with secret on GitHub&gt;\n      oauth_callback_url: https://dhub.bluemountain123.live/hub/oauth_callback\n      allowed_organizations:\n        - myorg:myteam\n      scope:\n        - read:org\n    Authenticator:\n      admin_users:\n        - yourGitHubusername\n    JupyterHub:\n      authenticator_class: github\n    KubeSpawner:\n      working_dir: /home/jovyan\nUpdate the hub.\nhelm upgrade --cleanup-on-fail   --install jhub1 jupyterhub/jupyterhub   --namespace jhubk8   --create-namespace   --version=3.3.4   --values config.yaml\nTest. Go to https:\\\\dhub.bluemountain123.live and it should ask you to login with GitHub. There will be some popups asking permission for the OAuth to have access to “myorg”. Make sure you grant access to “myorg”. Oh no, I forgot! You’ll probably have to go through the process of recreating an OAuth. I am not sure how to trigger it to ask to grant access again.\n\n\nIf you use daskhub helm chart\nIf you used the daskhub helm chart instead of the jupyterhub helm chart, then the config.yaml file has a jupyterhub: section:\njupyterhub:\n  hub:\n    config:\n      GitHubOAuthenticator:\n        client_id: xxxxxxx\n        client_secret: xxxxxxx\n        oauth_callback_url: https://dhub.opensci.live/hub/oauth_callback\n        allowed_organizations:\n          - myorg:myteam\n        scope:\n          - read:org\n      Authenticator:\n        admin_users:\n          - eeholmes\n      JupyterHub:\n        authenticator_class: github\n      KubeSpawner:\n        working_dir: /home/jovyan",
-    "crumbs": [
-      "Set-up authentication"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-daskhub.html",
-    "href": "posts/Set-up-daskhub.html",
-    "title": "DaskHub Set-up",
+    "objectID": "posts/set-up-jh-gcp.html#background",
+    "href": "posts/set-up-jh-gcp.html#background",
+    "title": "Set up JupyterHub on GCP",
     "section": "",
-    "text": "Documentation: https://z2jh.jupyter.org\n\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo.",
+    "text": "Documentation: https://z2jh.jupyter.org\nHelp forum: https://discourse.jupyter.org\nIssue tracking: https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues\n\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo.",
     "crumbs": [
-      "Set-up JHub on Azure"
+      "Set-up JHub on Google Cloud"
     ]
   },
   {
-    "objectID": "posts/Set-up-daskhub.html#requirements",
-    "href": "posts/Set-up-daskhub.html#requirements",
-    "title": "DaskHub Set-up",
+    "objectID": "posts/set-up-jh-gcp.html#set-up-google-cloud",
+    "href": "posts/set-up-jh-gcp.html#set-up-google-cloud",
+    "title": "Set up JupyterHub on GCP",
+    "section": "Set-up Google Cloud",
+    "text": "Set-up Google Cloud\n\nCreate a Google Cloud account. Activate Compute API. It’ll be one of the options.\nCreate a project. There is a button somewhere.\nOpen the Cloud Shell. Look for ‘Connect’ or if you don’t see that look for the icon in top right that looks like box with &gt;_ in it.",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-gcp.html#set-up-kubernetes-cluster",
+    "href": "posts/set-up-jh-gcp.html#set-up-kubernetes-cluster",
+    "title": "Set up JupyterHub on GCP",
+    "section": "Set-up Kubernetes cluster",
+    "text": "Set-up Kubernetes cluster\nNote, you’ll likely be asked to activate the Kubernetes API. It gave me a link to do so and I clicked that.\nOnce you are inside the Cloud Shell, you create a Kubernetes cluster. This is a simple example. Create the cluster and add the admin. Use your email that you use for your Google Cloud account. You don’t need a big machine type here. This just runs the Kubernetes bit; it is not running computations.\ngcloud container clusters create \\\n  --machine-type n1-standard-2 \\\n  --num-nodes 2 \\\n  --zone us-west1-a \\\n  --cluster-version latest \\\n  jhub\n\nkubectl create clusterrolebinding cluster-admin-binding \\\n  --clusterrole=cluster-admin \\\n  --user=yourname@gmail.com\nHere jhub is the name I gave the cluster. You will need this name in many places so don’t make it too long. Choose a zone with a region and letter. For me, I have run into problems if I don’t pin the region (us-west1, us-east1, etc) to a zone (a, b, c).\nNext create the node pools for users. Here is where you might want bigger machines. How much RAM users get will be specified in your config.yaml and that will determine how many users per node. So if you will have lots of users, then you need to have a big max-nodes.\ngcloud beta container node-pools create user-pool \\\n  --machine-type n1-standard-2 \\\n  --num-nodes 0 \\\n  --enable-autoscaling \\\n  --min-nodes 0 \\\n  --max-nodes 3 \\\n  --node-labels hub.jupyter.org/node-purpose=user \\\n  --node-taints hub.jupyter.org_dedicated=user:NoSchedule \\\n  --zone us-west1-a \\\n  --preemptible \\\n  --cluster jhub\nThe jhub is the name of the cluster I set when I created the cluster.",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-gcp.html#install-helm-3",
+    "href": "posts/set-up-jh-gcp.html#install-helm-3",
+    "title": "Set up JupyterHub on GCP",
+    "section": "install helm 3",
+    "text": "install helm 3\nInstall and check version installed.\ncurl https://raw.githubusercontent.com/helm/helm/HEAD/scripts/get-helm-3 | bash\nhelm version\nSet up the config.yaml file. Just dummy for now.\nnano config.yaml\nCopy this in and then Cntl-O and return to save and then Cntl-X to exit\n# Chart config reference:   https://zero-to-jupyterhub.readthedocs.io/en/stable/resources/reference.html\n# Chart default values:     https://github.com/jupyterhub/zero-to-jupyterhub-k8s/blob/HEAD/jupyterhub/values.yaml\n#",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-gcp.html#install-jupyterhub",
+    "href": "posts/set-up-jh-gcp.html#install-jupyterhub",
+    "title": "Set up JupyterHub on GCP",
+    "section": "Install JupyterHub",
+    "text": "Install JupyterHub\nAdd the repository where we will install from.\nhelm repo add jupyterhub https://hub.jupyter.org/helm-chart/\nhelm repo update\nInstall\nhelm upgrade --cleanup-on-fail \\\n  --install jhub1 jupyterhub/jupyterhub \\\n  --namespace jhubk8 \\\n  --create-namespace \\\n  --version=3.3.4 \\\n  --values config.yaml\nThe variables: jhub1 is the name of the JupyterHub. You could have many on this Kubernetes cluster. We will only have 1 however. jhubk8 is the namespace of all the assets that will be associated with this JupyterHub. All your storage (pvc) will appear in this namespace and you will have to add --namespace jhubk8 to commands where you are trying to list or debug assets (like storage or killing nodes that are stuck). config.yaml is the file that has all the configuration settings.",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-gcp.html#connect-to-the-jupyterhub",
+    "href": "posts/set-up-jh-gcp.html#connect-to-the-jupyterhub",
+    "title": "Set up JupyterHub on GCP",
+    "section": "Connect to the JupyterHub",
+    "text": "Connect to the JupyterHub\nNow it is running. Let’s try connecting via IP address\nkubectl --namespace jhubk8 get service proxy-public\nWill show you the public IP address. You should be able to go to that and log in with any username (no password).",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-gcp.html#set-up-https",
+    "href": "posts/set-up-jh-gcp.html#set-up-https",
+    "title": "Set up JupyterHub on GCP",
+    "section": "Set-up https",
+    "text": "Set-up https\nThis will be required for setting up authentication and also security.\n\nCreate a domain name\nFind a domain name provider and set one up. It is not expensive. I used GoDaddy.\n\n\nCreate a DNS entry\nLet’s pretend you set up bluemountain123.live as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let’s say you create, dhub as the type A DNS entry. Then dhub.bluemountain123.live will be the url. You can have as many subdomains as you need.\n\n\n\nTest if the url is working\nhttp:\\\\dhub.bluemountain123.live would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:\n\n\n\nSet-up https on your JupyterHub\nLog back into your Kubernetes cluster, by going to your project on Google Cloud and clicking the Cloud Shell icon in the top right (box with &gt;_). Once you are on the shell, type\nnano config.yaml\nPaste this in and save (Cntl-O, return and then Cntl-X to exit). The traefik bit is specific to GCP. Often people have trouble with GCP cluster spinning up too fast and it can’t find the letsencrypt certificate. A small delay prevents that problem. This is just for GCP. I never had that problem on Azure.\nproxy:\n  traefik:\n    extraInitContainers:\n      # This startup delay can help the k8s container network find the \n      # https certificate and allow letsencrypt to work in GCP\n      - name: startup-delay\n        image: busybox:stable\n        command: [\"sh\", \"-c\", \"sleep 10\"]\n  https:\n    enabled: true\n    hosts:\n      - dhub.bluemountain123.live\n    letsencrypt:\n      contactEmail: yourname@gmail.com\n\n\nUpdate the JupyterHub installation\nAnytime you change config.yaml you need to run this code. Replace the variables (like jhub1) with your names. jupyterhub/jupyterhub is specific to the helm chart; don’t change that.\nhelm upgrade --cleanup-on-fail   --install jhub1 jupyterhub/jupyterhub   --namespace jhubk8   --create-namespace   --version=3.3.4   --values config.yaml\n\n\nTest if https is working\nTry https:\\\\dhub.bluemountain123.live and you should see the JupyterHub login without that http warning.",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-gcp.html#set-up-authentication",
+    "href": "posts/set-up-jh-gcp.html#set-up-authentication",
+    "title": "Set up JupyterHub on GCP",
+    "section": "Set up authentication",
+    "text": "Set up authentication\nSee the post on setting up authentication for instructions.",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-gcp.html#deleting-the-kubernetes-cluster",
+    "href": "posts/set-up-jh-gcp.html#deleting-the-kubernetes-cluster",
+    "title": "Set up JupyterHub on GCP",
+    "section": "Deleting the Kubernetes cluster",
+    "text": "Deleting the Kubernetes cluster\n\nGo to dashboard. Make sure you are in the project with the Kubernetes cluster.\nClick on the Kubernetes API button and then click on the cluster with your JHub\nAt that point, you will see the delete button at the top. Click that.\nWait awhile and make sure all the associated VMs and storage are deleted.\nGo back onto billing in a few days and make sure it is not charging you. If it is, something associated with the JHub didn’t get deleted.",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-gcp.html#post-installation-checklist",
+    "href": "posts/set-up-jh-gcp.html#post-installation-checklist",
+    "title": "Set up JupyterHub on GCP",
+    "section": "Post-installation checklist",
+    "text": "Post-installation checklist\n\nVerify that created Pods enter a Running state: kubectl --namespace=jhubk8 get pod\nIf a pod is stuck with a Pending or ContainerCreating status, diagnose with: kubectl --namespace=jhubk8 describe pod &lt;name of pod&gt;\nIf a pod keeps restarting, diagnose with: kubectl --namespace=jhubk8 logs --previous &lt;name of pod&gt;\nVerify an external IP is provided for the k8s Service proxy-public. kubectl --namespace=jhubk8 get service proxy-public\nIf the external ip remains , diagnose with: kubectl --namespace=jhubk8 describe service proxy-public",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
+  },
+  {
+    "objectID": "posts/Setup-Notes.html",
+    "href": "posts/Setup-Notes.html",
+    "title": "Instructions for editing config",
     "section": "",
-    "text": "Documentation: https://z2jh.jupyter.org\n\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo.",
-    "crumbs": [
-      "Set-up JHub on Azure"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-daskhub.html#set-up-on-azure",
-    "href": "posts/Set-up-daskhub.html#set-up-on-azure",
-    "title": "DaskHub Set-up",
-    "section": "Set up on Azure",
-    "text": "Set up on Azure\nThis is my notes for setting this up on Azure. Attempting to replicate the Openscapes 2i2c JupyterHub: https://github.com/2i2c-org/infrastructure/tree/master/config/clusters/openscapes\nThat hub is on AWS and is designed for large workshops (100+) however the NMFS OpenSci JHub is quite similar. Main difference at the moment is that I don’t have a shared drive set-up and the user persistent volume (storage) is on the same VM as the user node for their Jupyter Notebook. This means that I cannot have multiple VM sizes. Need to fix so that user can pick a larger VM for a task if needed.",
-    "crumbs": [
-      "Set-up JHub on Azure"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-daskhub.html#create-your-kubernetes-cluster",
-    "href": "posts/Set-up-daskhub.html#create-your-kubernetes-cluster",
-    "title": "DaskHub Set-up",
-    "section": "Create your Kubernetes cluster",
-    "text": "Create your Kubernetes cluster\nLog into https:\\\\portal.azure.com\n\nGet to the dashboard that looks similar to this.\n\n\n\nClick on the Kubernetes Services button and you should see something like this\n\n\n\nClick Create Kubernetes Cluster\n\nAt this point, you will get to the set-up with lots of tabs.\n\nYou need to select the resource group if you are in a subscription for an organization. Don’t know what resource group to use, ask the admins.\nYou need to give your Kubernetes cluster a name. For example, jhub or daskhub or whatever.\nYou need to chose the AWS region. If you are using AWS S3 file access (big data in the cloud), then you need to be on the same region as the files you are accessing. Do you have no idea? Then you are probably not using AWS S3 file access. In that case, just go with the default or something close to you.\nNext you chose the “Node size”. This is the size of the base virtural machine (VM). It is going to spin up as many as it needs. The default is Standard DS2 v2 which as 2 CPU, 7 Gig RAM and 1T memory. This is fine for set-up. You can add more (bigger VMs later). Accept autoscaling since this is a multi-user hub.\n\nThe first tab is all you need for now. Later you may want to allow the user, to choose a different base VM. You can do that by adding node-pools. That’ll be covered after the initial set-up. For now, just get your basic hub working. You can add more VM sizes later.\n\nClick “Review and Create”\n\nWait for validation tests to pass.\n\nClick “Create”.\n\nOnce it is done deploying, you will see this.",
-    "crumbs": [
-      "Set-up JHub on Azure"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-daskhub.html#install-daskhub-on-your-cluster",
-    "href": "posts/Set-up-daskhub.html#install-daskhub-on-your-cluster",
-    "title": "DaskHub Set-up",
-    "section": "Install DaskHub on your cluster",
-    "text": "Install DaskHub on your cluster\nThese next steps are done in the shell after connecting to your cluster. First you need to get to the shell.\n\nConnect to your cluster\nOnce you have created your Kubernetes cluster, you want to go to its dashboard (by clicking on the name you gave it). You’ll see something like this (I named mine daskhub).\n\nClick on the Connect icon in the nav bar at top.\nYou then see this\n\nClick on the link that says “Open Cloud Shell”.\n\nYou will get to a terminal. Paste in the two commands in the previous image (the commands that show up for you that is).\n\n\nCreate dconfig.yaml\nThis will be the configuration file for your Dask-enabled JupyterHub. For now, it can be just comments. Note the name is unimportant but should end in .yaml. I am using dconfig.yaml instead of config.yaml since I already have a config.yaml file for something else–and I have not figured out how to install different hubs in different directories or even different clusters in different directories (I have much to learn…).\nnano dconfig.yaml\nThis will open the nano editor. Edit your file. You can do # just blank for now. Then Cntl-O to save and Cntl-X to exit.\n\n\nInstall daskhub via helm chart\nInstructions: https://artifacthub.io/packages/helm/dask/daskhub .\nCheck that helm is installed\nhelm version\nTell helm about the dask helm repository\nhelm repo add dask https://helm.dask.org\nhelm repo update\nNow install\nhelm upgrade --wait --install --render-subchart-notes \\\n    dhub dask/daskhub \\\n    --namespace=dhub --create-namespace \\\n    --values=dconfig.yaml\nYou will see this on successful installation (it’s long. much has been cut). \n\n\nSet-up your external IP address\nkubectl config set-context $(kubectl config current-context) --namespace dhub\nkubectl --namespace=dhub get service proxy-public\nThese commands will show the the IP address. Save the public IP address. You will need it in step 2. Look for the IP address under EXTERNAL-IP.",
-    "crumbs": [
-      "Set-up JHub on Azure"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-daskhub.html#step-2-set-up-https",
-    "href": "posts/Set-up-daskhub.html#step-2-set-up-https",
-    "title": "DaskHub Set-up",
-    "section": "Step 2 Set up https",
-    "text": "Step 2 Set up https\nYou can log out of your cluster. The next steps are done elsewhere.\n\nCreate a domain name\nYou will need a domain name for https which you want for security (and JHub won’t stop complaining if you don’t). Find a domain name provider and set one up. It is not expensive. I used GoDaddy.\n\n\nCreate a DNS entry\nLet’s pretend you set up bluemountain123.live as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let’s say you create, dhub as the type A DNS entry. Then dhub.bluemountain123.live will be the url. You can have as many subdomains as you need.\n\n\n\nTest if the url is working\nhttp:\\\\dhub.bluemountain123.live would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:\n\n\n\nSet-up https on your JupyterHub\nLog back into your Kubernetes cluster: go to portal.azure.com, click on your Kubernetes cluster name, and then click on “Connect”. Then click on “Open Cloud Shell”. Read documentation about https\nOnce you are on the shell, type\nnano dconfig.yaml\nto edit the config file. Paste this in and save. Note the additional jupyterhub: in the yaml file. This is not in a plain JupyterHub with Kubernetes config file (i.e. in a non-daskhub, the jupyterhub: bit is not there and everything is moved to left by 2 spaces).\njupyterhub:\n  proxy:\n    https:\n      enabled: true\n      hosts:\n        - dhub.bluemountain123.live\n      letsencrypt:\n        contactEmail: your@email.com\n\n\nUpdate the JupyterHub installation\nAnytime you change dconfig.yaml you need to run this code.\nhelm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml\n\n\nTest if https is working\nTry https:\\\\dhub.bluemountain123.live and you should see the JupyterHub login without that http warning.",
-    "crumbs": [
-      "Set-up JHub on Azure"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-daskhub.html#step-3-set-up-github-authentication",
-    "href": "posts/Set-up-daskhub.html#step-3-set-up-github-authentication",
-    "title": "DaskHub Set-up",
-    "section": "Step 3 Set up GitHub authentication",
-    "text": "Step 3 Set up GitHub authentication\nOptional, if you want to manage who can login via GitHub Team. I am going to show an example where I use a team on a GitHub organization to manage authentication. There are many other ways to manage users. Google to find that.\n\nCreate a new Oauth Application on GitHub\nThis is going to be associated with your (personal) GitHub account, but you can use a team on a GitHub org that you are owner of.\nLog into GitHub and go to GitHub &gt; Settings &gt; Developer Settings &gt; New Oauth Application\nLook carefully at how I filled in the boxes.\n\nNext you will see something like this\n\nYou need to copy the ID and then click the create secrets button and save the secret. Save those for later.\n\n\nCreate a team in your GitHub org\nYou will be added by default and add anyone else who needs access to the hub. Let’s say your org is MyOrg and the team is called DaskHub. So then the allowed organization is MyOrg:DaskHub. You can leave off :DaskHub if you want to allow all members of the organization to log in.\n\n\nEdit the dconfig.yaml file\nnano dconfig.yaml\nAdd to your config file so it is now this. Replace the id, secret and url with your values. We need to set the KubeSpawner working directory because the Openscapes Docker image sets it to home/jovyan/.kernels–which is fine but annoying since .kernels is hidden and not $HOME.\njupyterhub:\n  hub:\n    config:\n      GitHubOAuthenticator:\n        client_id: &lt;replace with your OAuth id&gt;\n        client_secret: &lt;replace with your OAuth app secret&gt;\n        oauth_callback_url: https://dhub.bluemountain123.live/hub/oauth_callback\n        allowed_organizations:\n          - MyOrg:DaskHub\n        scope:\n          - read:org\n      JupyterHub:\n        authenticator_class: github\n      KubeSpawner:\n        working_dir: /home/jovyan\n  proxy:\n    https:\n      enabled: true\n      hosts:\n        - dhub.bluemountain123.live\n      letsencrypt:\n        contactEmail: your@email.com        \n\n\nUpdate the hub\nhelm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml\n\n\nTest\nYou should now see this and can authenticate with GitHub.",
-    "crumbs": [
-      "Set-up JHub on Azure"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-daskhub.html#set-up-the-container-image",
-    "href": "posts/Set-up-daskhub.html#set-up-the-container-image",
-    "title": "DaskHub Set-up",
-    "section": "Set up the container image",
-    "text": "Set up the container image\nNow you need to specify the Docker image that will be used. We will use 2 different profiles: Python and R (RStudio).\nEdit the dconfig.yaml file and add the user image info. Note the spacing matters (a lot). I also added some Dask gateway config.\njupyterhub:\n  hub:\n    config:\n      GitHubOAuthenticator:\n        client_id: &lt;replace with your OAuth id&gt;\n        client_secret: &lt;replace with your OAuth app secret&gt;\n        oauth_callback_url: https://dhub.bluemountain123.live/hub/oauth_callback\n        allowed_organizations:\n          - MyOrg:DaskHub\n        scope:\n          - read:org\n      JupyterHub:\n        authenticator_class: github\n  proxy:\n    https:\n      enabled: true\n      hosts:\n        - dhub.bluemountain123.live\n      letsencrypt:\n        contactEmail: your@email.com        \n  singleuser:\n    image:\n      name: openscapes/python\n      tag: f577786\n    cmd: null\n  singleuser:\n    # Defines the default image\n    image:\n      name: openscapes/python\n      tag: f577786\n    profileList:\n      - display_name: \"Python3\"\n        description: \"NASA Openscapes Python image\"\n        default: true\n      - display_name: \"R\"\n        description: \"NASA Openscapes RStudio image\"\n        kubespawner_override:\n          image: openscapes/rocker:a7596b5        \ndask-gateway:\n  gateway:\n    extraConfig:\n      idle: |-\n        # timeout after 30 minutes of inactivity\n        c.KubeClusterConfig.idle_timeout = 1800        \n\nUpdate the hub\nhelm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml",
-    "crumbs": [
-      "Set-up JHub on Azure"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-daskhub.html#changing-the-vm-size",
-    "href": "posts/Set-up-daskhub.html#changing-the-vm-size",
-    "title": "DaskHub Set-up",
-    "section": "Changing the VM size",
-    "text": "Changing the VM size\nNOT WORKING YET I am stuck on creating the persistent volumes. Needed because you need the user storage somewhere if you have multiple node pools.\n\nkubectl get nodes --show-labels | grep instance-type\nbeta.kubernetes.io/instance-type=Standard_D8s_v3",
-    "crumbs": [
-      "Set-up JHub on Azure"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-daskhub.html#create-a-separate-disk-for-user-data",
-    "href": "posts/Set-up-daskhub.html#create-a-separate-disk-for-user-data",
-    "title": "DaskHub Set-up",
-    "section": "Create a separate disk for user data",
-    "text": "Create a separate disk for user data\nI want the user data to be in a drive different from the VM being spun up for their notebook. Sounds easy here https://z2jh.jupyter.org/en/latest/jupyterhub/customizing/user-storage.html but I cannot string the steps together.\nSteps, I think?\n\nCreate disk\nSomething like this?\nhttps://bluexp.netapp.com/blog/azure-cvo-blg-azure-kubernetes-service-configuring-persistent-volumes-in-aks\nBut I can’t figure out the steps.\n\n\nPVC\nNOT WORKING YET\n\nIs this pvc.yaml right?\nHow would I point this to the disk that I mount in the step above??\n\nThis command might have useful info\nKUBE_EDITOR=\"nano\" kubectl edit pvc --namespace=dhub claim-eeholmes\nnana pvc.yaml\nkind: PersistentVolumeClaim\napiVersion: v1\nmetadata:\n  name: hub-db-dir\n  labels:\n    component: jupyter\nspec:\n  storageClassName: \"standard\" # name of storage class, it will be default storage class if unspecified.\n  accessModes:\n    - ReadWriteOnce\n  resources:\n    requests:\n      storage: \"40Gi\"\nkubectl create -f pvc.yaml\nTo delete, you need to first edit the pvc yaml file and get rid of pvc protection. It is 2 lines.\nkubectl --namespace=dhub get pvc\nKUBE_EDITOR=\"nano\" kubectl edit pvc --namespace=dhub claim-eeholmes\nThen you can delete\nkubectl --namespace=dhub delete pvc claim-eeholmes\nCheck that it is gone\nkubectl --namespace=dhub get pvc\nif not try\nkubectl --namespace=dhub delete pvc claim-eeholmes --grace-period=0 --force\n\n\nPV\nNeed a persistent volume claim too….\n\n\nTell the hub about the disk\nhttps://z2jh.jupyter.org/en/latest/jupyterhub/customizing/user-storage.html\nBut see how this is done on the Openscapes 2i2c hub https://github.com/2i2c-org/infrastructure/blob/master/config/clusters/openscapes/common.values.yaml\nI know their set-up is a little different: basehub -&gt; jupyterhub in the helm chart, but I don’t see how the singleuser bit in the yaml file is referencing the nfs in the top of that yaml.",
-    "crumbs": [
-      "Set-up JHub on Azure"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-daskhub.html#troubleshooting",
-    "href": "posts/Set-up-daskhub.html#troubleshooting",
-    "title": "DaskHub Set-up",
-    "section": "Troubleshooting",
-    "text": "Troubleshooting\n\nI cannot clone repos in the JupyterHub. Restart the server. In Jupyter, File &gt; Hub Control Panel &gt; Stop My Server.",
-    "crumbs": [
-      "Set-up JHub on Azure"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-daskhub.html#refs-i-used",
-    "href": "posts/Set-up-daskhub.html#refs-i-used",
-    "title": "DaskHub Set-up",
-    "section": "Refs I used",
-    "text": "Refs I used\n\nOverall\n\nhttps://2i2c.org/service/#getahub\nOpenscapes common.values.yaml https://github.com/2i2c-org/infrastructure/blob/master/config/clusters/openscapes/common.values.yaml\nhttps://artifacthub.io/packages/helm/dask/daskhub\nhttps://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/dask_gateway/dask-hub/config_daskhub.yaml\nhttps://saturncloud.io/blog/how-to-setup-jupyterhub-on-azure/\nhttps://saturncloud.io/blog/jupyterhub-and-azure-ad/\n\n\n\nStorage\n\nhttps://www.youtube.com/watch?v=Da1qn7-RHvY\nDynamic NFS provisioning 2 https://www.youtube.com/watch?v=DF3v2P8ENEg&t=0s\nDynamic NFS provisioning 1 https://www.youtube.com/watch?v=AavnQzWDTEk&t=0s\nhttps://alan-turing-institute.github.io/hub23-deploy/\nhttps://z2jh.jupyter.org/en/latest/jupyterhub/customizing/user-storage.html\nhttps://learn.microsoft.com/en-us/azure/aks/azure-nfs-volume\nhttps://learn.microsoft.com/en-us/azure/storage/files/storage-files-quick-create-use-linux\nhttps://bluexp.netapp.com/blog/azure-cvo-blg-azure-kubernetes-service-configuring-persistent-volumes-in-aks",
-    "crumbs": [
-      "Set-up JHub on Azure"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-daskhub.html#setting-up-a-shared-data-disk",
-    "href": "posts/Set-up-daskhub.html#setting-up-a-shared-data-disk",
-    "title": "DaskHub Set-up",
-    "section": "Setting up a shared data disk",
-    "text": "Setting up a shared data disk\n\nhttps://www.mathworks.com/help/matlab/import_export/work-with-remote-data.html\nhttps://realpython.com/storing-images-in-python/",
-    "crumbs": [
-      "Set-up JHub on Azure"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-daskhub.html#s3-access",
-    "href": "posts/Set-up-daskhub.html#s3-access",
-    "title": "DaskHub Set-up",
-    "section": "S3 access",
-    "text": "S3 access\n\nhttps://s3fs.readthedocs.io/en/latest/\nhttps://stackoverflow.com/questions/67259323/jupyterhub-access-aws-s3\nhttps://data.lpdaac.earthdatacloud.nasa.gov/s3credentialsREADME",
-    "crumbs": [
-      "Set-up JHub on Azure"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-centos-tljh.html",
-    "href": "posts/Set-up-centos-tljh.html",
-    "title": "Centos Set-up with TLJH",
-    "section": "",
-    "text": "This is my notes for setting this up on a Centos 8 (Linux distribution) server. Jump to the “Summary” section to see only the instructions without explanations.\nAll the commands are run in a shell (bash)\nReferences:"
-  },
-  {
-    "objectID": "posts/Set-up-centos-tljh.html#set-up-vm-on-azure",
-    "href": "posts/Set-up-centos-tljh.html#set-up-vm-on-azure",
-    "title": "Centos Set-up with TLJH",
-    "section": "Set up VM on Azure",
-    "text": "Set up VM on Azure\n\nCreated a Centos 8.3 server on Azure: https://portal.azure.com/#create/cloud-infrastructure-services.centos-8-3centos-8-3\nI didn’t do anything special for set-up. Choose SSH with key.\nOnce it is created, I went to the dashboard and selected my VM. The dashboard has a “Connect” button to get to the shell and it shows the public IP address.\nI had to create a special security rule to allow me to ssh into the public IP address to connect. Normally I use the cloud shell to connect, but Azure would not let me connect via the cloud shell for a server since it wanted upgraded security package and I cannot do that with my work subscription.\nThen I saved the key somewhere on my computer and\n\n\nchmod 400 ~/&lt;key location&gt;\nssh -i ~/&lt;key location&gt;/Centos8.cer &lt;vm-username&gt;@&lt;public ip-address&gt;"
-  },
-  {
-    "objectID": "posts/Set-up-centos-tljh.html#on-vm-check-set-up",
-    "href": "posts/Set-up-centos-tljh.html#on-vm-check-set-up",
-    "title": "Centos Set-up with TLJH",
-    "section": "On VM check set-up",
-    "text": "On VM check set-up\nI ssh-ed into the VM with\n\nssh -i &lt;path to key downloaded from Azure&gt; eeholmes@&lt;public ip address&gt;\n\n\nMake sure you are root\nGetting the JupyterHub set up needs to be done as root. First make sure you have an admin password. When I set up my Azure VM, I did not set a password. So first\n\nsudo passwd &lt;your username&gt;\n\nand set a password. Then switch to root if you are not signed in as root\n\nsudo -i\n\n\n\nCheck for Python\nYou will need Python 3.6+ installed. Open a terminal window and run python3 --version or python --version to see if Python is installed and what the version is.\nCheck your operating system (OS) with\n\ncat /etc/os-release\n\n\n\nCheck for conda\nYou will need conda (or miniconda) for these instructions. conda (and miniconda) take care of checking that all our packages will be inter-operable. It is best to install JupyterHub into a clean environment. That way you minimize chances of conflicts and your environment will solve (figure out any conflicts) much much faster.\nCheck for conda with\n\nconda list\n\nIf it doesn’t show a list of environments, then you need to install miniconda. Installation instructions. Read about miniconda for scientists from Software Carpentries here.\nThis is what I used to install miniconda from these instructions. Note install miniconda in some place like /opt/miniconda3 where all users will have access to `/opt/miniconda3/bin. We don’t want to install in /root/ for example or the admin users home directory.\n\nmkdir -p /opt/miniconda3\nwget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /opt/miniconda3/miniconda.sh\nbash /opt/miniconda3/miniconda.sh -b -u -p /opt/miniconda3\nrm -rf /opt/miniconda3/miniconda.sh\n\nThen initialize to set up the path. Note I am using bash. You’ll need to change if you are using zsh.\n\n/opt/miniconda3/bin/conda init bash\nsource ~/.bashrc\n\nnote will need to do something else to add the conda binary to all the users’ paths"
-  },
-  {
-    "objectID": "posts/Set-up-centos-tljh.html#create-the-conda-environment",
-    "href": "posts/Set-up-centos-tljh.html#create-the-conda-environment",
-    "title": "Centos Set-up with TLJH",
-    "section": "Create the conda environment",
-    "text": "Create the conda environment\nCreate the conda environment for the jupyterhub installation. Installation will be in a directory with all the files for packages. Then activate it (enter it), and get the location of the environment (folder).\nAll the commands below are in the terminal window on your VM/server.\nCreate the environment named jupyterhub with python and jupyterhub (module). After creating, activate (enter) that environment. Then install jupyterlab, notebook and dockerspawner into the environment. Note the jupyterhub after -n is the name of the environment.\n\nconda create -n jupyterhub python\n\nThen activate (enter) that environment\n\nconda activate jupyterhub\n\nThen install jupyterhub here\n\nconda install -c conda-forge jupyterhub\n\nand then jupyterlab\n\nconda install -c conda-forge jupyterlab notebook\n\n\nSet a variable for env path\nThe environment has a folder with all the packages and binaries that we install. We are going to need to know the location of that folder. Get the location with\n\nconda env list\n\nOn the VM I set up, the folder location is\n\n/opt/miniconda3/envs/jupyterhub\n\nYours could be something entirely different. On another server with anaconda (a not-free conda package resolver), the folder was\n\n/SHARE/anaconda3/envs/jupterhub/\n\nWe are going to be saving the configuration files for our JupyterHub in this folder. Let’s save the path to a variable so we don’t have to keep entering the whole path.\n\nJHUBENV=/opt/miniconda3/envs/jupyterhub\n\nMake sure users can read and execute this folder. They need to in order to be able to spawn instances for the hub.\n\nchmod 755 $JHUBENV\n\nYou should now be able to start the hub, but you will not be able to access it yet because you need to open the 8000 port. Type\n\n$JHUBENV/bin/jupyterhub\n\nand check that it starts. Then use Cntl-C to stop the hub."
-  },
-  {
-    "objectID": "posts/Set-up-centos-tljh.html#create-a-user-on-the-vm",
-    "href": "posts/Set-up-centos-tljh.html#create-a-user-on-the-vm",
-    "title": "Centos Set-up with TLJH",
-    "section": "Create a user on the VM",
-    "text": "Create a user on the VM\nBy default, any user on the server will be able to login. Let’s create a test user so that we are not logging into our hub with the root user password. We will be using “http” until we secure it so passwords are potentially exposed.\n\nuseradd jhub\n\nand give it a password when it asks."
-  },
-  {
-    "objectID": "posts/Set-up-centos-tljh.html#open-the-8000-port",
-    "href": "posts/Set-up-centos-tljh.html#open-the-8000-port",
-    "title": "Centos Set-up with TLJH",
-    "section": "Open the 8000 port",
-    "text": "Open the 8000 port\nFirewallD was not running on my Azure Centos server, so I started it up to manage the ports.\n\nsudo systemctl enable firewalld\nsudo systemctl start firewalld\n\nFind out the Public IP address for the server you are on; it’s listed on the Azure overview and networking page for the VM in the Azure portal. Then open the 8000 port.\nFirst find out what ports are open through the firewall\n\nsudo firewall-cmd --list-ports\n\nAdd the 8000 port, reload and recheck that it appears.\n\nsudo firewall-cmd  --permanent --add-port 8000/tcp\nsudo firewall-cmd --reload\nsudo firewall-cmd --list-ports\n\nBecause I am on an Azure VM, I also have to set up a networking rule to allow the 8000 port. By default, all public access to the server is blocked. Go to the Azure dashboard, select your VM, then select Networking under Settings, and then click Add Inbound Port rule. I am pretty sure you need to select “http” instead of “https”.\nOnce the port is open, you should be able to reach your JupyterHub at http://XXX.XX.XX.XX:8000 (replace the XX’s with the Public IP address).\nBackground\nThe JupyterhHub is running by default on http://localhost:8000. This means that if you start the hub on a machine that you are logged into, you should be able to open a browser on that machine, enter http://localhost:8000 and the hub login page will appear. There are a few reasons that might not work\n\nYou are ssh-ing into a server and don’t have a browser to open. The browser on the computer that you are ssh-ing from is the “localhost” in this case and you need the “localhost” to be the server.\nYou are logged directly into your server, but it doesn’t have a browser installed.\n\nHowever http://localhost:8000 is actually not very useful. We are trying to create a hub that others can log into from their browsers.\nSo you need to determine the Public IP address for the server you are on. This is the IP address that you could enter into a browser. If you enter http://XXX.XX.XX.XX (replace with actual IP), then you should see a page of some sort. This indicates that the server is working. If you are on an internal network, then you will only be able to load the address if you are also on that network. But for security reason, ports will not be open by default. You need to open the 8000 port so that http://XXX.XX.XX.XX:8000 will be found."
-  },
-  {
-    "objectID": "posts/Set-up-centos-tljh.html#log-in",
-    "href": "posts/Set-up-centos-tljh.html#log-in",
-    "title": "Centos Set-up with TLJH",
-    "section": "Log in!",
-    "text": "Log in!\nAt this point, you should be able to login with the jhub test account."
-  },
-  {
-    "objectID": "posts/Set-up-centos-tljh.html#set-up-a-configuration-file",
-    "href": "posts/Set-up-centos-tljh.html#set-up-a-configuration-file",
-    "title": "Centos Set-up with TLJH",
-    "section": "Set up a configuration file",
-    "text": "Set up a configuration file\nSo far, we have started the hub with the default configuration. We are going to need to customize it. For that we need a configuration file. We will create this in the folder where the environment files are.\n\nsudo mkdir -p $JHUBENV/etc/jupyterhub/\ncd $JHUBENV/etc/jupyterhub/\n\nNext create the default configuration file jupyterhub_config.py.\n\nsudo $JHUBENV/bin/jupyterhub --generate-config\n\nBecause we cd-d into the $JHUBENV/etc/jupyterhub/ directory, the file is created there. This default file is very long. Open up with\n\nnano jupyterhub_config.py\n\nUse F6 to find lines. Uncomment these two lines and save (Cntl-O, Enter, Cntl-X).\n\nc.Spawner.http_timeout = 3600"
-  },
-  {
-    "objectID": "posts/Set-up-centos-tljh.html#make-a-new-server-service",
-    "href": "posts/Set-up-centos-tljh.html#make-a-new-server-service",
-    "title": "Centos Set-up with TLJH",
-    "section": "Make a new server service",
-    "text": "Make a new server service\n\nCreate the new unit file\nAt this point, after opening the port, you should be able to get to your JupyterHub by starting it with jupyterhub --ip XXX.XX.XX.XX --port=8000 and then browsing to http://XXX.XX.XX.XX:8000. But you hub is going to be stopped whenever the server is rebooted. So next we need to set up a service for your service so that our hub starts automatically.\nCreate a new directory for the service unit file,\n\nsudo mkdir -p $JHUBENV/etc/systemd\ncd $JHUBENV/etc/systemd\n\nCreate the file and name jupyterhub.service. For example, using nano editor, we do\n\nnano jupyterhub.service\n\nAnd into that file we put the following. Replace /opt/miniconda3/envs/jupyterhub with the actual path to the jupyterhub environment folder.\n\n[Unit]\nDescription=JupyterHub\nAfter=syslog.target network.target\n\n[Service]\nUser=root\nEnvironment=\"PATH=/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/miniconda3/envs/jupyterhub/bin\"\nExecStart=/opt/miniconda3/envs/jupyterhub/bin/jupyterhub -f /opt/miniconda3/envs/jupyterhub/etc/jupyterhub/jupyterhub_config.py\n\n[Install]\nWantedBy=multi-user.target\n\nNext we make systemd aware of the new service.\nCreate a symlink file in the folder where all the server services are kept. And tell systemd to reload its configuration files\n\nsudo ln -s $JHUBENV/etc/systemd/jupyterhub.service /etc/systemd/system/jupyterhub.service\nsudo systemctl daemon-reload\n\n\n\nMake sure SELinux doesn’t block our service\nSELinux (security for the server) checks that files that are used have the correct label. All our files have generic file labels. If you do,\n\nls -Z $JHUBENV/etc/systemd/\n\nYou will see that the file label is unconfined_u:object_r:usr_t:s0. We need it to be\n\nsystemd_unit_file_t\n\nWe change the file label with\n\nsudo chcon system_u:object_r:systemd_unit_file_t:s0 $JHUBENV/etc/systemd/jupyterhub.service\n\nSELinux will also object to the file label on all the binaries that we use to start up the JupyterHub (like jupyterhub) so we need to fix those file labels.\nThis will add bin_t label to all the binaries and check that it worked.\n\nsudo find $JHUBENV/bin -type f -exec chcon system_u:object_r:bin_t:s0 {} \\;\nls -Z $JHUBENV/bin\n\nIt got all the binaries but not the simlinks. Nonetheless it seemed to run ok.\n\n\nEnable our new service\n\nsudo systemctl enable jupyterhub.service\n\nThe service will start on reboot, but we can start it straight away using start:\n\nsudo systemctl start jupyterhub.service\n\nCheck that it is running.\n\nsudo systemctl status jupyterhub.service\n\nIf it fails, try\n\naudit2why &lt; /var/log/audit/audit.log\n\nto debug. It is likely to be an issue with SELinux blocking the service from starting.\nNow our hub should be available on http:\\\\XXX.XX.XX.XX:8000. You can double check that it is listen on this port by running\n\nnetstat -tuln\n\nAt this point, you will need to address security if your hub is open to the web, as opposed to being on an internal network and only accessible to that network. Learn about that here."
-  },
-  {
-    "objectID": "posts/Set-up-centos-tljh.html#set-up-docker-for-user-environment",
-    "href": "posts/Set-up-centos-tljh.html#set-up-docker-for-user-environment",
-    "title": "Centos Set-up with TLJH",
-    "section": "Set up Docker for user environment",
-    "text": "Set up Docker for user environment\nWhen you log in the jupyter notebooks will be trying to use the Python environment that was created to install JupyterHub, this is not what we want. We will use a docker image to “spawn” the user environment. Read here for other approaches.\nWe are going to use dockerspawner so that we can use a docker image for our user environments. The user will work in these containerized environments and they won’t have access to any other files in the server. In order to share their work with others, the normal workflow would be to work in Git repos and share those repos to a GitHub (or GitLab server). Each user will have a home directory on the server for their files, but they won’t have access to other hub user directories nor will they have access to any other directories on the server.\n\nInstall docker\nI am using Centos in this example\n\nsudo yum install -y yum-utils\nsudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo\n\nThen we need to start docker\n\nsudo systemctl start docker\n\n\n\nInstall dockerspawner\nI am going to be creating the user environment from a docker image, so I also want dockerspawner. Note dockerspawner installed docker-py but it was really old and threw errors so I installed separately to get the latest version. Note make sure you are in the jupyterhub conda env. You can run conda env list and use conda activate jupyterhub if you are not in it.\n\nconda install -c conda-forge dockerspawner\nconda install -c conda-forge docker-py\n\n\n\nJupyter images\nThe image that we use must have the jupyterhub and notebook module installed. The jupyterhub version needs to also match what you have on your hub.\nCheck the version on your server:\n\n$JHUBENV/bin/jupyterhub -V\n\nFor demo purposes, we will use the jupyter images on DockerHub. We want to find an image with the same version of jupyterhub as we have on our server.\n\n\nEdit the config file\nEdit the jupyterhub_config.py file in $JHUB-ENV/etc/jupyterhub/ to add that we want to use DockerSpawner and specify the images that users should have access to. Users will get a drop down menu. Add these lines to jupyterhub_config.py. The hub bind url needs to be 0.0.0.0 because we are using a docker container for the individual user environments.\n\nhttps://discourse.jupyter.org/t/whats-the-main-difference-between-hub-connect-url-vs-hub-bind-url/3596/2\nNote image_whitelist is deprecated as of dockerspawner 12.0. New name is allowed_images.\n\n\nc = get_config()  #noqa\nc.JupyterHub.port = 8000\nc.JupyterHub.hub_bind_url = \"http://0.0.0.0:8081\"\nc.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'\nc.DockerSpawner.remove = True\nc.Spawner.http_timeout = 3600\nc.DockerSpawner.image_whitelist = {\n    'datascience-r': 'jupyter/datascience-notebook:r-4.3.1',\n    'scipy-notebook': 'jupyter/scipy-notebook:7e1a19a8427f',\n}\n\nDo a docker pull of the images so that they don’t have to be pulled the first time that a user chooses that image.\n\ndocker pull jupyter/datascience-notebook:r-4.3.1\ndocker pull jupyter/scipy-notebook:7e1a19a8427f\n\nNow you can restart the service and the user can start a notebook with the specified images.\n\n\nCreate your own Docker images\nDocker images that work with JupyterHub with Kubernetes will work with this set-up with the addition of jupyterhub and notebook.\nAdd the following to your Docker image\n\nRUN pip3 install \\\n    'jupyter-rsession-proxy' \\\n    'jupyterhub==3.1.*' \\\n    'notebook==6.*' \\\n    'jupyterlab'\n\nCMD [\"jupyterhub-singleuser\"]\n\nExample using rocker image. Code added to make the home directory home/jovyan.\n\nFROM rocker/binder:4.3\n\nUSER root\nRUN usermod -d /home/jovyan rstudio\nRUN mkdir /home/jovyan\nRUN chown rstudio:rstudio /home/jovyan\nUSER rstudio\n\nRUN pip3 install \\\n    'jupyter-rsession-proxy' \\\n    'jupyterhub==3.1.*' \\\n    'notebook==6.*' \\\n    'jupyterlab'\n\nWORKDIR /home/jovyan\n\nCMD [\"jupyterhub-singleuser\"]\n\nExample using openscapes/rocker\n\nFROM openscapes/rocker:a7596b5\n\nRUN pip3 install \\\n    'jupyter-rsession-proxy' \\\n    'jupyterhub==3.1.*' \\\n    'notebook==6.*' \\\n    'jupyterlab'\n\nUSER root\nRUN mkdir /home/jovyan\nRUN chown rstudio:rstudio /home/jovyan\nUSER rstudio\n\nCMD [\"jupyterhub-singleuser\"]\n\n\n\nSpecial note regarding rocker images\nThe default home directory for rocker images is home/rstudio but the default for JupyterHub is home/jovyan."
-  },
-  {
-    "objectID": "posts/Set-up-centos-tljh.html#persistent-volume",
-    "href": "posts/Set-up-centos-tljh.html#persistent-volume",
-    "title": "Centos Set-up with TLJH",
-    "section": "Persistent volume",
-    "text": "Persistent volume\nAdd the following to the config file to create a persistent volume.\n\nnotebook_dir = '/home/jovyan'\nc.DockerSpawner.notebook_dir = notebook_dir\n\n# Mount the real user's Docker volume on the host to the notebook user's\n# notebook directory in the container\nc.DockerSpawner.volumes = { 'jupyter-{username}': notebook_dir }"
-  },
-  {
-    "objectID": "posts/Set-up-centos-tljh.html#user-environment-customization",
-    "href": "posts/Set-up-centos-tljh.html#user-environment-customization",
-    "title": "Centos Set-up with TLJH",
-    "section": "User environment customization",
-    "text": "User environment customization\n\nMemory limits and guarantees\nYou can set memory limits on the containers that are spawned for users by adding limits. Read the documentation here.\nFor example:\n\nc.DockerSpawner.mem_limit = '8G'\nc.DockerSpawner.mem_guarantee = '1G'\nc.DockerSpawner.cpu_guarantee = 0.5\nc.DockerSpawner.cpu_limit = 1\n\nIf that doesn’t work try\n\nc.Spawner.mem_limit = '2G'\n\nI believe you can specify as a drop-down to give the user choices:\n\nc.DockerSpawner.mem_guarantee = {\n    '1G': '1G',\n    '2G': '2G',\n    '8G': '8G',\n}\n\n\n\nCreating a shared volume\nOne read-only shared volume:\nhttps://github.com/jupyterhub/dockerspawner/issues/172\n\nc.DockerSpawner.volumes = {  'jupyterhub-user-{username}':'/home/jovyan',   '/path/to/shared': {\"bind\": '/home/jovyan/shared', \"mode\": \"ro\"} }\n\nA volume that is read-only for some and read-write for others:\nhttps://github.com/jupyterhub/dockerspawner/issues/172\nMore discussions around shared volumes\nhttps://github.com/jupyterhub/dockerspawner/issues/453"
-  },
-  {
-    "objectID": "posts/Set-up-centos-tljh.html#setting-up-https",
-    "href": "posts/Set-up-centos-tljh.html#setting-up-https",
-    "title": "Centos Set-up with TLJH",
-    "section": "Setting up https",
-    "text": "Setting up https\nIf you are using a public IP address, rather than being on a private network, you will want to set up https.\n\nCreate a domain name\nFind a domain name provider and set one up. It is not expensive. I used GoDaddy. You only need one. Later you can use it for multiple hubs using subdomains where are created by the next step (DNS entry). For example, let’s say you get the domain bluemountain123.live. You can have as many subdomains as you want and they will be subdomain.bluemountain123.live.\n\n\nCreate a DNS entry\nLet’s pretend you set up bluemountain123.live as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let’s say you create, dhub as the type A DNS entry. Put dhub in the name and the public IP address of the server (leaving off :8000) in the value section. Then dhub.bluemountain123.live will be the url.\n\n\n\nTest if the url is working\nhttp:\\\\dhub.bluemountain123.live:8000 would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:\n\n\n\nSet-up https on your JupyterHub\nLog back into your Kubernetes cluster: go to portal.azure.com, click on your Kubernetes cluster name, and then click on “Connect”. Then click on “Open Cloud Shell”. Read documentation about https\nOnce you are on the shell, type\nnano dconfig.yaml\nto edit the config file. Paste this in and save. Note the additional jupyterhub: in the yaml file. This is not in a plain JupyterHub with Kubernetes config file (i.e. in a non-daskhub, the jupyterhub: bit is not there and everything is moved to left by 2 spaces).\njupyterhub:\n  proxy:\n    https:\n      enabled: true\n      hosts:\n        - dhub.bluemountain123.live\n      letsencrypt:\n        contactEmail: your@email.com\n\n\nUpdate the JupyterHub installation\nAnytime you change dconfig.yaml you need to run this code.\nhelm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml\n\n\nTest if https is working\nTry https:\\\\dhub.bluemountain123.live and you should see the JupyterHub login without that http warning."
-  },
-  {
-    "objectID": "posts/Set-up-centos-tljh.html#authentication",
-    "href": "posts/Set-up-centos-tljh.html#authentication",
-    "title": "Centos Set-up with TLJH",
-    "section": "Authentication",
-    "text": "Authentication\nhttps://oauthenticator.readthedocs.io/en/latest/tutorials/provider-specific-setup/providers/github.html"
-  },
-  {
-    "objectID": "posts/Set-up-centos-tljh.html#summary",
-    "href": "posts/Set-up-centos-tljh.html#summary",
-    "title": "Centos Set-up with TLJH",
-    "section": "Summary",
-    "text": "Summary\nOnly the instructions. Make sure you are installing as the root user. I assume you have Python and conda installed.\nCreate the conda environment\n\nsudo -i\n\nconda create -n jupyterhub python --yes\nconda activate jupyterhub\nconda install -c conda-forge jupyterhub --yes\nconda install -c conda-forge jupyterlab notebook --yes\n\nJHUBENV=/opt/miniconda3/envs/jupyterhub\nchmod 755 $JHUBENV\n\nCreate user\n\nuseradd jhub\n\nOpen the 8000 port for access to the application.\n\n#sudo systemctl enable firewalld\n#sudo systemctl start firewalld\n\nsudo firewall-cmd  --permanent --add-port 8000/tcp\nsudo firewall-cmd --reload\nsudo firewall-cmd --list-ports\n\nCreate the configuration file. Will be editted at end.\n\nsudo mkdir -p $JHUBENV/etc/jupyterhub/\ncd $JHUBENV/etc/jupyterhub/\nsudo $JHUBENV/bin/jupyterhub --generate-config\n\nInstall docker if needed\n\nsudo yum install -y yum-utils\nsudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo\n\nsudo systemctl start docker\n\nNot sure this is needed.\n\nsudo firewall-cmd --zone=docker --add-port=8081/tcp\nsudo firewall-cmd --reload\nsudo systemctl restart docker\n\nInstall dockerspawner\n\nconda install -c conda-forge dockerspawner --yes\nconda install -c conda-forge docker-py --yes\n\nEdit the configuration file.\n\ncd $JHUBENV/etc/jupyterhub/\nnano jupyterhub_config.py\n\nPaste this in\n\n# Configuration file for jupyterhub.\n\nc = get_config()  #noqa\nc.JupyterHub.port = 8000\nc.JupyterHub.hub_bind_url = \"http://0.0.0.0:8081\"\nc.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'\nc.DockerSpawner.remove = True\nc.Spawner.http_timeout = 3600\nc.DockerSpawner.image_whitelist = {\n    'iorocker': 'eeholmes/iorocker-standalone:20231003',\n    'rocker-binder': 'eeholmes/rocker-binder:20231003',\n    'openscapes-rocker': 'eeholmes/minimal-jhub:20231004',\n    'datascience-r': 'jupyter/datascience-notebook:r-4.3.1',\n    'scipy-notebook': 'jupyter/scipy-notebook:7e1a19a8427f',\n}\n\nnotebook_dir = '/home/jovyan'\nc.DockerSpawner.notebook_dir = notebook_dir\n\n# Mount the real user's Docker volume on the host to the notebook user's\n# notebook directory in the container\nc.DockerSpawner.volumes = { 'jupyter-{username}': notebook_dir }\n\nDocker pull of the images. Do all.\n\ndocker pull jupyter/datascience-notebook:r-4.3.1\ndocker pull jupyter/scipy-notebook:7e1a19a8427f\n\nMake a new server service\n\nsudo mkdir -p $JHUBENV/etc/systemd\ncd $JHUBENV/etc/systemd\nnano jupyterhub.service\n\nPaste this in\n\n[Unit]\nDescription=JupyterHub\nAfter=syslog.target network.target\n\n[Service]\nUser=root\nEnvironment=\"PATH=/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/miniconda3/envs/jupyterhub/bin\"\nExecStart=/opt/miniconda3/envs/jupyterhub/bin/jupyterhub -f /opt/miniconda3/envs/jupyterhub/etc/jupyterhub/jupyterhub_config.py\n\n[Install]\nWantedBy=multi-user.target\n\nMake sure SELinux doesn’t block our service\n\nls -Z $JHUBENV/etc/systemd/\nsudo chcon system_u:object_r:systemd_unit_file_t:s0 $JHUBENV/etc/systemd/jupyterhub.service\nsudo find $JHUBENV/bin -type f -exec chcon system_u:object_r:bin_t:s0 {} \\;\n\nEnable our new service\n\nsudo ln -s $JHUBENV/etc/systemd/jupyterhub.service /etc/systemd/system/jupyterhub.service\nsudo systemctl daemon-reload\nsudo systemctl enable jupyterhub.service\nsudo systemctl start jupyterhub.service\n\nDone! See the long instructions if anything is not working."
-  },
-  {
-    "objectID": "posts/JHub-User-Guide.html",
-    "href": "posts/JHub-User-Guide.html",
-    "title": "JHub User Instructions",
-    "section": "",
-    "text": "I have set us up a JupyterHub/RStudio cloud-computing hub on Azure. It’s on Kubernetes and will spin up VMs as needed. The VMs are not huge: 2CPU & 8 Gig RAM.\nhttps://jhub.opensci.live/hub/login\nLogin authentication is via GitHub. Only members of the JHub GitHub team can log on. This is a testing environment. Contact Eli if you want to test it out.\nInstructions: It should be pretty self-explanatory.",
-    "crumbs": [
-      "JHub User Guide"
-    ]
-  },
-  {
-    "objectID": "posts/JHub-User-Guide.html#login",
-    "href": "posts/JHub-User-Guide.html#login",
-    "title": "JHub User Instructions",
-    "section": "Login",
-    "text": "Login\nAfter you get paste the login page, you will see this. Choose Python for Python only; choose R for Python and R.",
-    "crumbs": [
-      "JHub User Guide"
-    ]
-  },
-  {
-    "objectID": "posts/JHub-User-Guide.html#spin-up-your-server",
-    "href": "posts/JHub-User-Guide.html#spin-up-your-server",
-    "title": "JHub User Instructions",
-    "section": "Spin up your server",
-    "text": "Spin up your server\nYou will see this as your server spins up",
-    "crumbs": [
-      "JHub User Guide"
-    ]
-  },
-  {
-    "objectID": "posts/JHub-User-Guide.html#choose-your-platform",
-    "href": "posts/JHub-User-Guide.html#choose-your-platform",
-    "title": "JHub User Instructions",
-    "section": "Choose your platform",
-    "text": "Choose your platform\nYou can code in RStudio, JupyterLab or Terminal.",
-    "crumbs": [
-      "JHub User Guide"
-    ]
-  },
-  {
-    "objectID": "posts/JHub-User-Guide.html#lets-choose-rstudio",
-    "href": "posts/JHub-User-Guide.html#lets-choose-rstudio",
-    "title": "JHub User Instructions",
-    "section": "Let’s choose RStudio",
-    "text": "Let’s choose RStudio\n\n\nClone a repo\nChoose ‘new project’ (top right) and Version Control.\n\n\n\nTell Git who you are\nTell Git who you are and save your authentication info. You only do this once (or until your PAT expires). Run this code from the R console (not terminal).\nusethis::use_git_config(user.name = \"YourName\", user.email = \"your@email.com\")\nNow create a personal access token for authentication. SAVE the token because you will need it in the next step.\nusethis::create_github_token() \nNow run this and paste in the token.\ngitcreds::gitcreds_set()\nRestart R. You can chose your project from the dropdown on the top right to do this.\nNow commit a change and push.\nNote, you can also run the commands below from a terminal window.\ngit config --global user.name \"YourName\"\ngit config --global user.email \"your@email.com\"\ngit config --global credential.helper store",
-    "crumbs": [
-      "JHub User Guide"
-    ]
-  },
-  {
-    "objectID": "posts/JHub-User-Guide.html#lets-choose-jupyterlab",
-    "href": "posts/JHub-User-Guide.html#lets-choose-jupyterlab",
-    "title": "JHub User Instructions",
-    "section": "Let’s choose JupyterLab",
-    "text": "Let’s choose JupyterLab\nAny of the browser tabs with the Jupyter icon are JupyterLab.\nBe careful because you can be in RStudio with one GitHub repository and you could open the same repo in JupyterLab and easily create merge conflicts. Just be aware that they are in separate file systems so changes on RStudio will not be reflected in JupyterLab. It is not like you are on one computer.\n\nTell Git who you are\nBut I just did that with RStudio! I know but the JLab instance is in a different environment and doesn’t know what you did in the RStudio environment.\nOpen a terminal. You do this from the Launcher window. You can always open a new launcher window by clicking the little + tab\n\nNow click Terminal and run this code\ngit config --global user.name \"YourName\"\ngit config --global user.email \"your@email.com\"\ngit config --global credential.helper store\n\nCreate a PAT or use the one you created for RStudio\nMake a commit and push with the PAT as the password. Now you are set (until your PAT expires).\n\n\n\nClone a Git repo\nClick the Git icon on the left and you can clone a repo.",
-    "crumbs": [
-      "JHub User Guide"
-    ]
-  },
-  {
-    "objectID": "posts/JHub-User-Guide.html#stop-your-server",
-    "href": "posts/JHub-User-Guide.html#stop-your-server",
-    "title": "JHub User Instructions",
-    "section": "Stop your server",
-    "text": "Stop your server\nIt will stop on it’s own after awhile, but if it hangs, you can stop it and restart it. With File &gt; Hub Control Panel",
-    "crumbs": [
-      "JHub User Guide"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-centos-security.html",
-    "href": "posts/Set-up-centos-security.html",
-    "title": "Set-up CentOS https",
-    "section": "",
-    "text": "Now that our basic JupyterHub is running, we want to secure it. We are going to use Let’s Encrypt. Prerequisites:\nReferences:",
-    "crumbs": [
-      "Set-up https on Centos"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-centos-security.html#create-a-domain-name",
-    "href": "posts/Set-up-centos-security.html#create-a-domain-name",
-    "title": "Set-up CentOS https",
-    "section": "Create a domain name",
-    "text": "Create a domain name\nFind a domain name provider and set one up. It is not expensive. I used GoDaddy. You only need one. Later you can use it for multiple hubs using subdomains where are created by the next step (DNS entry). For example, let’s say you get the domain bluemountain123.live. You can have as many subdomains as you want and they will be subdomain.bluemountain123.live.\n\nCreate a DNS entry\nLet’s pretend you set up bluemountain123.live as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let’s say you create, dhub as the type A DNS entry. Put dhub in the name and the public IP address of the server (leaving off :8000) in the value section. Then dhub.bluemountain123.live will be the url.\n\n\n\nTest if the url is working\nhttp://dhub.bluemountain123.live:8000 would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:",
-    "crumbs": [
-      "Set-up https on Centos"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-centos-security.html#prep-the-server",
-    "href": "posts/Set-up-centos-security.html#prep-the-server",
-    "title": "Set-up CentOS https",
-    "section": "Prep the server",
-    "text": "Prep the server\n\nOpen port 80\nThis is the default port for http and certbot is going to spin up a temporary webserver on this port and get the SSL certificates. We will close this port when we are done.\n\nGo to the Azure dashboard (Networking section) for your CentOS server and make sure port 80 is open.\nCheck that the firewall is not blocking port 80: sudo firewall-cmd --list-ports. If 80 is not listed, we need to add it and reload:\n\n\nsudo firewall-cmd  --permanent --add-port 80/tcp\nsudo firewall-cmd --reload\nsudo firewall-cmd --list-ports\n\n\n\nStop our JupyterHub\n\nsudo systemctl start jupyterhub.service",
-    "crumbs": [
-      "Set-up https on Centos"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-centos-security.html#install-certbot",
-    "href": "posts/Set-up-centos-security.html#install-certbot",
-    "title": "Set-up CentOS https",
-    "section": "Install certbot",
-    "text": "Install certbot\nPer Let’s Encrypt recommendations, we will use certbot to get our SSL certificates. https://certbot.eff.org/.\nHere are the instructions for certbot on CentOS 8: https://certbot.eff.org/instructions?ws=other&os=centosrhel8 We choose “other” as the software.\n\nUpdate the CentOS repos\nI am using an End-of-Life CentOS distribution (sigh), and the repositories have been archived. This solution worked.\n\ndnf --disablerepo '*' --enablerepo=extras swap centos-linux-repos centos-stream-repos\ndnf distro-sync\n\nNote the last line, suggesting updating a bunch of packages and I said NO to that.\n\n\nInstall snap\nPer instructions here: https://snapcraft.io/docs/installing-snap-on-centos This updated some SELinux packages, which seemed a bit alarming but nothing seemed to break.\n\nsudo yum install snapd\nsudo systemctl enable --now snapd.socket\nsudo ln -s /var/lib/snapd/snap /snap\n\n\n\nInstall certbot\nI had to run this twice. First time it complained.\n\nsudo snap install --classic certbot\nsudo ln -s /snap/bin/certbot /usr/bin/certbot\n\n\n\nCreate the SSL certs.\nHave certbot create the SSL certs by spinning up a temporary webserver listening on port 80. Per instructions on the certbot website.\n\nsudo certbot certonly --standalone\n\nIt’ll ask for your email and the URL of your website. In my toy example, I created the domain dhub.bluemountain123.live.\n\n\nSSL cert renewal\nWith certbot running, the certificates should auto renew, but I haven’t tested this.",
-    "crumbs": [
-      "Set-up https on Centos"
-    ]
-  },
-  {
-    "objectID": "posts/Set-up-centos-security.html#update-the-jupyterhub-config-file",
-    "href": "posts/Set-up-centos-security.html#update-the-jupyterhub-config-file",
-    "title": "Set-up CentOS https",
-    "section": "Update the JupyterHub config file",
-    "text": "Update the JupyterHub config file\nEdit with something like\n\ncd /opt/miniconda3/envs/jupyterhub/etc/jupyterhub/\nnano jupyterhub_config.py\n\nThen add this to the config file. The port that is configured for SSL by default is 443. https is not going to work on 8000 which we had configured for http (on Azure).\nc.JupyterHub.port = 443\nc.JupyterHub.ssl_key = '/etc/letsencrypt/live/dhub.bluemountain123.live/privkey.pem'\nc.JupyterHub.ssl_cert = '/etc/letsencrypt/live/dhub.bluemountain123.live/fullchain.pem'\n\nRestart and Test\nWe need to open 443 in the firewall, and we can close 80 and 8000 now.\n\nsudo firewall-cmd  --permanent --add-port 443/tcp\nsudo firewall-cmd  --permanent --remove-port=80/tcp\nsudo firewall-cmd  --permanent --remove-port=8000/tcp\nsudo firewall-cmd --reload\nsudo firewall-cmd --list-ports\n\nNext we restart our JupyterHub service.\n\nsudo systemctl start jupyterhub.service\n\nTry https://dhub.bluemountain123.live and you should see the JupyterHub login without the http warning.",
-    "crumbs": [
-      "Set-up https on Centos"
-    ]
+    "text": "Instructions for editing config\n\nLog into https://portal.azure.com/ and once successful, you will see this\n\n\n\nClick the JupyterHub icon and you will see this\n\n\n\nClick the Connect icon and you will see this. Ignore everything else that you see. I don’t think you need to run the kubectl get deployments --all-namespaces=true unless you need to check Kubernetes set up.\n\n\n\nType nano config.yaml to get the the JupyterHub config. This is the only file you need to change. cntl-O to write. cntl-X to exit.\n\nAfter you update the config.yaml, you need to tell the JupyterHub about the change\nhelm upgrade --cleanup-on-fail jhub jupyterhub/jupyterhub --namespace jhub  --version=2.0.0 --values config.yaml\nIf upgrade was successful, you will see this (plus a bunch of text below that you can ignore).\n\n\nWhat a few minutes for your changes to take effect."
   },
   {
     "objectID": "posts/Set-up-centos.html",
@@ -559,120 +377,412 @@
     ]
   },
   {
-    "objectID": "posts/Setup-Notes.html",
-    "href": "posts/Setup-Notes.html",
-    "title": "Instructions for editing config",
+    "objectID": "posts/Set-up-centos-security.html",
+    "href": "posts/Set-up-centos-security.html",
+    "title": "Set-up CentOS https",
     "section": "",
-    "text": "Instructions for editing config\n\nLog into https://portal.azure.com/ and once successful, you will see this\n\n\n\nClick the JupyterHub icon and you will see this\n\n\n\nClick the Connect icon and you will see this. Ignore everything else that you see. I don’t think you need to run the kubectl get deployments --all-namespaces=true unless you need to check Kubernetes set up.\n\n\n\nType nano config.yaml to get the the JupyterHub config. This is the only file you need to change. cntl-O to write. cntl-X to exit.\n\nAfter you update the config.yaml, you need to tell the JupyterHub about the change\nhelm upgrade --cleanup-on-fail jhub jupyterhub/jupyterhub --namespace jhub  --version=2.0.0 --values config.yaml\nIf upgrade was successful, you will see this (plus a bunch of text below that you can ignore).\n\n\nWhat a few minutes for your changes to take effect."
+    "text": "Now that our basic JupyterHub is running, we want to secure it. We are going to use Let’s Encrypt. Prerequisites:\nReferences:",
+    "crumbs": [
+      "Set-up https on Centos"
+    ]
   },
   {
-    "objectID": "posts/set-up-jh-gcp.html",
-    "href": "posts/set-up-jh-gcp.html",
-    "title": "Set up JupyterHub on GCP",
+    "objectID": "posts/Set-up-centos-security.html#create-a-domain-name",
+    "href": "posts/Set-up-centos-security.html#create-a-domain-name",
+    "title": "Set-up CentOS https",
+    "section": "Create a domain name",
+    "text": "Create a domain name\nFind a domain name provider and set one up. It is not expensive. I used GoDaddy. You only need one. Later you can use it for multiple hubs using subdomains where are created by the next step (DNS entry). For example, let’s say you get the domain bluemountain123.live. You can have as many subdomains as you want and they will be subdomain.bluemountain123.live.\n\nCreate a DNS entry\nLet’s pretend you set up bluemountain123.live as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let’s say you create, dhub as the type A DNS entry. Put dhub in the name and the public IP address of the server (leaving off :8000) in the value section. Then dhub.bluemountain123.live will be the url.\n\n\n\nTest if the url is working\nhttp://dhub.bluemountain123.live:8000 would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:",
+    "crumbs": [
+      "Set-up https on Centos"
+    ]
+  },
+  {
+    "objectID": "posts/Set-up-centos-security.html#prep-the-server",
+    "href": "posts/Set-up-centos-security.html#prep-the-server",
+    "title": "Set-up CentOS https",
+    "section": "Prep the server",
+    "text": "Prep the server\n\nOpen port 80\nThis is the default port for http and certbot is going to spin up a temporary webserver on this port and get the SSL certificates. We will close this port when we are done.\n\nGo to the Azure dashboard (Networking section) for your CentOS server and make sure port 80 is open.\nCheck that the firewall is not blocking port 80: sudo firewall-cmd --list-ports. If 80 is not listed, we need to add it and reload:\n\n\nsudo firewall-cmd  --permanent --add-port 80/tcp\nsudo firewall-cmd --reload\nsudo firewall-cmd --list-ports\n\n\n\nStop our JupyterHub\n\nsudo systemctl start jupyterhub.service",
+    "crumbs": [
+      "Set-up https on Centos"
+    ]
+  },
+  {
+    "objectID": "posts/Set-up-centos-security.html#install-certbot",
+    "href": "posts/Set-up-centos-security.html#install-certbot",
+    "title": "Set-up CentOS https",
+    "section": "Install certbot",
+    "text": "Install certbot\nPer Let’s Encrypt recommendations, we will use certbot to get our SSL certificates. https://certbot.eff.org/.\nHere are the instructions for certbot on CentOS 8: https://certbot.eff.org/instructions?ws=other&os=centosrhel8 We choose “other” as the software.\n\nUpdate the CentOS repos\nI am using an End-of-Life CentOS distribution (sigh), and the repositories have been archived. This solution worked.\n\ndnf --disablerepo '*' --enablerepo=extras swap centos-linux-repos centos-stream-repos\ndnf distro-sync\n\nNote the last line, suggesting updating a bunch of packages and I said NO to that.\n\n\nInstall snap\nPer instructions here: https://snapcraft.io/docs/installing-snap-on-centos This updated some SELinux packages, which seemed a bit alarming but nothing seemed to break.\n\nsudo yum install snapd\nsudo systemctl enable --now snapd.socket\nsudo ln -s /var/lib/snapd/snap /snap\n\n\n\nInstall certbot\nI had to run this twice. First time it complained.\n\nsudo snap install --classic certbot\nsudo ln -s /snap/bin/certbot /usr/bin/certbot\n\n\n\nCreate the SSL certs.\nHave certbot create the SSL certs by spinning up a temporary webserver listening on port 80. Per instructions on the certbot website.\n\nsudo certbot certonly --standalone\n\nIt’ll ask for your email and the URL of your website. In my toy example, I created the domain dhub.bluemountain123.live.\n\n\nSSL cert renewal\nWith certbot running, the certificates should auto renew, but I haven’t tested this.",
+    "crumbs": [
+      "Set-up https on Centos"
+    ]
+  },
+  {
+    "objectID": "posts/Set-up-centos-security.html#update-the-jupyterhub-config-file",
+    "href": "posts/Set-up-centos-security.html#update-the-jupyterhub-config-file",
+    "title": "Set-up CentOS https",
+    "section": "Update the JupyterHub config file",
+    "text": "Update the JupyterHub config file\nEdit with something like\n\ncd /opt/miniconda3/envs/jupyterhub/etc/jupyterhub/\nnano jupyterhub_config.py\n\nThen add this to the config file. The port that is configured for SSL by default is 443. https is not going to work on 8000 which we had configured for http (on Azure).\nc.JupyterHub.port = 443\nc.JupyterHub.ssl_key = '/etc/letsencrypt/live/dhub.bluemountain123.live/privkey.pem'\nc.JupyterHub.ssl_cert = '/etc/letsencrypt/live/dhub.bluemountain123.live/fullchain.pem'\n\nRestart and Test\nWe need to open 443 in the firewall, and we can close 80 and 8000 now.\n\nsudo firewall-cmd  --permanent --add-port 443/tcp\nsudo firewall-cmd  --permanent --remove-port=80/tcp\nsudo firewall-cmd  --permanent --remove-port=8000/tcp\nsudo firewall-cmd --reload\nsudo firewall-cmd --list-ports\n\nNext we restart our JupyterHub service.\n\nsudo systemctl start jupyterhub.service\n\nTry https://dhub.bluemountain123.live and you should see the JupyterHub login without the http warning.",
+    "crumbs": [
+      "Set-up https on Centos"
+    ]
+  },
+  {
+    "objectID": "posts/JHub-User-Guide.html",
+    "href": "posts/JHub-User-Guide.html",
+    "title": "JHub User Instructions",
     "section": "",
-    "text": "Documentation: https://z2jh.jupyter.org\nHelp forum: https://discourse.jupyter.org\nIssue tracking: https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues\n\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo.",
+    "text": "I have set us up a JupyterHub/RStudio cloud-computing hub on Azure. It’s on Kubernetes and will spin up VMs as needed. The VMs are not huge: 2CPU & 8 Gig RAM.\nhttps://jhub.opensci.live/hub/login\nLogin authentication is via GitHub. Only members of the JHub GitHub team can log on. This is a testing environment. Contact Eli if you want to test it out.\nInstructions: It should be pretty self-explanatory.",
     "crumbs": [
-      "Set-up JHub on Google Cloud"
+      "JHub User Guide"
     ]
   },
   {
-    "objectID": "posts/set-up-jh-gcp.html#background",
-    "href": "posts/set-up-jh-gcp.html#background",
-    "title": "Set up JupyterHub on GCP",
+    "objectID": "posts/JHub-User-Guide.html#login",
+    "href": "posts/JHub-User-Guide.html#login",
+    "title": "JHub User Instructions",
+    "section": "Login",
+    "text": "Login\nAfter you get paste the login page, you will see this. Choose Python for Python only; choose R for Python and R.",
+    "crumbs": [
+      "JHub User Guide"
+    ]
+  },
+  {
+    "objectID": "posts/JHub-User-Guide.html#spin-up-your-server",
+    "href": "posts/JHub-User-Guide.html#spin-up-your-server",
+    "title": "JHub User Instructions",
+    "section": "Spin up your server",
+    "text": "Spin up your server\nYou will see this as your server spins up",
+    "crumbs": [
+      "JHub User Guide"
+    ]
+  },
+  {
+    "objectID": "posts/JHub-User-Guide.html#choose-your-platform",
+    "href": "posts/JHub-User-Guide.html#choose-your-platform",
+    "title": "JHub User Instructions",
+    "section": "Choose your platform",
+    "text": "Choose your platform\nYou can code in RStudio, JupyterLab or Terminal.",
+    "crumbs": [
+      "JHub User Guide"
+    ]
+  },
+  {
+    "objectID": "posts/JHub-User-Guide.html#lets-choose-rstudio",
+    "href": "posts/JHub-User-Guide.html#lets-choose-rstudio",
+    "title": "JHub User Instructions",
+    "section": "Let’s choose RStudio",
+    "text": "Let’s choose RStudio\n\n\nClone a repo\nChoose ‘new project’ (top right) and Version Control.\n\n\n\nTell Git who you are\nTell Git who you are and save your authentication info. You only do this once (or until your PAT expires). Run this code from the R console (not terminal).\nusethis::use_git_config(user.name = \"YourName\", user.email = \"your@email.com\")\nNow create a personal access token for authentication. SAVE the token because you will need it in the next step.\nusethis::create_github_token() \nNow run this and paste in the token.\ngitcreds::gitcreds_set()\nRestart R. You can chose your project from the dropdown on the top right to do this.\nNow commit a change and push.\nNote, you can also run the commands below from a terminal window.\ngit config --global user.name \"YourName\"\ngit config --global user.email \"your@email.com\"\ngit config --global credential.helper store",
+    "crumbs": [
+      "JHub User Guide"
+    ]
+  },
+  {
+    "objectID": "posts/JHub-User-Guide.html#lets-choose-jupyterlab",
+    "href": "posts/JHub-User-Guide.html#lets-choose-jupyterlab",
+    "title": "JHub User Instructions",
+    "section": "Let’s choose JupyterLab",
+    "text": "Let’s choose JupyterLab\nAny of the browser tabs with the Jupyter icon are JupyterLab.\nBe careful because you can be in RStudio with one GitHub repository and you could open the same repo in JupyterLab and easily create merge conflicts. Just be aware that they are in separate file systems so changes on RStudio will not be reflected in JupyterLab. It is not like you are on one computer.\n\nTell Git who you are\nBut I just did that with RStudio! I know but the JLab instance is in a different environment and doesn’t know what you did in the RStudio environment.\nOpen a terminal. You do this from the Launcher window. You can always open a new launcher window by clicking the little + tab\n\nNow click Terminal and run this code\ngit config --global user.name \"YourName\"\ngit config --global user.email \"your@email.com\"\ngit config --global credential.helper store\n\nCreate a PAT or use the one you created for RStudio\nMake a commit and push with the PAT as the password. Now you are set (until your PAT expires).\n\n\n\nClone a Git repo\nClick the Git icon on the left and you can clone a repo.",
+    "crumbs": [
+      "JHub User Guide"
+    ]
+  },
+  {
+    "objectID": "posts/JHub-User-Guide.html#stop-your-server",
+    "href": "posts/JHub-User-Guide.html#stop-your-server",
+    "title": "JHub User Instructions",
+    "section": "Stop your server",
+    "text": "Stop your server\nIt will stop on it’s own after awhile, but if it hangs, you can stop it and restart it. With File &gt; Hub Control Panel",
+    "crumbs": [
+      "JHub User Guide"
+    ]
+  },
+  {
+    "objectID": "posts/Set-up-centos-tljh.html",
+    "href": "posts/Set-up-centos-tljh.html",
+    "title": "Centos Set-up with TLJH",
     "section": "",
-    "text": "Documentation: https://z2jh.jupyter.org\nHelp forum: https://discourse.jupyter.org\nIssue tracking: https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues\n\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo.",
+    "text": "This is my notes for setting this up on a Centos 8 (Linux distribution) server. Jump to the “Summary” section to see only the instructions without explanations.\nAll the commands are run in a shell (bash)\nReferences:"
+  },
+  {
+    "objectID": "posts/Set-up-centos-tljh.html#set-up-vm-on-azure",
+    "href": "posts/Set-up-centos-tljh.html#set-up-vm-on-azure",
+    "title": "Centos Set-up with TLJH",
+    "section": "Set up VM on Azure",
+    "text": "Set up VM on Azure\n\nCreated a Centos 8.3 server on Azure: https://portal.azure.com/#create/cloud-infrastructure-services.centos-8-3centos-8-3\nI didn’t do anything special for set-up. Choose SSH with key.\nOnce it is created, I went to the dashboard and selected my VM. The dashboard has a “Connect” button to get to the shell and it shows the public IP address.\nI had to create a special security rule to allow me to ssh into the public IP address to connect. Normally I use the cloud shell to connect, but Azure would not let me connect via the cloud shell for a server since it wanted upgraded security package and I cannot do that with my work subscription.\nThen I saved the key somewhere on my computer and\n\n\nchmod 400 ~/&lt;key location&gt;\nssh -i ~/&lt;key location&gt;/Centos8.cer &lt;vm-username&gt;@&lt;public ip-address&gt;"
+  },
+  {
+    "objectID": "posts/Set-up-centos-tljh.html#on-vm-check-set-up",
+    "href": "posts/Set-up-centos-tljh.html#on-vm-check-set-up",
+    "title": "Centos Set-up with TLJH",
+    "section": "On VM check set-up",
+    "text": "On VM check set-up\nI ssh-ed into the VM with\n\nssh -i &lt;path to key downloaded from Azure&gt; eeholmes@&lt;public ip address&gt;\n\n\nMake sure you are root\nGetting the JupyterHub set up needs to be done as root. First make sure you have an admin password. When I set up my Azure VM, I did not set a password. So first\n\nsudo passwd &lt;your username&gt;\n\nand set a password. Then switch to root if you are not signed in as root\n\nsudo -i\n\n\n\nCheck for Python\nYou will need Python 3.6+ installed. Open a terminal window and run python3 --version or python --version to see if Python is installed and what the version is.\nCheck your operating system (OS) with\n\ncat /etc/os-release\n\n\n\nCheck for conda\nYou will need conda (or miniconda) for these instructions. conda (and miniconda) take care of checking that all our packages will be inter-operable. It is best to install JupyterHub into a clean environment. That way you minimize chances of conflicts and your environment will solve (figure out any conflicts) much much faster.\nCheck for conda with\n\nconda list\n\nIf it doesn’t show a list of environments, then you need to install miniconda. Installation instructions. Read about miniconda for scientists from Software Carpentries here.\nThis is what I used to install miniconda from these instructions. Note install miniconda in some place like /opt/miniconda3 where all users will have access to `/opt/miniconda3/bin. We don’t want to install in /root/ for example or the admin users home directory.\n\nmkdir -p /opt/miniconda3\nwget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /opt/miniconda3/miniconda.sh\nbash /opt/miniconda3/miniconda.sh -b -u -p /opt/miniconda3\nrm -rf /opt/miniconda3/miniconda.sh\n\nThen initialize to set up the path. Note I am using bash. You’ll need to change if you are using zsh.\n\n/opt/miniconda3/bin/conda init bash\nsource ~/.bashrc\n\nnote will need to do something else to add the conda binary to all the users’ paths"
+  },
+  {
+    "objectID": "posts/Set-up-centos-tljh.html#create-the-conda-environment",
+    "href": "posts/Set-up-centos-tljh.html#create-the-conda-environment",
+    "title": "Centos Set-up with TLJH",
+    "section": "Create the conda environment",
+    "text": "Create the conda environment\nCreate the conda environment for the jupyterhub installation. Installation will be in a directory with all the files for packages. Then activate it (enter it), and get the location of the environment (folder).\nAll the commands below are in the terminal window on your VM/server.\nCreate the environment named jupyterhub with python and jupyterhub (module). After creating, activate (enter) that environment. Then install jupyterlab, notebook and dockerspawner into the environment. Note the jupyterhub after -n is the name of the environment.\n\nconda create -n jupyterhub python\n\nThen activate (enter) that environment\n\nconda activate jupyterhub\n\nThen install jupyterhub here\n\nconda install -c conda-forge jupyterhub\n\nand then jupyterlab\n\nconda install -c conda-forge jupyterlab notebook\n\n\nSet a variable for env path\nThe environment has a folder with all the packages and binaries that we install. We are going to need to know the location of that folder. Get the location with\n\nconda env list\n\nOn the VM I set up, the folder location is\n\n/opt/miniconda3/envs/jupyterhub\n\nYours could be something entirely different. On another server with anaconda (a not-free conda package resolver), the folder was\n\n/SHARE/anaconda3/envs/jupterhub/\n\nWe are going to be saving the configuration files for our JupyterHub in this folder. Let’s save the path to a variable so we don’t have to keep entering the whole path.\n\nJHUBENV=/opt/miniconda3/envs/jupyterhub\n\nMake sure users can read and execute this folder. They need to in order to be able to spawn instances for the hub.\n\nchmod 755 $JHUBENV\n\nYou should now be able to start the hub, but you will not be able to access it yet because you need to open the 8000 port. Type\n\n$JHUBENV/bin/jupyterhub\n\nand check that it starts. Then use Cntl-C to stop the hub."
+  },
+  {
+    "objectID": "posts/Set-up-centos-tljh.html#create-a-user-on-the-vm",
+    "href": "posts/Set-up-centos-tljh.html#create-a-user-on-the-vm",
+    "title": "Centos Set-up with TLJH",
+    "section": "Create a user on the VM",
+    "text": "Create a user on the VM\nBy default, any user on the server will be able to login. Let’s create a test user so that we are not logging into our hub with the root user password. We will be using “http” until we secure it so passwords are potentially exposed.\n\nuseradd jhub\n\nand give it a password when it asks."
+  },
+  {
+    "objectID": "posts/Set-up-centos-tljh.html#open-the-8000-port",
+    "href": "posts/Set-up-centos-tljh.html#open-the-8000-port",
+    "title": "Centos Set-up with TLJH",
+    "section": "Open the 8000 port",
+    "text": "Open the 8000 port\nFirewallD was not running on my Azure Centos server, so I started it up to manage the ports.\n\nsudo systemctl enable firewalld\nsudo systemctl start firewalld\n\nFind out the Public IP address for the server you are on; it’s listed on the Azure overview and networking page for the VM in the Azure portal. Then open the 8000 port.\nFirst find out what ports are open through the firewall\n\nsudo firewall-cmd --list-ports\n\nAdd the 8000 port, reload and recheck that it appears.\n\nsudo firewall-cmd  --permanent --add-port 8000/tcp\nsudo firewall-cmd --reload\nsudo firewall-cmd --list-ports\n\nBecause I am on an Azure VM, I also have to set up a networking rule to allow the 8000 port. By default, all public access to the server is blocked. Go to the Azure dashboard, select your VM, then select Networking under Settings, and then click Add Inbound Port rule. I am pretty sure you need to select “http” instead of “https”.\nOnce the port is open, you should be able to reach your JupyterHub at http://XXX.XX.XX.XX:8000 (replace the XX’s with the Public IP address).\nBackground\nThe JupyterhHub is running by default on http://localhost:8000. This means that if you start the hub on a machine that you are logged into, you should be able to open a browser on that machine, enter http://localhost:8000 and the hub login page will appear. There are a few reasons that might not work\n\nYou are ssh-ing into a server and don’t have a browser to open. The browser on the computer that you are ssh-ing from is the “localhost” in this case and you need the “localhost” to be the server.\nYou are logged directly into your server, but it doesn’t have a browser installed.\n\nHowever http://localhost:8000 is actually not very useful. We are trying to create a hub that others can log into from their browsers.\nSo you need to determine the Public IP address for the server you are on. This is the IP address that you could enter into a browser. If you enter http://XXX.XX.XX.XX (replace with actual IP), then you should see a page of some sort. This indicates that the server is working. If you are on an internal network, then you will only be able to load the address if you are also on that network. But for security reason, ports will not be open by default. You need to open the 8000 port so that http://XXX.XX.XX.XX:8000 will be found."
+  },
+  {
+    "objectID": "posts/Set-up-centos-tljh.html#log-in",
+    "href": "posts/Set-up-centos-tljh.html#log-in",
+    "title": "Centos Set-up with TLJH",
+    "section": "Log in!",
+    "text": "Log in!\nAt this point, you should be able to login with the jhub test account."
+  },
+  {
+    "objectID": "posts/Set-up-centos-tljh.html#set-up-a-configuration-file",
+    "href": "posts/Set-up-centos-tljh.html#set-up-a-configuration-file",
+    "title": "Centos Set-up with TLJH",
+    "section": "Set up a configuration file",
+    "text": "Set up a configuration file\nSo far, we have started the hub with the default configuration. We are going to need to customize it. For that we need a configuration file. We will create this in the folder where the environment files are.\n\nsudo mkdir -p $JHUBENV/etc/jupyterhub/\ncd $JHUBENV/etc/jupyterhub/\n\nNext create the default configuration file jupyterhub_config.py.\n\nsudo $JHUBENV/bin/jupyterhub --generate-config\n\nBecause we cd-d into the $JHUBENV/etc/jupyterhub/ directory, the file is created there. This default file is very long. Open up with\n\nnano jupyterhub_config.py\n\nUse F6 to find lines. Uncomment these two lines and save (Cntl-O, Enter, Cntl-X).\n\nc.Spawner.http_timeout = 3600"
+  },
+  {
+    "objectID": "posts/Set-up-centos-tljh.html#make-a-new-server-service",
+    "href": "posts/Set-up-centos-tljh.html#make-a-new-server-service",
+    "title": "Centos Set-up with TLJH",
+    "section": "Make a new server service",
+    "text": "Make a new server service\n\nCreate the new unit file\nAt this point, after opening the port, you should be able to get to your JupyterHub by starting it with jupyterhub --ip XXX.XX.XX.XX --port=8000 and then browsing to http://XXX.XX.XX.XX:8000. But you hub is going to be stopped whenever the server is rebooted. So next we need to set up a service for your service so that our hub starts automatically.\nCreate a new directory for the service unit file,\n\nsudo mkdir -p $JHUBENV/etc/systemd\ncd $JHUBENV/etc/systemd\n\nCreate the file and name jupyterhub.service. For example, using nano editor, we do\n\nnano jupyterhub.service\n\nAnd into that file we put the following. Replace /opt/miniconda3/envs/jupyterhub with the actual path to the jupyterhub environment folder.\n\n[Unit]\nDescription=JupyterHub\nAfter=syslog.target network.target\n\n[Service]\nUser=root\nEnvironment=\"PATH=/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/miniconda3/envs/jupyterhub/bin\"\nExecStart=/opt/miniconda3/envs/jupyterhub/bin/jupyterhub -f /opt/miniconda3/envs/jupyterhub/etc/jupyterhub/jupyterhub_config.py\n\n[Install]\nWantedBy=multi-user.target\n\nNext we make systemd aware of the new service.\nCreate a symlink file in the folder where all the server services are kept. And tell systemd to reload its configuration files\n\nsudo ln -s $JHUBENV/etc/systemd/jupyterhub.service /etc/systemd/system/jupyterhub.service\nsudo systemctl daemon-reload\n\n\n\nMake sure SELinux doesn’t block our service\nSELinux (security for the server) checks that files that are used have the correct label. All our files have generic file labels. If you do,\n\nls -Z $JHUBENV/etc/systemd/\n\nYou will see that the file label is unconfined_u:object_r:usr_t:s0. We need it to be\n\nsystemd_unit_file_t\n\nWe change the file label with\n\nsudo chcon system_u:object_r:systemd_unit_file_t:s0 $JHUBENV/etc/systemd/jupyterhub.service\n\nSELinux will also object to the file label on all the binaries that we use to start up the JupyterHub (like jupyterhub) so we need to fix those file labels.\nThis will add bin_t label to all the binaries and check that it worked.\n\nsudo find $JHUBENV/bin -type f -exec chcon system_u:object_r:bin_t:s0 {} \\;\nls -Z $JHUBENV/bin\n\nIt got all the binaries but not the simlinks. Nonetheless it seemed to run ok.\n\n\nEnable our new service\n\nsudo systemctl enable jupyterhub.service\n\nThe service will start on reboot, but we can start it straight away using start:\n\nsudo systemctl start jupyterhub.service\n\nCheck that it is running.\n\nsudo systemctl status jupyterhub.service\n\nIf it fails, try\n\naudit2why &lt; /var/log/audit/audit.log\n\nto debug. It is likely to be an issue with SELinux blocking the service from starting.\nNow our hub should be available on http:\\\\XXX.XX.XX.XX:8000. You can double check that it is listen on this port by running\n\nnetstat -tuln\n\nAt this point, you will need to address security if your hub is open to the web, as opposed to being on an internal network and only accessible to that network. Learn about that here."
+  },
+  {
+    "objectID": "posts/Set-up-centos-tljh.html#set-up-docker-for-user-environment",
+    "href": "posts/Set-up-centos-tljh.html#set-up-docker-for-user-environment",
+    "title": "Centos Set-up with TLJH",
+    "section": "Set up Docker for user environment",
+    "text": "Set up Docker for user environment\nWhen you log in the jupyter notebooks will be trying to use the Python environment that was created to install JupyterHub, this is not what we want. We will use a docker image to “spawn” the user environment. Read here for other approaches.\nWe are going to use dockerspawner so that we can use a docker image for our user environments. The user will work in these containerized environments and they won’t have access to any other files in the server. In order to share their work with others, the normal workflow would be to work in Git repos and share those repos to a GitHub (or GitLab server). Each user will have a home directory on the server for their files, but they won’t have access to other hub user directories nor will they have access to any other directories on the server.\n\nInstall docker\nI am using Centos in this example\n\nsudo yum install -y yum-utils\nsudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo\n\nThen we need to start docker\n\nsudo systemctl start docker\n\n\n\nInstall dockerspawner\nI am going to be creating the user environment from a docker image, so I also want dockerspawner. Note dockerspawner installed docker-py but it was really old and threw errors so I installed separately to get the latest version. Note make sure you are in the jupyterhub conda env. You can run conda env list and use conda activate jupyterhub if you are not in it.\n\nconda install -c conda-forge dockerspawner\nconda install -c conda-forge docker-py\n\n\n\nJupyter images\nThe image that we use must have the jupyterhub and notebook module installed. The jupyterhub version needs to also match what you have on your hub.\nCheck the version on your server:\n\n$JHUBENV/bin/jupyterhub -V\n\nFor demo purposes, we will use the jupyter images on DockerHub. We want to find an image with the same version of jupyterhub as we have on our server.\n\n\nEdit the config file\nEdit the jupyterhub_config.py file in $JHUB-ENV/etc/jupyterhub/ to add that we want to use DockerSpawner and specify the images that users should have access to. Users will get a drop down menu. Add these lines to jupyterhub_config.py. The hub bind url needs to be 0.0.0.0 because we are using a docker container for the individual user environments.\n\nhttps://discourse.jupyter.org/t/whats-the-main-difference-between-hub-connect-url-vs-hub-bind-url/3596/2\nNote image_whitelist is deprecated as of dockerspawner 12.0. New name is allowed_images.\n\n\nc = get_config()  #noqa\nc.JupyterHub.port = 8000\nc.JupyterHub.hub_bind_url = \"http://0.0.0.0:8081\"\nc.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'\nc.DockerSpawner.remove = True\nc.Spawner.http_timeout = 3600\nc.DockerSpawner.image_whitelist = {\n    'datascience-r': 'jupyter/datascience-notebook:r-4.3.1',\n    'scipy-notebook': 'jupyter/scipy-notebook:7e1a19a8427f',\n}\n\nDo a docker pull of the images so that they don’t have to be pulled the first time that a user chooses that image.\n\ndocker pull jupyter/datascience-notebook:r-4.3.1\ndocker pull jupyter/scipy-notebook:7e1a19a8427f\n\nNow you can restart the service and the user can start a notebook with the specified images.\n\n\nCreate your own Docker images\nDocker images that work with JupyterHub with Kubernetes will work with this set-up with the addition of jupyterhub and notebook.\nAdd the following to your Docker image\n\nRUN pip3 install \\\n    'jupyter-rsession-proxy' \\\n    'jupyterhub==3.1.*' \\\n    'notebook==6.*' \\\n    'jupyterlab'\n\nCMD [\"jupyterhub-singleuser\"]\n\nExample using rocker image. Code added to make the home directory home/jovyan.\n\nFROM rocker/binder:4.3\n\nUSER root\nRUN usermod -d /home/jovyan rstudio\nRUN mkdir /home/jovyan\nRUN chown rstudio:rstudio /home/jovyan\nUSER rstudio\n\nRUN pip3 install \\\n    'jupyter-rsession-proxy' \\\n    'jupyterhub==3.1.*' \\\n    'notebook==6.*' \\\n    'jupyterlab'\n\nWORKDIR /home/jovyan\n\nCMD [\"jupyterhub-singleuser\"]\n\nExample using openscapes/rocker\n\nFROM openscapes/rocker:a7596b5\n\nRUN pip3 install \\\n    'jupyter-rsession-proxy' \\\n    'jupyterhub==3.1.*' \\\n    'notebook==6.*' \\\n    'jupyterlab'\n\nUSER root\nRUN mkdir /home/jovyan\nRUN chown rstudio:rstudio /home/jovyan\nUSER rstudio\n\nCMD [\"jupyterhub-singleuser\"]\n\n\n\nSpecial note regarding rocker images\nThe default home directory for rocker images is home/rstudio but the default for JupyterHub is home/jovyan."
+  },
+  {
+    "objectID": "posts/Set-up-centos-tljh.html#persistent-volume",
+    "href": "posts/Set-up-centos-tljh.html#persistent-volume",
+    "title": "Centos Set-up with TLJH",
+    "section": "Persistent volume",
+    "text": "Persistent volume\nAdd the following to the config file to create a persistent volume.\n\nnotebook_dir = '/home/jovyan'\nc.DockerSpawner.notebook_dir = notebook_dir\n\n# Mount the real user's Docker volume on the host to the notebook user's\n# notebook directory in the container\nc.DockerSpawner.volumes = { 'jupyter-{username}': notebook_dir }"
+  },
+  {
+    "objectID": "posts/Set-up-centos-tljh.html#user-environment-customization",
+    "href": "posts/Set-up-centos-tljh.html#user-environment-customization",
+    "title": "Centos Set-up with TLJH",
+    "section": "User environment customization",
+    "text": "User environment customization\n\nMemory limits and guarantees\nYou can set memory limits on the containers that are spawned for users by adding limits. Read the documentation here.\nFor example:\n\nc.DockerSpawner.mem_limit = '8G'\nc.DockerSpawner.mem_guarantee = '1G'\nc.DockerSpawner.cpu_guarantee = 0.5\nc.DockerSpawner.cpu_limit = 1\n\nIf that doesn’t work try\n\nc.Spawner.mem_limit = '2G'\n\nI believe you can specify as a drop-down to give the user choices:\n\nc.DockerSpawner.mem_guarantee = {\n    '1G': '1G',\n    '2G': '2G',\n    '8G': '8G',\n}\n\n\n\nCreating a shared volume\nOne read-only shared volume:\nhttps://github.com/jupyterhub/dockerspawner/issues/172\n\nc.DockerSpawner.volumes = {  'jupyterhub-user-{username}':'/home/jovyan',   '/path/to/shared': {\"bind\": '/home/jovyan/shared', \"mode\": \"ro\"} }\n\nA volume that is read-only for some and read-write for others:\nhttps://github.com/jupyterhub/dockerspawner/issues/172\nMore discussions around shared volumes\nhttps://github.com/jupyterhub/dockerspawner/issues/453"
+  },
+  {
+    "objectID": "posts/Set-up-centos-tljh.html#setting-up-https",
+    "href": "posts/Set-up-centos-tljh.html#setting-up-https",
+    "title": "Centos Set-up with TLJH",
+    "section": "Setting up https",
+    "text": "Setting up https\nIf you are using a public IP address, rather than being on a private network, you will want to set up https.\n\nCreate a domain name\nFind a domain name provider and set one up. It is not expensive. I used GoDaddy. You only need one. Later you can use it for multiple hubs using subdomains where are created by the next step (DNS entry). For example, let’s say you get the domain bluemountain123.live. You can have as many subdomains as you want and they will be subdomain.bluemountain123.live.\n\n\nCreate a DNS entry\nLet’s pretend you set up bluemountain123.live as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let’s say you create, dhub as the type A DNS entry. Put dhub in the name and the public IP address of the server (leaving off :8000) in the value section. Then dhub.bluemountain123.live will be the url.\n\n\n\nTest if the url is working\nhttp:\\\\dhub.bluemountain123.live:8000 would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:\n\n\n\nSet-up https on your JupyterHub\nLog back into your Kubernetes cluster: go to portal.azure.com, click on your Kubernetes cluster name, and then click on “Connect”. Then click on “Open Cloud Shell”. Read documentation about https\nOnce you are on the shell, type\nnano dconfig.yaml\nto edit the config file. Paste this in and save. Note the additional jupyterhub: in the yaml file. This is not in a plain JupyterHub with Kubernetes config file (i.e. in a non-daskhub, the jupyterhub: bit is not there and everything is moved to left by 2 spaces).\njupyterhub:\n  proxy:\n    https:\n      enabled: true\n      hosts:\n        - dhub.bluemountain123.live\n      letsencrypt:\n        contactEmail: your@email.com\n\n\nUpdate the JupyterHub installation\nAnytime you change dconfig.yaml you need to run this code.\nhelm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml\n\n\nTest if https is working\nTry https:\\\\dhub.bluemountain123.live and you should see the JupyterHub login without that http warning."
+  },
+  {
+    "objectID": "posts/Set-up-centos-tljh.html#authentication",
+    "href": "posts/Set-up-centos-tljh.html#authentication",
+    "title": "Centos Set-up with TLJH",
+    "section": "Authentication",
+    "text": "Authentication\nhttps://oauthenticator.readthedocs.io/en/latest/tutorials/provider-specific-setup/providers/github.html"
+  },
+  {
+    "objectID": "posts/Set-up-centos-tljh.html#summary",
+    "href": "posts/Set-up-centos-tljh.html#summary",
+    "title": "Centos Set-up with TLJH",
+    "section": "Summary",
+    "text": "Summary\nOnly the instructions. Make sure you are installing as the root user. I assume you have Python and conda installed.\nCreate the conda environment\n\nsudo -i\n\nconda create -n jupyterhub python --yes\nconda activate jupyterhub\nconda install -c conda-forge jupyterhub --yes\nconda install -c conda-forge jupyterlab notebook --yes\n\nJHUBENV=/opt/miniconda3/envs/jupyterhub\nchmod 755 $JHUBENV\n\nCreate user\n\nuseradd jhub\n\nOpen the 8000 port for access to the application.\n\n#sudo systemctl enable firewalld\n#sudo systemctl start firewalld\n\nsudo firewall-cmd  --permanent --add-port 8000/tcp\nsudo firewall-cmd --reload\nsudo firewall-cmd --list-ports\n\nCreate the configuration file. Will be editted at end.\n\nsudo mkdir -p $JHUBENV/etc/jupyterhub/\ncd $JHUBENV/etc/jupyterhub/\nsudo $JHUBENV/bin/jupyterhub --generate-config\n\nInstall docker if needed\n\nsudo yum install -y yum-utils\nsudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo\n\nsudo systemctl start docker\n\nNot sure this is needed.\n\nsudo firewall-cmd --zone=docker --add-port=8081/tcp\nsudo firewall-cmd --reload\nsudo systemctl restart docker\n\nInstall dockerspawner\n\nconda install -c conda-forge dockerspawner --yes\nconda install -c conda-forge docker-py --yes\n\nEdit the configuration file.\n\ncd $JHUBENV/etc/jupyterhub/\nnano jupyterhub_config.py\n\nPaste this in\n\n# Configuration file for jupyterhub.\n\nc = get_config()  #noqa\nc.JupyterHub.port = 8000\nc.JupyterHub.hub_bind_url = \"http://0.0.0.0:8081\"\nc.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'\nc.DockerSpawner.remove = True\nc.Spawner.http_timeout = 3600\nc.DockerSpawner.image_whitelist = {\n    'iorocker': 'eeholmes/iorocker-standalone:20231003',\n    'rocker-binder': 'eeholmes/rocker-binder:20231003',\n    'openscapes-rocker': 'eeholmes/minimal-jhub:20231004',\n    'datascience-r': 'jupyter/datascience-notebook:r-4.3.1',\n    'scipy-notebook': 'jupyter/scipy-notebook:7e1a19a8427f',\n}\n\nnotebook_dir = '/home/jovyan'\nc.DockerSpawner.notebook_dir = notebook_dir\n\n# Mount the real user's Docker volume on the host to the notebook user's\n# notebook directory in the container\nc.DockerSpawner.volumes = { 'jupyter-{username}': notebook_dir }\n\nDocker pull of the images. Do all.\n\ndocker pull jupyter/datascience-notebook:r-4.3.1\ndocker pull jupyter/scipy-notebook:7e1a19a8427f\n\nMake a new server service\n\nsudo mkdir -p $JHUBENV/etc/systemd\ncd $JHUBENV/etc/systemd\nnano jupyterhub.service\n\nPaste this in\n\n[Unit]\nDescription=JupyterHub\nAfter=syslog.target network.target\n\n[Service]\nUser=root\nEnvironment=\"PATH=/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/miniconda3/envs/jupyterhub/bin\"\nExecStart=/opt/miniconda3/envs/jupyterhub/bin/jupyterhub -f /opt/miniconda3/envs/jupyterhub/etc/jupyterhub/jupyterhub_config.py\n\n[Install]\nWantedBy=multi-user.target\n\nMake sure SELinux doesn’t block our service\n\nls -Z $JHUBENV/etc/systemd/\nsudo chcon system_u:object_r:systemd_unit_file_t:s0 $JHUBENV/etc/systemd/jupyterhub.service\nsudo find $JHUBENV/bin -type f -exec chcon system_u:object_r:bin_t:s0 {} \\;\n\nEnable our new service\n\nsudo ln -s $JHUBENV/etc/systemd/jupyterhub.service /etc/systemd/system/jupyterhub.service\nsudo systemctl daemon-reload\nsudo systemctl enable jupyterhub.service\nsudo systemctl start jupyterhub.service\n\nDone! See the long instructions if anything is not working."
+  },
+  {
+    "objectID": "posts/Set-up-daskhub.html",
+    "href": "posts/Set-up-daskhub.html",
+    "title": "DaskHub Set-up",
+    "section": "",
+    "text": "Documentation: https://z2jh.jupyter.org\n\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo.",
     "crumbs": [
-      "Set-up JHub on Google Cloud"
+      "Set-up JHub on Azure"
     ]
   },
   {
-    "objectID": "posts/set-up-jh-gcp.html#set-up-google-cloud",
-    "href": "posts/set-up-jh-gcp.html#set-up-google-cloud",
-    "title": "Set up JupyterHub on GCP",
-    "section": "Set-up Google Cloud",
-    "text": "Set-up Google Cloud\n\nCreate a Google Cloud account. Activate Compute API. It’ll be one of the options.\nCreate a project. There is a button somewhere.\nOpen the Cloud Shell. Look for ‘Connect’ or if you don’t see that look for the icon in top right that looks like box with &gt;_ in it.",
+    "objectID": "posts/Set-up-daskhub.html#requirements",
+    "href": "posts/Set-up-daskhub.html#requirements",
+    "title": "DaskHub Set-up",
+    "section": "",
+    "text": "Documentation: https://z2jh.jupyter.org\n\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo.",
     "crumbs": [
-      "Set-up JHub on Google Cloud"
+      "Set-up JHub on Azure"
     ]
   },
   {
-    "objectID": "posts/set-up-jh-gcp.html#set-up-kubernetes-cluster",
-    "href": "posts/set-up-jh-gcp.html#set-up-kubernetes-cluster",
-    "title": "Set up JupyterHub on GCP",
-    "section": "Set-up Kubernetes cluster",
-    "text": "Set-up Kubernetes cluster\nNote, you’ll likely be asked to activate the Kubernetes API. It gave me a link to do so and I clicked that.\nOnce you are inside the Cloud Shell, you create a Kubernetes cluster. This is a simple example. Create the cluster and add the admin. Use your email that you use for your Google Cloud account. You don’t need a big machine type here. This just runs the Kubernetes bit; it is not running computations.\ngcloud container clusters create \\\n  --machine-type n1-standard-2 \\\n  --num-nodes 2 \\\n  --zone us-west1-a \\\n  --cluster-version latest \\\n  jhub\n\nkubectl create clusterrolebinding cluster-admin-binding \\\n  --clusterrole=cluster-admin \\\n  --user=yourname@gmail.com\nHere jhub is the name I gave the cluster. You will need this name in many places so don’t make it too long. Choose a zone with a region and letter. For me, I have run into problems if I don’t pin the region (us-west1, us-east1, etc) to a zone (a, b, c).\nNext create the node pools for users. Here is where you might want bigger machines. How much RAM users get will be specified in your config.yaml and that will determine how many users per node. So if you will have lots of users, then you need to have a big max-nodes.\ngcloud beta container node-pools create user-pool \\\n  --machine-type n1-standard-2 \\\n  --num-nodes 0 \\\n  --enable-autoscaling \\\n  --min-nodes 0 \\\n  --max-nodes 3 \\\n  --node-labels hub.jupyter.org/node-purpose=user \\\n  --node-taints hub.jupyter.org_dedicated=user:NoSchedule \\\n  --zone us-west1-a \\\n  --preemptible \\\n  --cluster jhub\nThe jhub is the name of the cluster I set when I created the cluster.",
+    "objectID": "posts/Set-up-daskhub.html#set-up-on-azure",
+    "href": "posts/Set-up-daskhub.html#set-up-on-azure",
+    "title": "DaskHub Set-up",
+    "section": "Set up on Azure",
+    "text": "Set up on Azure\nThis is my notes for setting this up on Azure. Attempting to replicate the Openscapes 2i2c JupyterHub: https://github.com/2i2c-org/infrastructure/tree/master/config/clusters/openscapes\nThat hub is on AWS and is designed for large workshops (100+) however the NMFS OpenSci JHub is quite similar. Main difference at the moment is that I don’t have a shared drive set-up and the user persistent volume (storage) is on the same VM as the user node for their Jupyter Notebook. This means that I cannot have multiple VM sizes. Need to fix so that user can pick a larger VM for a task if needed.",
     "crumbs": [
-      "Set-up JHub on Google Cloud"
+      "Set-up JHub on Azure"
     ]
   },
   {
-    "objectID": "posts/set-up-jh-gcp.html#install-helm-3",
-    "href": "posts/set-up-jh-gcp.html#install-helm-3",
-    "title": "Set up JupyterHub on GCP",
-    "section": "install helm 3",
-    "text": "install helm 3\nInstall and check version installed.\ncurl https://raw.githubusercontent.com/helm/helm/HEAD/scripts/get-helm-3 | bash\nhelm version\nSet up the config.yaml file. Just dummy for now.\nnano config.yaml\nCopy this in and then Cntl-O and return to save and then Cntl-X to exit\n# Chart config reference:   https://zero-to-jupyterhub.readthedocs.io/en/stable/resources/reference.html\n# Chart default values:     https://github.com/jupyterhub/zero-to-jupyterhub-k8s/blob/HEAD/jupyterhub/values.yaml\n#",
+    "objectID": "posts/Set-up-daskhub.html#create-your-kubernetes-cluster",
+    "href": "posts/Set-up-daskhub.html#create-your-kubernetes-cluster",
+    "title": "DaskHub Set-up",
+    "section": "Create your Kubernetes cluster",
+    "text": "Create your Kubernetes cluster\nLog into https:\\\\portal.azure.com\n\nGet to the dashboard that looks similar to this.\n\n\n\nClick on the Kubernetes Services button and you should see something like this\n\n\n\nClick Create Kubernetes Cluster\n\nAt this point, you will get to the set-up with lots of tabs.\n\nYou need to select the resource group if you are in a subscription for an organization. Don’t know what resource group to use, ask the admins.\nYou need to give your Kubernetes cluster a name. For example, jhub or daskhub or whatever.\nYou need to chose the AWS region. If you are using AWS S3 file access (big data in the cloud), then you need to be on the same region as the files you are accessing. Do you have no idea? Then you are probably not using AWS S3 file access. In that case, just go with the default or something close to you.\nNext you chose the “Node size”. This is the size of the base virtural machine (VM). It is going to spin up as many as it needs. The default is Standard DS2 v2 which as 2 CPU, 7 Gig RAM and 1T memory. This is fine for set-up. You can add more (bigger VMs later). Accept autoscaling since this is a multi-user hub.\n\nThe first tab is all you need for now. Later you may want to allow the user, to choose a different base VM. You can do that by adding node-pools. That’ll be covered after the initial set-up. For now, just get your basic hub working. You can add more VM sizes later.\n\nClick “Review and Create”\n\nWait for validation tests to pass.\n\nClick “Create”.\n\nOnce it is done deploying, you will see this.",
     "crumbs": [
-      "Set-up JHub on Google Cloud"
+      "Set-up JHub on Azure"
     ]
   },
   {
-    "objectID": "posts/set-up-jh-gcp.html#install-jupyterhub",
-    "href": "posts/set-up-jh-gcp.html#install-jupyterhub",
-    "title": "Set up JupyterHub on GCP",
-    "section": "Install JupyterHub",
-    "text": "Install JupyterHub\nAdd the repository where we will install from.\nhelm repo add jupyterhub https://hub.jupyter.org/helm-chart/\nhelm repo update\nInstall\nhelm upgrade --cleanup-on-fail \\\n  --install jhub1 jupyterhub/jupyterhub \\\n  --namespace jhubk8 \\\n  --create-namespace \\\n  --version=3.3.4 \\\n  --values config.yaml\nThe variables: jhub1 is the name of the JupyterHub. You could have many on this Kubernetes cluster. We will only have 1 however. jhubk8 is the namespace of all the assets that will be associated with this JupyterHub. All your storage (pvc) will appear in this namespace and you will have to add --namespace jhubk8 to commands where you are trying to list or debug assets (like storage or killing nodes that are stuck). config.yaml is the file that has all the configuration settings.",
+    "objectID": "posts/Set-up-daskhub.html#install-daskhub-on-your-cluster",
+    "href": "posts/Set-up-daskhub.html#install-daskhub-on-your-cluster",
+    "title": "DaskHub Set-up",
+    "section": "Install DaskHub on your cluster",
+    "text": "Install DaskHub on your cluster\nThese next steps are done in the shell after connecting to your cluster. First you need to get to the shell.\n\nConnect to your cluster\nOnce you have created your Kubernetes cluster, you want to go to its dashboard (by clicking on the name you gave it). You’ll see something like this (I named mine daskhub).\n\nClick on the Connect icon in the nav bar at top.\nYou then see this\n\nClick on the link that says “Open Cloud Shell”.\n\nYou will get to a terminal. Paste in the two commands in the previous image (the commands that show up for you that is).\n\n\nCreate dconfig.yaml\nThis will be the configuration file for your Dask-enabled JupyterHub. For now, it can be just comments. Note the name is unimportant but should end in .yaml. I am using dconfig.yaml instead of config.yaml since I already have a config.yaml file for something else–and I have not figured out how to install different hubs in different directories or even different clusters in different directories (I have much to learn…).\nnano dconfig.yaml\nThis will open the nano editor. Edit your file. You can do # just blank for now. Then Cntl-O to save and Cntl-X to exit.\n\n\nInstall daskhub via helm chart\nInstructions: https://artifacthub.io/packages/helm/dask/daskhub .\nCheck that helm is installed\nhelm version\nTell helm about the dask helm repository\nhelm repo add dask https://helm.dask.org\nhelm repo update\nNow install\nhelm upgrade --wait --install --render-subchart-notes \\\n    dhub dask/daskhub \\\n    --namespace=dhub --create-namespace \\\n    --values=dconfig.yaml\nYou will see this on successful installation (it’s long. much has been cut). \n\n\nSet-up your external IP address\nkubectl config set-context $(kubectl config current-context) --namespace dhub\nkubectl --namespace=dhub get service proxy-public\nThese commands will show the the IP address. Save the public IP address. You will need it in step 2. Look for the IP address under EXTERNAL-IP.",
     "crumbs": [
-      "Set-up JHub on Google Cloud"
+      "Set-up JHub on Azure"
     ]
   },
   {
-    "objectID": "posts/set-up-jh-gcp.html#connect-to-the-jupyterhub",
-    "href": "posts/set-up-jh-gcp.html#connect-to-the-jupyterhub",
-    "title": "Set up JupyterHub on GCP",
-    "section": "Connect to the JupyterHub",
-    "text": "Connect to the JupyterHub\nNow it is running. Let’s try connecting via IP address\nkubectl --namespace jhubk8 get service proxy-public\nWill show you the public IP address. You should be able to go to that and log in with any username (no password).",
+    "objectID": "posts/Set-up-daskhub.html#step-2-set-up-https",
+    "href": "posts/Set-up-daskhub.html#step-2-set-up-https",
+    "title": "DaskHub Set-up",
+    "section": "Step 2 Set up https",
+    "text": "Step 2 Set up https\nYou can log out of your cluster. The next steps are done elsewhere.\n\nCreate a domain name\nYou will need a domain name for https which you want for security (and JHub won’t stop complaining if you don’t). Find a domain name provider and set one up. It is not expensive. I used GoDaddy.\n\n\nCreate a DNS entry\nLet’s pretend you set up bluemountain123.live as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let’s say you create, dhub as the type A DNS entry. Then dhub.bluemountain123.live will be the url. You can have as many subdomains as you need.\n\n\n\nTest if the url is working\nhttp:\\\\dhub.bluemountain123.live would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:\n\n\n\nSet-up https on your JupyterHub\nLog back into your Kubernetes cluster: go to portal.azure.com, click on your Kubernetes cluster name, and then click on “Connect”. Then click on “Open Cloud Shell”. Read documentation about https\nOnce you are on the shell, type\nnano dconfig.yaml\nto edit the config file. Paste this in and save. Note the additional jupyterhub: in the yaml file. This is not in a plain JupyterHub with Kubernetes config file (i.e. in a non-daskhub, the jupyterhub: bit is not there and everything is moved to left by 2 spaces).\njupyterhub:\n  proxy:\n    https:\n      enabled: true\n      hosts:\n        - dhub.bluemountain123.live\n      letsencrypt:\n        contactEmail: your@email.com\n\n\nUpdate the JupyterHub installation\nAnytime you change dconfig.yaml you need to run this code.\nhelm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml\n\n\nTest if https is working\nTry https:\\\\dhub.bluemountain123.live and you should see the JupyterHub login without that http warning.",
     "crumbs": [
-      "Set-up JHub on Google Cloud"
+      "Set-up JHub on Azure"
     ]
   },
   {
-    "objectID": "posts/set-up-jh-gcp.html#set-up-https",
-    "href": "posts/set-up-jh-gcp.html#set-up-https",
-    "title": "Set up JupyterHub on GCP",
-    "section": "Set-up https",
-    "text": "Set-up https\nThis will be required for setting up authentication and also security.\n\nCreate a domain name\nFind a domain name provider and set one up. It is not expensive. I used GoDaddy.\n\n\nCreate a DNS entry\nLet’s pretend you set up bluemountain123.live as the domain. Go to the DNS settings for your domain. Add a type A record. This will do 2 things. First this will create the subdomain that you will use to access your JupyterHub. So let’s say you create, dhub as the type A DNS entry. Then dhub.bluemountain123.live will be the url. You can have as many subdomains as you need.\n\n\n\nTest if the url is working\nhttp:\\\\dhub.bluemountain123.live would be the url using the example domain above. Test that it is working (shows a JupyterHub login) before moving on. This is what you should see:\n\n\n\nSet-up https on your JupyterHub\nLog back into your Kubernetes cluster, by going to your project on Google Cloud and clicking the Cloud Shell icon in the top right (box with &gt;_). Once you are on the shell, type\nnano config.yaml\nPaste this in and save (Cntl-O, return and then Cntl-X to exit). The traefik bit is specific to GCP. Often people have trouble with GCP cluster spinning up too fast and it can’t find the letsencrypt certificate. A small delay prevents that problem. This is just for GCP. I never had that problem on Azure.\nproxy:\n  traefik:\n    extraInitContainers:\n      # This startup delay can help the k8s container network find the \n      # https certificate and allow letsencrypt to work in GCP\n      - name: startup-delay\n        image: busybox:stable\n        command: [\"sh\", \"-c\", \"sleep 10\"]\n  https:\n    enabled: true\n    hosts:\n      - dhub.bluemountain123.live\n    letsencrypt:\n      contactEmail: yourname@gmail.com\n\n\nUpdate the JupyterHub installation\nAnytime you change config.yaml you need to run this code. Replace the variables (like jhub1) with your names. jupyterhub/jupyterhub is specific to the helm chart; don’t change that.\nhelm upgrade --cleanup-on-fail   --install jhub1 jupyterhub/jupyterhub   --namespace jhubk8   --create-namespace   --version=3.3.4   --values config.yaml\n\n\nTest if https is working\nTry https:\\\\dhub.bluemountain123.live and you should see the JupyterHub login without that http warning.",
+    "objectID": "posts/Set-up-daskhub.html#step-3-set-up-github-authentication",
+    "href": "posts/Set-up-daskhub.html#step-3-set-up-github-authentication",
+    "title": "DaskHub Set-up",
+    "section": "Step 3 Set up GitHub authentication",
+    "text": "Step 3 Set up GitHub authentication\nOptional, if you want to manage who can login via GitHub Team. I am going to show an example where I use a team on a GitHub organization to manage authentication. There are many other ways to manage users. Google to find that.\n\nCreate a new Oauth Application on GitHub\nThis is going to be associated with your (personal) GitHub account, but you can use a team on a GitHub org that you are owner of.\nLog into GitHub and go to GitHub &gt; Settings &gt; Developer Settings &gt; New Oauth Application\nLook carefully at how I filled in the boxes.\n\nNext you will see something like this\n\nYou need to copy the ID and then click the create secrets button and save the secret. Save those for later.\n\n\nCreate a team in your GitHub org\nYou will be added by default and add anyone else who needs access to the hub. Let’s say your org is MyOrg and the team is called DaskHub. So then the allowed organization is MyOrg:DaskHub. You can leave off :DaskHub if you want to allow all members of the organization to log in.\n\n\nEdit the dconfig.yaml file\nnano dconfig.yaml\nAdd to your config file so it is now this. Replace the id, secret and url with your values. We need to set the KubeSpawner working directory because the Openscapes Docker image sets it to home/jovyan/.kernels–which is fine but annoying since .kernels is hidden and not $HOME.\njupyterhub:\n  hub:\n    config:\n      GitHubOAuthenticator:\n        client_id: &lt;replace with your OAuth id&gt;\n        client_secret: &lt;replace with your OAuth app secret&gt;\n        oauth_callback_url: https://dhub.bluemountain123.live/hub/oauth_callback\n        allowed_organizations:\n          - MyOrg:DaskHub\n        scope:\n          - read:org\n      JupyterHub:\n        authenticator_class: github\n      KubeSpawner:\n        working_dir: /home/jovyan\n  proxy:\n    https:\n      enabled: true\n      hosts:\n        - dhub.bluemountain123.live\n      letsencrypt:\n        contactEmail: your@email.com        \n\n\nUpdate the hub\nhelm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml\n\n\nTest\nYou should now see this and can authenticate with GitHub.",
     "crumbs": [
-      "Set-up JHub on Google Cloud"
+      "Set-up JHub on Azure"
     ]
   },
   {
-    "objectID": "posts/set-up-jh-gcp.html#set-up-authentication",
-    "href": "posts/set-up-jh-gcp.html#set-up-authentication",
-    "title": "Set up JupyterHub on GCP",
-    "section": "Set up authentication",
-    "text": "Set up authentication\nSee the post on setting up authentication for instructions.",
+    "objectID": "posts/Set-up-daskhub.html#set-up-the-container-image",
+    "href": "posts/Set-up-daskhub.html#set-up-the-container-image",
+    "title": "DaskHub Set-up",
+    "section": "Set up the container image",
+    "text": "Set up the container image\nNow you need to specify the Docker image that will be used. We will use 2 different profiles: Python and R (RStudio).\nEdit the dconfig.yaml file and add the user image info. Note the spacing matters (a lot). I also added some Dask gateway config.\njupyterhub:\n  hub:\n    config:\n      GitHubOAuthenticator:\n        client_id: &lt;replace with your OAuth id&gt;\n        client_secret: &lt;replace with your OAuth app secret&gt;\n        oauth_callback_url: https://dhub.bluemountain123.live/hub/oauth_callback\n        allowed_organizations:\n          - MyOrg:DaskHub\n        scope:\n          - read:org\n      JupyterHub:\n        authenticator_class: github\n  proxy:\n    https:\n      enabled: true\n      hosts:\n        - dhub.bluemountain123.live\n      letsencrypt:\n        contactEmail: your@email.com        \n  singleuser:\n    image:\n      name: openscapes/python\n      tag: f577786\n    cmd: null\n  singleuser:\n    # Defines the default image\n    image:\n      name: openscapes/python\n      tag: f577786\n    profileList:\n      - display_name: \"Python3\"\n        description: \"NASA Openscapes Python image\"\n        default: true\n      - display_name: \"R\"\n        description: \"NASA Openscapes RStudio image\"\n        kubespawner_override:\n          image: openscapes/rocker:a7596b5        \ndask-gateway:\n  gateway:\n    extraConfig:\n      idle: |-\n        # timeout after 30 minutes of inactivity\n        c.KubeClusterConfig.idle_timeout = 1800        \n\nUpdate the hub\nhelm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml",
     "crumbs": [
-      "Set-up JHub on Google Cloud"
+      "Set-up JHub on Azure"
     ]
   },
   {
-    "objectID": "posts/set-up-jh-gcp.html#deleting-the-kubernetes-cluster",
-    "href": "posts/set-up-jh-gcp.html#deleting-the-kubernetes-cluster",
-    "title": "Set up JupyterHub on GCP",
-    "section": "Deleting the Kubernetes cluster",
-    "text": "Deleting the Kubernetes cluster\n\nGo to dashboard. Make sure you are in the project with the Kubernetes cluster.\nClick on the Kubernetes API button and then click on the cluster with your JHub\nAt that point, you will see the delete button at the top. Click that.\nWait awhile and make sure all the associated VMs and storage are deleted.\nGo back onto billing in a few days and make sure it is not charging you. If it is, something associated with the JHub didn’t get deleted.",
+    "objectID": "posts/Set-up-daskhub.html#changing-the-vm-size",
+    "href": "posts/Set-up-daskhub.html#changing-the-vm-size",
+    "title": "DaskHub Set-up",
+    "section": "Changing the VM size",
+    "text": "Changing the VM size\nNOT WORKING YET I am stuck on creating the persistent volumes. Needed because you need the user storage somewhere if you have multiple node pools.\n\nkubectl get nodes --show-labels | grep instance-type\nbeta.kubernetes.io/instance-type=Standard_D8s_v3",
     "crumbs": [
-      "Set-up JHub on Google Cloud"
+      "Set-up JHub on Azure"
     ]
   },
   {
-    "objectID": "posts/set-up-jh-gcp.html#post-installation-checklist",
-    "href": "posts/set-up-jh-gcp.html#post-installation-checklist",
-    "title": "Set up JupyterHub on GCP",
-    "section": "Post-installation checklist",
-    "text": "Post-installation checklist\n\nVerify that created Pods enter a Running state: kubectl --namespace=jhubk8 get pod\nIf a pod is stuck with a Pending or ContainerCreating status, diagnose with: kubectl --namespace=jhubk8 describe pod &lt;name of pod&gt;\nIf a pod keeps restarting, diagnose with: kubectl --namespace=jhubk8 logs --previous &lt;name of pod&gt;\nVerify an external IP is provided for the k8s Service proxy-public. kubectl --namespace=jhubk8 get service proxy-public\nIf the external ip remains , diagnose with: kubectl --namespace=jhubk8 describe service proxy-public",
+    "objectID": "posts/Set-up-daskhub.html#create-a-separate-disk-for-user-data",
+    "href": "posts/Set-up-daskhub.html#create-a-separate-disk-for-user-data",
+    "title": "DaskHub Set-up",
+    "section": "Create a separate disk for user data",
+    "text": "Create a separate disk for user data\nI want the user data to be in a drive different from the VM being spun up for their notebook. Sounds easy here https://z2jh.jupyter.org/en/latest/jupyterhub/customizing/user-storage.html but I cannot string the steps together.\nSteps, I think?\n\nCreate disk\nSomething like this?\nhttps://bluexp.netapp.com/blog/azure-cvo-blg-azure-kubernetes-service-configuring-persistent-volumes-in-aks\nBut I can’t figure out the steps.\n\n\nPVC\nNOT WORKING YET\n\nIs this pvc.yaml right?\nHow would I point this to the disk that I mount in the step above??\n\nThis command might have useful info\nKUBE_EDITOR=\"nano\" kubectl edit pvc --namespace=dhub claim-eeholmes\nnana pvc.yaml\nkind: PersistentVolumeClaim\napiVersion: v1\nmetadata:\n  name: hub-db-dir\n  labels:\n    component: jupyter\nspec:\n  storageClassName: \"standard\" # name of storage class, it will be default storage class if unspecified.\n  accessModes:\n    - ReadWriteOnce\n  resources:\n    requests:\n      storage: \"40Gi\"\nkubectl create -f pvc.yaml\nTo delete, you need to first edit the pvc yaml file and get rid of pvc protection. It is 2 lines.\nkubectl --namespace=dhub get pvc\nKUBE_EDITOR=\"nano\" kubectl edit pvc --namespace=dhub claim-eeholmes\nThen you can delete\nkubectl --namespace=dhub delete pvc claim-eeholmes\nCheck that it is gone\nkubectl --namespace=dhub get pvc\nif not try\nkubectl --namespace=dhub delete pvc claim-eeholmes --grace-period=0 --force\n\n\nPV\nNeed a persistent volume claim too….\n\n\nTell the hub about the disk\nhttps://z2jh.jupyter.org/en/latest/jupyterhub/customizing/user-storage.html\nBut see how this is done on the Openscapes 2i2c hub https://github.com/2i2c-org/infrastructure/blob/master/config/clusters/openscapes/common.values.yaml\nI know their set-up is a little different: basehub -&gt; jupyterhub in the helm chart, but I don’t see how the singleuser bit in the yaml file is referencing the nfs in the top of that yaml.",
     "crumbs": [
-      "Set-up JHub on Google Cloud"
+      "Set-up JHub on Azure"
     ]
+  },
+  {
+    "objectID": "posts/Set-up-daskhub.html#troubleshooting",
+    "href": "posts/Set-up-daskhub.html#troubleshooting",
+    "title": "DaskHub Set-up",
+    "section": "Troubleshooting",
+    "text": "Troubleshooting\n\nI cannot clone repos in the JupyterHub. Restart the server. In Jupyter, File &gt; Hub Control Panel &gt; Stop My Server.",
+    "crumbs": [
+      "Set-up JHub on Azure"
+    ]
+  },
+  {
+    "objectID": "posts/Set-up-daskhub.html#refs-i-used",
+    "href": "posts/Set-up-daskhub.html#refs-i-used",
+    "title": "DaskHub Set-up",
+    "section": "Refs I used",
+    "text": "Refs I used\n\nOverall\n\nhttps://2i2c.org/service/#getahub\nOpenscapes common.values.yaml https://github.com/2i2c-org/infrastructure/blob/master/config/clusters/openscapes/common.values.yaml\nhttps://artifacthub.io/packages/helm/dask/daskhub\nhttps://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/dask_gateway/dask-hub/config_daskhub.yaml\nhttps://saturncloud.io/blog/how-to-setup-jupyterhub-on-azure/\nhttps://saturncloud.io/blog/jupyterhub-and-azure-ad/\n\n\n\nStorage\n\nhttps://www.youtube.com/watch?v=Da1qn7-RHvY\nDynamic NFS provisioning 2 https://www.youtube.com/watch?v=DF3v2P8ENEg&t=0s\nDynamic NFS provisioning 1 https://www.youtube.com/watch?v=AavnQzWDTEk&t=0s\nhttps://alan-turing-institute.github.io/hub23-deploy/\nhttps://z2jh.jupyter.org/en/latest/jupyterhub/customizing/user-storage.html\nhttps://learn.microsoft.com/en-us/azure/aks/azure-nfs-volume\nhttps://learn.microsoft.com/en-us/azure/storage/files/storage-files-quick-create-use-linux\nhttps://bluexp.netapp.com/blog/azure-cvo-blg-azure-kubernetes-service-configuring-persistent-volumes-in-aks",
+    "crumbs": [
+      "Set-up JHub on Azure"
+    ]
+  },
+  {
+    "objectID": "posts/Set-up-daskhub.html#setting-up-a-shared-data-disk",
+    "href": "posts/Set-up-daskhub.html#setting-up-a-shared-data-disk",
+    "title": "DaskHub Set-up",
+    "section": "Setting up a shared data disk",
+    "text": "Setting up a shared data disk\n\nhttps://www.mathworks.com/help/matlab/import_export/work-with-remote-data.html\nhttps://realpython.com/storing-images-in-python/",
+    "crumbs": [
+      "Set-up JHub on Azure"
+    ]
+  },
+  {
+    "objectID": "posts/Set-up-daskhub.html#s3-access",
+    "href": "posts/Set-up-daskhub.html#s3-access",
+    "title": "DaskHub Set-up",
+    "section": "S3 access",
+    "text": "S3 access\n\nhttps://s3fs.readthedocs.io/en/latest/\nhttps://stackoverflow.com/questions/67259323/jupyterhub-access-aws-s3\nhttps://data.lpdaac.earthdatacloud.nasa.gov/s3credentialsREADME",
+    "crumbs": [
+      "Set-up JHub on Azure"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-authentication.html",
+    "href": "posts/set-up-authentication.html",
+    "title": "Set up JupyterHub Authentication",
+    "section": "",
+    "text": "Documentation: https://z2jh.jupyter.org\n\nI assume you have https set-up and your JuptyerHub is installed with a config.yaml file. You will need to know your upgrade command when you make changes to the config.yaml file. For example, but yours will look different.\nhelm upgrade --cleanup-on-fail   --install jhub1 jupyterhub/jupyterhub   --namespace jhubk8   --create-namespace   --version=3.3.4   --values config.yaml\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo.",
+    "crumbs": [
+      "Set-up authentication"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-authentication.html#requirements",
+    "href": "posts/set-up-authentication.html#requirements",
+    "title": "Set up JupyterHub Authentication",
+    "section": "",
+    "text": "Documentation: https://z2jh.jupyter.org\n\nI assume you have https set-up and your JuptyerHub is installed with a config.yaml file. You will need to know your upgrade command when you make changes to the config.yaml file. For example, but yours will look different.\nhelm upgrade --cleanup-on-fail   --install jhub1 jupyterhub/jupyterhub   --namespace jhubk8   --create-namespace   --version=3.3.4   --values config.yaml\nSee examples of full config.yaml files in the config directory in the nmfs-opensci/nmfs-jhub GitHub repo.",
+    "crumbs": [
+      "Set-up authentication"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-authentication.html#set-up-github-authentication",
+    "href": "posts/set-up-authentication.html#set-up-github-authentication",
+    "title": "Set up JupyterHub Authentication",
+    "section": "Set up GitHub authentication",
+    "text": "Set up GitHub authentication\nI am going to show an example where I use a team on a GitHub organization to manage authentication. There are many other ways to manage users. See the JupyterHub documentation.\n\nCreate a new Oauth Application on GitHub\nThis is going to be associated with your (personal) GitHub account, but you can use a team on a GitHub org that you are owner of.\nLog into GitHub and go to GitHub &gt; Settings &gt; Developer Settings &gt; New Oauth Application\nLook carefully at how I filled in the boxes.\n\nNext you will see something like this\n\nYou need to copy the ID and then click the create secrets button and save the secret. Save those for later.\n\n\nCreate a team in your GitHub org\nYou will be added by default and add anyone else who needs access to the hub. Let’s say your org is MyOrg and the team is called DaskHub. So then the allowed organization is MyOrg:DaskHub. You can leave off :DaskHub if you want to allow all members of the organization to log in.\n\n\nEdit the config.yaml file\nnano config.yaml\nAdd the following to your config file (nano config.yaml). Replace the id, secret and url with your values. We need to set the KubeSpawner working directory because the Openscapes Docker image sets it to home/jovyan/.kernels–which is fine but annoying since .kernels is hidden and not $HOME.\nMake sure you have “myteam” created as a team in your GitHub org (“myorg”) and that you have added yourself to that team.\nhub:\n  config:\n    GitHubOAuthenticator:\n      client_id: &lt;replace by what is on GitHub&gt;\n      client_secret: &lt;replace with secret on GitHub&gt;\n      oauth_callback_url: https://dhub.bluemountain123.live/hub/oauth_callback\n      allowed_organizations:\n        - myorg:myteam\n      scope:\n        - read:org\n    Authenticator:\n      admin_users:\n        - yourGitHubusername\n    JupyterHub:\n      authenticator_class: github\n    KubeSpawner:\n      working_dir: /home/jovyan\nUpdate the hub.\nhelm upgrade --cleanup-on-fail   --install jhub1 jupyterhub/jupyterhub   --namespace jhubk8   --create-namespace   --version=3.3.4   --values config.yaml\nTest. Go to https:\\\\dhub.bluemountain123.live and it should ask you to login with GitHub. There will be some popups asking permission for the OAuth to have access to “myorg”. Make sure you grant access to “myorg”. Oh no, I forgot! You’ll probably have to go through the process of recreating an OAuth. I am not sure how to trigger it to ask to grant access again.\n\n\nIf you use daskhub helm chart\nIf you used the daskhub helm chart instead of the jupyterhub helm chart, then the config.yaml file has a jupyterhub: section:\njupyterhub:\n  hub:\n    config:\n      GitHubOAuthenticator:\n        client_id: xxxxxxx\n        client_secret: xxxxxxx\n        oauth_callback_url: https://dhub.opensci.live/hub/oauth_callback\n        allowed_organizations:\n          - myorg:myteam\n        scope:\n          - read:org\n      Authenticator:\n        admin_users:\n          - eeholmes\n      JupyterHub:\n        authenticator_class: github\n      KubeSpawner:\n        working_dir: /home/jovyan",
+    "crumbs": [
+      "Set-up authentication"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-vm.html",
+    "href": "posts/set-up-vm.html",
+    "title": "Set up VM",
+    "section": "",
+    "text": "For testing JupyterHub set-ups, I start various Linux machines. Here is how to set up a virtual machine."
+  },
+  {
+    "objectID": "posts/set-up-vm.html#azure",
+    "href": "posts/set-up-vm.html#azure",
+    "title": "Set up VM",
+    "section": "Azure",
+    "text": "Azure\n\nCreated a Centos 8.3 server on Azure: https://portal.azure.com/#create/cloud-infrastructure-services.centos-8-3centos-8-3\nI didn’t do anything special for set-up. Choose SSH with key.\nOnce it is created, I went to the dashboard and selected my VM. The dashboard has a “Connect” button to get to the shell and it shows the public IP address.\nI had to create a special security rule to allow me to ssh into the public IP address to connect. Normally I use the cloud shell to connect, but Azure would not let me connect via the cloud shell for a server since it wanted upgraded security and I cannot do that with my work subscription.\nThen I saved the key somewhere on my computer and\n\nchmod 400 ~/&lt;key location&gt;\nssh -i ~/&lt;key location&gt; &lt;vm-username&gt;@&lt;public key&gt;\n\nI downloaded VMware Fusion 13.0.2 for M1 macs.\nThen I downloaded a Centos 9 server image from here\nhttps://www.centos.org/download/\nOpen VMWare and create a new VM. Choose other Linux. Doesn’t actually matter since it will be removed.\nShut down the VM.\nGo to settings and remove the hard drive.\nAdd a new hardrive. For me, I used ‘Add Device’ in the upper right of the Settings box. Choose ‘existing harddrive’\nHelp for M1 https://medium.com/@thehippieandtheboss/how-to-create-a-linux-virtual-machine-on-macos-1278ec1ef327\nhttps://tomcudd.com/how-i-set-up-a-centos-7-virtual-machine/"
   }
 ]

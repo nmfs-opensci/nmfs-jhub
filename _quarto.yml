@@ -3,6 +3,7 @@ project:
   output-dir: docs
   render:
     - "posts/*.Rmd"
+    - "posts/*.md"
     - "!ci/"
     - "!config/"
     - "!config-template/"
@@ -33,6 +34,8 @@ website:
         href: posts/Set-up-daskhub.Rmd
       - text: "Set-up JHub on Google Cloud"
         href: posts/set-up-jh-gcp.Rmd
+      - text: "Set-up JHub on AWS"
+        href: posts/set-up-jh-aws.md
       - text: "Set-up JHub on Centos"
         href: posts/Set-up-centos.Rmd
       - text: "Set-up https on Centos"
