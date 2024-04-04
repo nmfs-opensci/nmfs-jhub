@@ -1,8 +1,8 @@
 hub:
   config:
     GitHubOAuthenticator:
-      client_id: 5872d2b7ea348ff2f8c0
-      client_secret: 6dafc2820264b4d8602e632e891f078481d4927a
+      client_id: <id when you register your OAuth on GitHub>
+      client_secret: <secret when you register your OAuth on GitHub>
       oauth_callback_url: https://gcp.opensci.live/hub/oauth_callback
       allowed_organizations:
         - nmfs-opensci:DaskHub
