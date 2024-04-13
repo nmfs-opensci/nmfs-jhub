@@ -114,6 +114,61 @@ Click the Git icon on the left and you can clone a repo.
 
 ![](../images/user-guide/img6.png)
 
+You can also clone from the terminal with
+```
+cd ~
+git clone <url to repo>
+```
+
 ## Stop your server
 
 It will stop on it's own after awhile, but if it hangs, you can stop it and restart it. With File \> Hub Control Panel
+
+
+## Using your own conda environment 
+
+
+The following commands are entered in a terminal window.
+
+Create a place in your home directory to keep your conda environments
+```
+cd ~
+mkdir envs
+```
+
+Create the new environment and create a kernel for it. The environment must contain `ipykernel` (Python) or `irkernel` (R). Note use of `-p` instead of `-n` this is telling conda to create the environment in the current location and not the conda directory (which will be recreated every time the server restarts).
+```
+conda deactivate
+conda create -p ~/envs/myenv numpy ipykernel
+conda activate myenv
+python -m ipykernel install --user --name myenv
+```
+You need to make sure that you run the `ipykernel` command when you are in the activated new environment.
+
+Wait a few minutes and then the conda environment will appear on the launcher and in the dropdown in the kernels when you start a notebook.
+
+If you want to use an `environment.yaml` file make sure it includes `ipkernel` (Python) or `irkernel` (R). Example:
+
+```
+name: myenv
+channels:
+  - conda-forge
+dependencies:
+  - numpy
+  - ipykernel
+```
+With an `environment.yaml` file, the create command is
+```
+conda create -p ~/envs/myenv -f environment.yaml
+```
+
+To remove the conda environment and kernel:
+```
+conda deactivate
+conda remove -p ~/envs/myenv
+jupyter kernelspec remove myenv
+```
+You can see the kernels with
+```
+jupyter kernelspec list
+```

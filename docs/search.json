@@ -481,7 +481,7 @@
     "href": "posts/JHub-User-Guide.html#lets-choose-jupyterlab",
     "title": "JHub User Instructions",
     "section": "Let’s choose JupyterLab",
-    "text": "Let’s choose JupyterLab\nAny of the browser tabs with the Jupyter icon are JupyterLab.\nBe careful because you can be in RStudio with one GitHub repository and you could open the same repo in JupyterLab and easily create merge conflicts. Just be aware that they are in separate file systems so changes on RStudio will not be reflected in JupyterLab. It is not like you are on one computer.\n\nTell Git who you are\nBut I just did that with RStudio! I know but the JLab instance is in a different environment and doesn’t know what you did in the RStudio environment.\nOpen a terminal. You do this from the Launcher window. You can always open a new launcher window by clicking the little + tab\n\nNow click Terminal and run this code\ngit config --global user.name \"YourName\"\ngit config --global user.email \"your@email.com\"\ngit config --global credential.helper store\n\nCreate a PAT or use the one you created for RStudio\nMake a commit and push with the PAT as the password. Now you are set (until your PAT expires).\n\n\n\nClone a Git repo\nClick the Git icon on the left and you can clone a repo.",
+    "text": "Let’s choose JupyterLab\nAny of the browser tabs with the Jupyter icon are JupyterLab.\nBe careful because you can be in RStudio with one GitHub repository and you could open the same repo in JupyterLab and easily create merge conflicts. Just be aware that they are in separate file systems so changes on RStudio will not be reflected in JupyterLab. It is not like you are on one computer.\n\nTell Git who you are\nBut I just did that with RStudio! I know but the JLab instance is in a different environment and doesn’t know what you did in the RStudio environment.\nOpen a terminal. You do this from the Launcher window. You can always open a new launcher window by clicking the little + tab\n\nNow click Terminal and run this code\ngit config --global user.name \"YourName\"\ngit config --global user.email \"your@email.com\"\ngit config --global credential.helper store\n\nCreate a PAT or use the one you created for RStudio\nMake a commit and push with the PAT as the password. Now you are set (until your PAT expires).\n\n\n\nClone a Git repo\nClick the Git icon on the left and you can clone a repo.\n\nYou can also clone from the terminal with\ncd ~\ngit clone &lt;url to repo&gt;",
     "crumbs": [
       "JHub User Guide"
     ]
@@ -492,6 +492,16 @@
     "title": "JHub User Instructions",
     "section": "Stop your server",
     "text": "Stop your server\nIt will stop on it’s own after awhile, but if it hangs, you can stop it and restart it. With File &gt; Hub Control Panel",
+    "crumbs": [
+      "JHub User Guide"
+    ]
+  },
+  {
+    "objectID": "posts/JHub-User-Guide.html#using-your-own-conda-environment",
+    "href": "posts/JHub-User-Guide.html#using-your-own-conda-environment",
+    "title": "JHub User Instructions",
+    "section": "Using your own conda environment",
+    "text": "Using your own conda environment\nThe following commands are entered in a terminal window.\nCreate a place in your home directory to keep your conda environments\ncd ~\nmkdir envs\nCreate the new environment and create a kernel for it. The environment must contain ipykernel (Python) or irkernel (R). Note use of -p instead of -n this is telling conda to create the environment in the current location and not the conda directory (which will be recreated every time the server restarts).\nconda deactivate\nconda create -p ~/envs/myenv numpy ipykernel\nconda activate myenv\npython -m ipykernel install --user --name myenv\nYou need to make sure that you run the ipykernel command when you are in the activated new environment.\nWait a few minutes and then the conda environment will appear on the launcher and in the dropdown in the kernels when you start a notebook.\nIf you want to use an environment.yaml file make sure it includes ipkernel (Python) or irkernel (R). Example:\nname: myenv\nchannels:\n  - conda-forge\ndependencies:\n  - numpy\n  - ipykernel\nWith an environment.yaml file, the create command is\nconda create -p ~/envs/myenv -f environment.yaml\nTo remove the conda environment and kernel:\nconda deactivate\nconda remove -p ~/envs/myenv\njupyter kernelspec remove myenv\nYou can see the kernels with\njupyter kernelspec list",
     "crumbs": [
       "JHub User Guide"
     ]
