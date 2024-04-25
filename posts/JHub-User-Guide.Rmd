@@ -7,6 +7,8 @@ output:
     toc: true
 ---
 
+[Intro article](https://medium.com/@magstherdev/jupyterhub-on-kubernetes-c51953ae9ecd)
+
 I have set us up a JupyterHub/RStudio cloud-computing hub on Azure. It's on Kubernetes and will spin up VMs as needed. The VMs are not huge: 2CPU & 8 Gig RAM.
 
 <https://jhub.opensci.live/hub/login>
@@ -172,3 +174,7 @@ You can see the kernels with
 ```
 jupyter kernelspec list
 ```
+
+## Trouble-shooting
+
+* Debugging https://test-zerotojh.readthedocs.io/en/latest/administrator/debug.html
