@@ -102,12 +102,12 @@ The variables: `jhub1` is the name of the JupyterHub. You could have many on thi
 
 ## Connect to the JupyterHub
 
-Now it is running. Let's try connecting via IP address
+Now it is running. Let's try connecting via the External IP address
 
 ```
 kubectl --namespace jhubk8 get service proxy-public
 ```
-Will show you the public IP address. You should be able to go to that and log in with any username (no password).
+It will show you the public (external) IP address. You should be able to go to that with `http://` and you will see the log in page. Note you will not be able to log in as we did not create any users in the hub node (where the JupyterHub is running).
 
 ## Set-up https
 
