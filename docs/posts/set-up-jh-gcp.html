@@ -171,6 +171,7 @@ ul.task-list li input[type="checkbox"] {
    
   <ul class="collapse">
   <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background">Background</a></li>
+  <li><a href="#just-show-me-the-code" id="toc-just-show-me-the-code" class="nav-link" data-scroll-target="#just-show-me-the-code">Just show me the code!</a></li>
   <li><a href="#set-up-google-cloud" id="toc-set-up-google-cloud" class="nav-link" data-scroll-target="#set-up-google-cloud">Set-up Google Cloud</a></li>
   <li><a href="#set-up-kubernetes-cluster" id="toc-set-up-kubernetes-cluster" class="nav-link" data-scroll-target="#set-up-kubernetes-cluster">Set-up Kubernetes cluster</a></li>
   <li><a href="#install-helm-3" id="toc-install-helm-3" class="nav-link" data-scroll-target="#install-helm-3">install helm 3</a></li>
@@ -180,6 +181,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#set-up-authentication" id="toc-set-up-authentication" class="nav-link" data-scroll-target="#set-up-authentication">Set up authentication</a></li>
   <li><a href="#deleting-the-kubernetes-cluster" id="toc-deleting-the-kubernetes-cluster" class="nav-link" data-scroll-target="#deleting-the-kubernetes-cluster">Deleting the Kubernetes cluster</a></li>
   <li><a href="#post-installation-checklist" id="toc-post-installation-checklist" class="nav-link" data-scroll-target="#post-installation-checklist">Post-installation checklist</a></li>
+  <li><a href="#just-the-code-to-set-up" id="toc-just-the-code-to-set-up" class="nav-link" data-scroll-target="#just-the-code-to-set-up">Just the code to set up</a></li>
   </ul>
 <div class="toc-actions"><ul class="collapse"><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/edit/main/posts/set-up-jh-gcp.Rmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/posts/set-up-jh-gcp.Rmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
@@ -218,6 +220,10 @@ ul.task-list li input[type="checkbox"] {
 <li>Issue tracking: <a href="https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues">https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues</a></li>
 </ul>
 <p>See examples of full <code>config.yaml</code> files in the <code>config</code> directory in the <a href="https://github.com/nmfs-opensci/nmfs-jhub">nmfs-opensci/nmfs-jhub</a> GitHub repo.</p>
+</section>
+<section id="just-show-me-the-code" class="level2">
+<h2 class="anchored" data-anchor-id="just-show-me-the-code">Just show me the code!</h2>
+<p>Scroll to the bottom see the short version just to get the JHub set-up.</p>
 </section>
 <section id="set-up-google-cloud" class="level2">
 <h2 class="anchored" data-anchor-id="set-up-google-cloud">Set-up Google Cloud</h2>
@@ -284,9 +290,9 @@ helm repo update</code></pre>
 </section>
 <section id="connect-to-the-jupyterhub" class="level2">
 <h2 class="anchored" data-anchor-id="connect-to-the-jupyterhub">Connect to the JupyterHub</h2>
-<p>Now it is running. Let’s try connecting via IP address</p>
+<p>Now it is running. Let’s try connecting via the External IP address</p>
 <pre><code>kubectl --namespace jhubk8 get service proxy-public</code></pre>
-<p>Will show you the public IP address. You should be able to go to that and log in with any username (no password).</p>
+<p>It will show you the public (external) IP address. You should be able to go to that with <code>http://</code> and you will see the log in page. Note you will not be able to log in as we did not create any users in the hub node (where the JupyterHub is running).</p>
 </section>
 <section id="set-up-https" class="level2">
 <h2 class="anchored" data-anchor-id="set-up-https">Set-up https</h2>
@@ -358,6 +364,46 @@ helm repo update</code></pre>
 <li>Verify an external IP is provided for the k8s Service proxy-public. <code>kubectl --namespace=jhubk8 get service proxy-public</code></li>
 <li>If the external ip remains <pending>, diagnose with: <code>kubectl --namespace=jhubk8 describe service proxy-public</code></pending></li>
 </ul>
+</section>
+<section id="just-the-code-to-set-up" class="level2">
+<h2 class="anchored" data-anchor-id="just-the-code-to-set-up">Just the code to set up</h2>
+<pre><code># Open a Cloud Shell and run these lines of code
+gcloud container clusters create \
+  --machine-type n1-standard-2 \
+  --num-nodes 2 \
+  --zone us-west1-a \
+  --cluster-version latest \
+  jhub
+
+kubectl create clusterrolebinding cluster-admin-binding \
+  --clusterrole=cluster-admin \
+  --user=yourname@gmail.com
+
+gcloud beta container node-pools create user-pool \
+  --machine-type n1-standard-2 \
+  --num-nodes 0 \
+  --enable-autoscaling \
+  --min-nodes 0 \
+  --max-nodes 3 \
+  --node-labels hub.jupyter.org/node-purpose=user \
+  --node-taints hub.jupyter.org_dedicated=user:NoSchedule \
+  --zone us-west1-a \
+  --preemptible \
+  --cluster jhub
+
+curl https://raw.githubusercontent.com/helm/helm/HEAD/scripts/get-helm-3
+
+helm repo add jupyterhub https://hub.jupyter.org/helm-chart/
+helm repo update
+
+helm upgrade --cleanup-on-fail \
+  --install jhub1 jupyterhub/jupyterhub \
+  --namespace jhubk8 \
+  --create-namespace \
+  --version=3.3.4 \
+  --values config.yaml
+
+# DONE!!! Now edit config.yaml by looking at some of the examples in the config directory in this repo.</code></pre>
 
 
 </section>

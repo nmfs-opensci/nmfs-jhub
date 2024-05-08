@@ -232,5 +232,6 @@ helm upgrade --cleanup-on-fail \
   --values config.yaml
 
 # DONE!!! Now edit config.yaml by looking at some of the examples in the config directory in this repo.
+```
 
 

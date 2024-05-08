@@ -130,6 +130,16 @@
     ]
   },
   {
+    "objectID": "posts/set-up-jh-gcp.html#just-show-me-the-code",
+    "href": "posts/set-up-jh-gcp.html#just-show-me-the-code",
+    "title": "Set up JupyterHub on GCP",
+    "section": "Just show me the code!",
+    "text": "Just show me the code!\nScroll to the bottom see the short version just to get the JHub set-up.",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
+  },
+  {
     "objectID": "posts/set-up-jh-gcp.html#set-up-google-cloud",
     "href": "posts/set-up-jh-gcp.html#set-up-google-cloud",
     "title": "Set up JupyterHub on GCP",
@@ -174,7 +184,7 @@
     "href": "posts/set-up-jh-gcp.html#connect-to-the-jupyterhub",
     "title": "Set up JupyterHub on GCP",
     "section": "Connect to the JupyterHub",
-    "text": "Connect to the JupyterHub\nNow it is running. Let’s try connecting via IP address\nkubectl --namespace jhubk8 get service proxy-public\nWill show you the public IP address. You should be able to go to that and log in with any username (no password).",
+    "text": "Connect to the JupyterHub\nNow it is running. Let’s try connecting via the External IP address\nkubectl --namespace jhubk8 get service proxy-public\nIt will show you the public (external) IP address. You should be able to go to that with http:// and you will see the log in page. Note you will not be able to log in as we did not create any users in the hub node (where the JupyterHub is running).",
     "crumbs": [
       "Set-up JHub on Google Cloud"
     ]
@@ -215,6 +225,16 @@
     "title": "Set up JupyterHub on GCP",
     "section": "Post-installation checklist",
     "text": "Post-installation checklist\n\nVerify that created Pods enter a Running state: kubectl --namespace=jhubk8 get pod\nIf a pod is stuck with a Pending or ContainerCreating status, diagnose with: kubectl --namespace=jhubk8 describe pod &lt;name of pod&gt;\nIf a pod keeps restarting, diagnose with: kubectl --namespace=jhubk8 logs --previous &lt;name of pod&gt;\nVerify an external IP is provided for the k8s Service proxy-public. kubectl --namespace=jhubk8 get service proxy-public\nIf the external ip remains , diagnose with: kubectl --namespace=jhubk8 describe service proxy-public",
+    "crumbs": [
+      "Set-up JHub on Google Cloud"
+    ]
+  },
+  {
+    "objectID": "posts/set-up-jh-gcp.html#just-the-code-to-set-up",
+    "href": "posts/set-up-jh-gcp.html#just-the-code-to-set-up",
+    "title": "Set up JupyterHub on GCP",
+    "section": "Just the code to set up",
+    "text": "Just the code to set up\n# Open a Cloud Shell and run these lines of code\ngcloud container clusters create \\\n  --machine-type n1-standard-2 \\\n  --num-nodes 2 \\\n  --zone us-west1-a \\\n  --cluster-version latest \\\n  jhub\n\nkubectl create clusterrolebinding cluster-admin-binding \\\n  --clusterrole=cluster-admin \\\n  --user=yourname@gmail.com\n\ngcloud beta container node-pools create user-pool \\\n  --machine-type n1-standard-2 \\\n  --num-nodes 0 \\\n  --enable-autoscaling \\\n  --min-nodes 0 \\\n  --max-nodes 3 \\\n  --node-labels hub.jupyter.org/node-purpose=user \\\n  --node-taints hub.jupyter.org_dedicated=user:NoSchedule \\\n  --zone us-west1-a \\\n  --preemptible \\\n  --cluster jhub\n\ncurl https://raw.githubusercontent.com/helm/helm/HEAD/scripts/get-helm-3\n\nhelm repo add jupyterhub https://hub.jupyter.org/helm-chart/\nhelm repo update\n\nhelm upgrade --cleanup-on-fail \\\n  --install jhub1 jupyterhub/jupyterhub \\\n  --namespace jhubk8 \\\n  --create-namespace \\\n  --version=3.3.4 \\\n  --values config.yaml\n\n# DONE!!! Now edit config.yaml by looking at some of the examples in the config directory in this repo.",
     "crumbs": [
       "Set-up JHub on Google Cloud"
     ]
@@ -431,7 +451,7 @@
     "href": "posts/JHub-User-Guide.html",
     "title": "JHub User Instructions",
     "section": "",
-    "text": "I have set us up a JupyterHub/RStudio cloud-computing hub on Azure. It’s on Kubernetes and will spin up VMs as needed. The VMs are not huge: 2CPU & 8 Gig RAM.\nhttps://jhub.opensci.live/hub/login\nLogin authentication is via GitHub. Only members of the JHub GitHub team can log on. This is a testing environment. Contact Eli if you want to test it out.\nInstructions: It should be pretty self-explanatory.",
+    "text": "Intro article\nI have set us up a JupyterHub/RStudio cloud-computing hub on Azure. It’s on Kubernetes and will spin up VMs as needed. The VMs are not huge: 2CPU & 8 Gig RAM.\nhttps://jhub.opensci.live/hub/login\nLogin authentication is via GitHub. Only members of the JHub GitHub team can log on. This is a testing environment. Contact Eli if you want to test it out.\nInstructions: It should be pretty self-explanatory.",
     "crumbs": [
       "JHub User Guide"
     ]
@@ -502,6 +522,16 @@
     "title": "JHub User Instructions",
     "section": "Using your own conda environment",
     "text": "Using your own conda environment\nThe following commands are entered in a terminal window.\nCreate a place in your home directory to keep your conda environments\ncd ~\nmkdir envs\nCreate the new environment and create a kernel for it. The environment must contain ipykernel (Python) or irkernel (R). Note use of -p instead of -n this is telling conda to create the environment in the current location and not the conda directory (which will be recreated every time the server restarts).\nconda deactivate\nconda create -p ~/envs/myenv numpy ipykernel\nconda activate myenv\npython -m ipykernel install --user --name myenv\nYou need to make sure that you run the ipykernel command when you are in the activated new environment.\nWait a few minutes and then the conda environment will appear on the launcher and in the dropdown in the kernels when you start a notebook.\nIf you want to use an environment.yaml file make sure it includes ipkernel (Python) or irkernel (R). Example:\nname: myenv\nchannels:\n  - conda-forge\ndependencies:\n  - numpy\n  - ipykernel\nWith an environment.yaml file, the create command is\nconda create -p ~/envs/myenv -f environment.yaml\nTo remove the conda environment and kernel:\nconda deactivate\nconda remove -p ~/envs/myenv\njupyter kernelspec remove myenv\nYou can see the kernels with\njupyter kernelspec list",
+    "crumbs": [
+      "JHub User Guide"
+    ]
+  },
+  {
+    "objectID": "posts/JHub-User-Guide.html#trouble-shooting",
+    "href": "posts/JHub-User-Guide.html#trouble-shooting",
+    "title": "JHub User Instructions",
+    "section": "Trouble-shooting",
+    "text": "Trouble-shooting\n\nDebugging https://test-zerotojh.readthedocs.io/en/latest/administrator/debug.html",
     "crumbs": [
       "JHub User Guide"
     ]
