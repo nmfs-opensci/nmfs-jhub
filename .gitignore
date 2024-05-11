@@ -5,6 +5,7 @@
 .Ruserdata
 config/jhub/config.yaml
 config/dhub/dconfig2.yaml
+config/dhub/dconfig-resource.yaml
 
 /.quarto/
 .DS_Store

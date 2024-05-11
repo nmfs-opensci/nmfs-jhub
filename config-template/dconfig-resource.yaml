@@ -1,0 +1,181 @@
+# The config file for the dask-enabled hub
+jupyterhub:
+  hub:
+    extraEnv:
+      DASK_DISTRIBUTED__DASHBOARD_LINK: '/user/{JUPYTERHUB_USER}/proxy/{port}/status'
+    config:
+      GitHubOAuthenticator:
+        client_id: xxx
+        client_secret: xxx
+        oauth_callback_url: https://dhub.opensci.live/hub/oauth_callback
+        allowed_organizations:
+          - nmfs-opensci:DaskHub
+          - nmfs-opensci:EDMW-2024
+        scope:
+          - read:org
+      Authenticator:
+        admin_users:
+          - eeholmes
+      JupyterHub:
+        authenticator_class: github
+      KubeSpawner:
+        working_dir: /home/jovyan
+    allowNamedServers: true
+    networkPolicy:
+      # FIXME: For dask gateway
+      enabled: false
+    readinessProbe:
+      enabled: false
+  proxy:
+    https:
+      enabled: true
+      hosts:
+        - dhub.opensci.live
+      letsencrypt:
+        contactEmail: eli.holmes@noaa.gov        
+  singleuser:
+    startTimeout: 3600
+    defaultUrl: /lab
+    storage:
+      capacity: 20Gi
+      extraVolumes:
+        - name: jupyterhub-shared
+          persistentVolumeClaim:
+            claimName: daskhub-pvc
+      extraVolumeMounts:
+        - name: jupyterhub-shared
+          mountPath: /home/jovyan/shared
+    image:
+      name: openscapes/python
+      tag: 6ee57a9
+      pullPolicy: Always
+    profileList:
+      - display_name: "Select image and RAM"
+        description: &profile_list_description "Start a container with at least a chosen share of capacity on a node of this type"
+        default: true
+        slug: small
+        profile_options:
+          image: &profile_options_image
+            display_name: Image
+            choices:
+              python:
+                display_name: Py - Openscapes Python 39dffde
+                slug: python
+                kubespawner_override:
+                  image: openscapes/python:39dffde
+              cmip6:
+                display_name: Py - CMIP6-Cookbook
+                slug: cmip6
+                kubespawner_override:
+                  image: ghcr.io/nmfs-opensci/container-images/cmip6-cookbook:latest
+              pyrbase:
+                display_name: Py-R - base image 4.4-3.10
+                slug: pyrbase
+                kubespawner_override:
+                  image: ghcr.io/nmfs-opensci/container-images/py-rocket-base:latest
+              pyrgeo:
+                display_name: Py-R - Base geospatial image 4.4-3.10
+                slug: pyrgeo
+                default: true
+                kubespawner_override:
+                  image: ghcr.io/nmfs-opensci/container-images/py-rocket-geospatial:latest
+              coastwatch:
+                display_name: Py-R - CoastWatch - nmfs-opensci coastwatch latest
+                slug: coastwatch
+                kubespawner_override:
+                  image: ghcr.io/nmfs-opensci/container-images/coastwatch:latest
+              aomlomics:
+                display_name: Py - Tourmaline Snakemake workflow for QIIME 2 v.2023.5
+                slug: aomlomics
+                kubespawner_override:
+                  image: ghcr.io/nmfs-opensci/container-images/aomlomics-jh:latest
+              iopython:
+                display_name: Py - Python w tensorflow - eeholmes iopython 20230714
+                slug: iopython
+                kubespawner_override:
+                  image: eeholmes/iopython:20230714
+              iorocker:
+                display_name: R - R geospatial  w sdmTMB - eeholmes iorocker 20230729
+                slug: iorocker
+                kubespawner_override:
+                  image: eeholmes/iorocker:20230729
+              test:
+                display_name: Py - pangeo base-notebook 2024.01.23
+                slug: test
+                kubespawner_override:
+                  image: pangeo/base-notebook
+                  tag: 2024.01.23
+              rocker:
+                display_name: R - Openscapes rocker a7596b5
+                slug: rocker
+                kubespawner_override:
+                  image: openscapes/rocker:a7596b5
+              echopype:
+                display_name: Py - Echopype with pangeo nmfs-opensci echopype latest
+                slug: echopype
+                kubespawner_override:
+                  image: ghcr.io/nmfs-opensci/container-images/echopype:latest
+              arcgis:
+                display_name: Py - ArcGIS Python 3.9
+                slug: arcgis
+                kubespawner_override:
+                  image: ghcr.io/nmfs-opensci/container-images/arcgis:latest
+              cboettig:
+                display_name: R-Py - NASA TOPS Env Jus - boettiger-lab nasa-tops latest
+                slug: cboettig
+                kubespawner_override:
+                  image: ghcr.io/boettiger-lab/nasa-tops:latest 
+          requests: &profile_options_resource_allocation
+            display_name: Resource Allocation
+            choices:
+              mem_1_9:
+                display_name: 1.9 GB RAM, upto 3.7 CPUs
+                kubespawner_override:
+                  mem_guarantee: 1991244775
+                  mem_limit: 1991244775
+                  cpu_guarantee: 0.2328125
+                  cpu_limit: 3.725
+                  default: true
+              mem_3_7:
+                display_name: 3.7 GB RAM, upto 3.7 CPUs
+                kubespawner_override:
+                  mem_guarantee: 3982489550
+                  mem_limit: 3982489550
+                  cpu_guarantee: 0.465625
+                  cpu_limit: 3.725
+                  node_selector:
+                    node.kubernetes.io/instance-type: r5.xlarge
+              mem_7_4:
+                display_name: 7.4 GB RAM, upto 3.7 CPUs
+                kubespawner_override:
+                  mem_guarantee: 7964979101
+                  mem_limit: 7964979101
+                  cpu_guarantee: 0.93125
+                  cpu_limit: 3.725
+              mem_14_8:
+                display_name: 14.8 GB RAM, upto 3.7 CPUs
+                kubespawner_override:
+                  mem_guarantee: 15929958203
+                  mem_limit: 15929958203
+                  cpu_guarantee: 1.8625
+                  cpu_limit: 3.725
+              mem_29_7:
+                display_name: 29.7 GB RAM, upto 3.7 CPUs
+                kubespawner_override:
+                  mem_guarantee: 31859916406
+                  mem_limit: 31859916406
+                  cpu_guarantee: 3.725
+                  cpu_limit: 3.725
+        kubespawner_override:
+          cpu_limit: null
+          mem_limit: null
+          node_selector:
+            topology.kubernetes.io/zone: westus2-1
+            node.kubernetes.io/instance-type: Standard_D8s_v3 
+dask-gateway:
+  gateway:
+    extraConfig:
+      idle: |-
+        # timeout after 30 minutes of inactivity
+        c.KubeClusterConfig.idle_timeout = 1800        
+        
