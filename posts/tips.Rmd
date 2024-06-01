@@ -13,3 +13,31 @@ find / -iname 'core.[0-9]*'
 ```
 
 Then delete them.
+
+## List kernels
+
+```
+jupyter kernelspec list
+```
+
+Remove
+
+```
+jupyter kernelspec remove <kernel_name>
+```
+if the kernel is not in the usual place use something like this to remove
+```
+jupyter kernelspec remove -p /home/jovyan/.local/share/jupyter/kernels notebook
+```
+
+Create a kernel
+
+```
+# make sure ipykernel is in your env
+conda install ipykernel
+python -m ipykernel install --user --name mykernel
+```
+
+## Creating a persistent environment
+
+https://nmfs-opensci.github.io/nmfs-jhub/posts/JHub-User-Guide.html#using-your-own-conda-environment

@@ -844,5 +844,25 @@
     "crumbs": [
       "Tips"
     ]
+  },
+  {
+    "objectID": "posts/tips.html#list-kernels",
+    "href": "posts/tips.html#list-kernels",
+    "title": "Tips",
+    "section": "List kernels",
+    "text": "List kernels\njupyter kernelspec list\nRemove\njupyter kernelspec remove &lt;kernel_name&gt;\nif the kernel is not in the usual place use something like this to remove\njupyter kernelspec remove -p /home/jovyan/.local/share/jupyter/kernels notebook\nCreate a kernel\n# make sure ipykernel is in your env\nconda install ipykernel\npython -m ipykernel install --user --name mykernel",
+    "crumbs": [
+      "Tips"
+    ]
+  },
+  {
+    "objectID": "posts/tips.html#creating-a-persistent-environment",
+    "href": "posts/tips.html#creating-a-persistent-environment",
+    "title": "Tips",
+    "section": "Creating a persistent environment",
+    "text": "Creating a persistent environment\nhttps://nmfs-opensci.github.io/nmfs-jhub/posts/JHub-User-Guide.html#using-your-own-conda-environment",
+    "crumbs": [
+      "Tips"
+    ]
   }
 ]

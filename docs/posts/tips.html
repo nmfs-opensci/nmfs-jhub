@@ -176,6 +176,8 @@ ul.task-list li input[type="checkbox"] {
    
   <ul class="collapse">
   <li><a href="#finding-core-files" id="toc-finding-core-files" class="nav-link active" data-scroll-target="#finding-core-files">Finding core files</a></li>
+  <li><a href="#list-kernels" id="toc-list-kernels" class="nav-link" data-scroll-target="#list-kernels">List kernels</a></li>
+  <li><a href="#creating-a-persistent-environment" id="toc-creating-a-persistent-environment" class="nav-link" data-scroll-target="#creating-a-persistent-environment">Creating a persistent environment</a></li>
   </ul>
 <div class="toc-actions"><ul class="collapse"><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/edit/main/posts/tips.Rmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/posts/tips.Rmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
@@ -211,6 +213,22 @@ ul.task-list li input[type="checkbox"] {
 <p>These are big and storage is expensive.</p>
 <pre><code>find / -iname 'core.[0-9]*'</code></pre>
 <p>Then delete them.</p>
+</section>
+<section id="list-kernels" class="level2">
+<h2 class="anchored" data-anchor-id="list-kernels">List kernels</h2>
+<pre><code>jupyter kernelspec list</code></pre>
+<p>Remove</p>
+<pre><code>jupyter kernelspec remove &lt;kernel_name&gt;</code></pre>
+<p>if the kernel is not in the usual place use something like this to remove</p>
+<pre><code>jupyter kernelspec remove -p /home/jovyan/.local/share/jupyter/kernels notebook</code></pre>
+<p>Create a kernel</p>
+<pre><code># make sure ipykernel is in your env
+conda install ipykernel
+python -m ipykernel install --user --name mykernel</code></pre>
+</section>
+<section id="creating-a-persistent-environment" class="level2">
+<h2 class="anchored" data-anchor-id="creating-a-persistent-environment">Creating a persistent environment</h2>
+<p>https://nmfs-opensci.github.io/nmfs-jhub/posts/JHub-User-Guide.html#using-your-own-conda-environment</p>
 
 
 </section>
