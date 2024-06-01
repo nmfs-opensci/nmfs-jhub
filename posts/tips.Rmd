@@ -1,0 +1,15 @@
+---
+title: "Tips"
+description: |
+  Misc tips
+---
+
+## Finding core files
+
+These are big and storage is expensive.
+
+```
+find / -iname 'core.[0-9]*'
+```
+
+Then delete them.

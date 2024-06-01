@@ -28,7 +28,7 @@ cd ci/iopython
 ```
 2. Update the docker tag to the date.
 ```
-DOCKER_TAG="20230901"
+DOCKER_TAG="20240409"
 ```
 2. Build the image. `.` means current directory. `eeholmes/iopython` is the name of the repo on DockerHub. See notes below. 
 ```

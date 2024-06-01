@@ -42,6 +42,8 @@ website:
         href: posts/Set-up-centos-security.Rmd
       - text: "Set-up authentication"
         href: posts/set-up-authentication.Rmd
+      - text: "Tips"
+        href: posts/tips.Rmd
 
 format:
   html:
