@@ -10,7 +10,6 @@ jupyterhub:
         oauth_callback_url: https://dhub.opensci.live/hub/oauth_callback
         allowed_organizations:
           - nmfs-opensci:DaskHub
-          - nmfs-opensci:EDMW-2024
         scope:
           - read:org
       Authenticator:
@@ -26,6 +25,35 @@ jupyterhub:
       enabled: false
     readinessProbe:
       enabled: false
+    initContainers:
+      - name: git-clone-templates
+        image: alpine/git
+        command:
+          - /bin/sh
+          - -c
+        args:
+          - >-
+              git clone --branch=master https://github.com/nmfs-opensci/jupyterhub-templates.git &&
+              cp -r jupyterhub-templates/templates/* /templates &&
+              cp -r jupyterhub-templates/extra-assets/* /extra-assets
+        volumeMounts:
+          - name: custom-templates
+            mountPath: /templates
+          - name: custom-templates-static
+            mountPath: /extra-assets
+    extraVolumes:
+      - name: custom-templates
+        emptyDir: {}
+      - name: custom-templates-static
+        emptyDir: {}
+    extraVolumeMounts:
+      - name: custom-templates
+        mountPath: /usr/local/share/jupyterhub/custom_templates
+      - name: custom-templates-static
+        mountPath: /usr/local/share/jupyterhub/static/extra_assets
+    extraConfig:
+      templates: |
+        c.JupyterHub.template_paths = ['/usr/local/share/jupyterhub/custom_templates/']
   proxy:
     https:
       enabled: true
@@ -64,7 +92,7 @@ jupyterhub:
                 kubespawner_override:
                   image: openscapes/python:39dffde
               cmip6:
-                display_name: Py - CMIP6-Cookbook
+                display_name: Py - CMIP6-Cookbook - cmip6-cookbook latest
                 slug: cmip6
                 kubespawner_override:
                   image: ghcr.io/nmfs-opensci/container-images/cmip6-cookbook:latest
@@ -74,7 +102,7 @@ jupyterhub:
                 kubespawner_override:
                   image: ghcr.io/nmfs-opensci/container-images/py-rocket-base:latest
               pyrgeo:
-                display_name: Py-R - Base geospatial image 4.4-3.10
+                display_name: Py-R - Base geospatial image - py-rocket-geospatial latest
                 slug: pyrgeo
                 default: true
                 kubespawner_override:
@@ -95,10 +123,10 @@ jupyterhub:
                 kubespawner_override:
                   image: eeholmes/iopython:20230714
               iorocker:
-                display_name: R - R geospatial  w sdmTMB - eeholmes iorocker 20230729
-                slug: iorocker
+                display_name: R - R geospatial w sdmTMB - r-geospatial-sdm latest
+                slug: rgeospatialsdm
                 kubespawner_override:
-                  image: eeholmes/iorocker:20230729
+                  image: ghcr.io/nmfs-opensci/container-images/r-geospatial-sdm:latest
               test:
                 display_name: Py - pangeo base-notebook 2024.01.23
                 slug: test
@@ -156,13 +184,6 @@ jupyterhub:
                   mem_guarantee: 15929958203
                   mem_limit: 15929958203
                   cpu_guarantee: 1.8625
-                  cpu_limit: 3.725
-              mem_29_7:
-                display_name: 29.7 GB RAM, upto 3.7 CPUs
-                kubespawner_override:
-                  mem_guarantee: 31859916406
-                  mem_limit: 31859916406
-                  cpu_guarantee: 3.725
                   cpu_limit: 3.725
         kubespawner_override:
           cpu_limit: null
