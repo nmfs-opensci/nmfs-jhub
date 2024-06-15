@@ -37,7 +37,7 @@ At this point, you will get to the set-up with lots of tabs.
 
 -   You need to select the resource group if you are in a subscription for an organization. Don't know what resource group to use, ask the admins.
 -   You need to give your Kubernetes cluster a name. For example, `jhub` or `daskhub` or whatever.
--   You need to chose the AWS region. If you are using AWS S3 file access (big data in the cloud), then you need to be on the same region as the files you are accessing. Do you have no idea? Then you are probably not using AWS S3 file access. In that case, just go with the default or something close to you.
+-   You need to chose the region and zone. If you are using Azure file access (big data in the cloud), then you need to be on the same region as the files you are accessing. Do you have no idea? In that case, just go with the default or something close to you. Make sure to use the same region and zone in every node pool creation step.
 -   Next you chose the "Node size". This is the size of the base virtural machine (VM). It is going to spin up as many as it needs. The default is [Standard DS2 v2](https://azureprice.net/vm/Standard_DS2_v2) which as 2 CPU, 7 Gig RAM and 1T memory. This is fine for set-up. You can add more (bigger VMs later). Accept autoscaling since this is a multi-user hub.
 
 The first tab is all you need for now. Later you may want to allow the user, to choose a different base VM. You can do that by adding node-pools. That'll be covered after the initial set-up. For now, just get your basic hub working. You can add more VM sizes later.
