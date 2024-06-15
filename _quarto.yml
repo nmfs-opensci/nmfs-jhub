@@ -30,9 +30,9 @@ website:
         href: index.Rmd
       - text: "JHub User Guide"
         href: posts/JHub-User-Guide.Rmd
-      - text: "Set-up JHub on Azure"
+      - text: "Set-up DaskHub on Azure"
         href: posts/Set-up-daskhub.Rmd
-      - text: "Set-up JHub on Google Cloud"
+      - text: "Set-up JHub on GCP"
         href: posts/set-up-jh-gcp.Rmd
       - text: "Set-up JHub on AWS"
         href: posts/set-up-jh-aws.md

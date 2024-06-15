@@ -84,7 +84,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../posts/Set-up-daskhub.html">Set-up JHub on Azure</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../posts/Set-up-daskhub.html">Set-up DaskHub on Azure</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -127,13 +127,13 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../posts/Set-up-daskhub.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Set-up JHub on Azure</span></a>
+ <span class="menu-text">Set-up DaskHub on Azure</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../posts/set-up-jh-gcp.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Set-up JHub on Google Cloud</span></a>
+ <span class="menu-text">Set-up JHub on GCP</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -249,7 +249,7 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li>You need to select the resource group if you are in a subscription for an organization. Don’t know what resource group to use, ask the admins.</li>
 <li>You need to give your Kubernetes cluster a name. For example, <code>jhub</code> or <code>daskhub</code> or whatever.</li>
-<li>You need to chose the AWS region. If you are using AWS S3 file access (big data in the cloud), then you need to be on the same region as the files you are accessing. Do you have no idea? Then you are probably not using AWS S3 file access. In that case, just go with the default or something close to you.</li>
+<li>You need to chose the region and zone. If you are using Azure file access (big data in the cloud), then you need to be on the same region as the files you are accessing. Do you have no idea? In that case, just go with the default or something close to you. Make sure to use the same region and zone in every node pool creation step.</li>
 <li>Next you chose the “Node size”. This is the size of the base virtural machine (VM). It is going to spin up as many as it needs. The default is <a href="https://azureprice.net/vm/Standard_DS2_v2">Standard DS2 v2</a> which as 2 CPU, 7 Gig RAM and 1T memory. This is fine for set-up. You can add more (bigger VMs later). Accept autoscaling since this is a multi-user hub.</li>
 </ul>
 <p>The first tab is all you need for now. Later you may want to allow the user, to choose a different base VM. You can do that by adding node-pools. That’ll be covered after the initial set-up. For now, just get your basic hub working. You can add more VM sizes later.</p>
@@ -1109,8 +1109,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../posts/set-up-jh-gcp.html" class="pagination-link" aria-label="Set-up JHub on Google Cloud">
-        <span class="nav-page-text">Set-up JHub on Google Cloud</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../posts/set-up-jh-gcp.html" class="pagination-link" aria-label="Set-up JHub on GCP">
+        <span class="nav-page-text">Set-up JHub on GCP</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
