@@ -1,0 +1,206 @@
+# The config file for the fish.opensci.live
+jupyterhub:
+  hub:
+    extraEnv:
+      DASK_DISTRIBUTED__DASHBOARD_LINK: '/user/{JUPYTERHUB_USER}/proxy/{port}/status'
+    config:
+      GitHubOAuthenticator:
+        client_id: xxxxxxx
+        client_secret: xxxxxxx
+        oauth_callback_url: https://fish.opensci.live/hub/oauth_callback
+        allowed_organizations:
+          - <org name>:<team name>
+        scope:
+          - read:org
+      Authenticator:
+        admin_users:
+          - eeholmes
+          - eeholmes-uw
+      JupyterHub:
+        authenticator_class: github
+      KubeSpawner:
+        working_dir: /home/jovyan
+    allowNamedServers: true
+    networkPolicy:
+      # FIXME: For dask gateway
+      enabled: false
+    readinessProbe:
+      enabled: false
+    initContainers:
+      - name: git-clone-templates
+        image: alpine/git
+        command:
+          - /bin/sh
+          - -c
+        args:
+          - >-
+              git clone --branch=master https://github.com/SAFS-Varanasi-Internship/jupyterhub-templates.git &&
+              cp -r jupyterhub-templates/templates/* /templates &&
+              cp -r jupyterhub-templates/extra-assets/* /extra-assets
+        volumeMounts:
+          - name: custom-templates
+            mountPath: /templates
+          - name: custom-templates-static
+            mountPath: /extra-assets
+    extraVolumes:
+      - name: custom-templates
+        emptyDir: {}
+      - name: custom-templates-static
+        emptyDir: {}
+    extraVolumeMounts:
+      - name: custom-templates
+        mountPath: /usr/local/share/jupyterhub/custom_templates
+      - name: custom-templates-static
+        mountPath: /usr/local/share/jupyterhub/static/extra_assets
+    extraConfig:
+      templates: |
+        c.JupyterHub.template_paths = ['/usr/local/share/jupyterhub/custom_templates/']
+  proxy:
+    https:
+      enabled: true
+      hosts:
+        - fish.opensci.live
+      letsencrypt:
+        contactEmail: eli.holmes@noaa.gov       
+  singleuser:
+    startTimeout: 3600
+    defaultUrl: /lab
+    storage:
+      capacity: 50Gi
+      extraVolumes:
+        - name: jupyterhub-shared
+          persistentVolumeClaim:
+            claimName: daskhub-pvc
+      extraVolumeMounts:
+        - name: jupyterhub-shared
+          mountPath: /home/jovyan/shared
+    image:
+      name: openscapes/python
+      tag: 6ee57a9
+      pullPolicy: Always
+    profileList:
+      - display_name: "Select image and RAM"
+        description: &profile_list_description "Start a container with at least a chosen share of capacity on a node of this type"
+        default: true
+        slug: small
+        profile_options:
+          image: &profile_options_image
+            display_name: Image
+            choices:
+              pyrbase:
+                display_name: PyR - base image R vrs 4.4 and Python vrs 3.10
+                slug: pyrbase
+                kubespawner_override:
+                  image: ghcr.io/nmfs-opensci/container-images/py-rocket-base:latest
+              pyrgeo:
+                display_name: PyR - Geospatial Python and R - py-rocket-geospatial latest
+                slug: pyrgeo
+                default: true
+                kubespawner_override:
+                  image: ghcr.io/nmfs-opensci/container-images/py-rocket-geospatial:latest
+              coastwatch:
+                display_name: PyR - CoastWatch - nmfs-opensci coastwatch latest
+                slug: coastwatch
+                kubespawner_override:
+                  image: ghcr.io/nmfs-opensci/container-images/coastwatch:latest
+              iopython:
+                display_name: Py - Python w tensorflow - eeholmes iopython 20230714
+                slug: iopython
+                kubespawner_override:
+                  image: eeholmes/iopython:20230714
+              iorocker:
+                display_name: R - Geospatial w sdmTMB - r-geospatial-sdm latest
+                slug: rgeospatialsdm
+                kubespawner_override:
+                  image: ghcr.io/nmfs-opensci/container-images/r-geospatial-sdm:latest
+              echopype:
+                display_name: Py - Echopype with pangeo nmfs-opensci echopype latest
+                slug: echopype
+                kubespawner_override:
+                  image: ghcr.io/nmfs-opensci/container-images/echopype:latest
+              arcgis:
+                display_name: Py - ArcGIS Python 3.9
+                slug: arcgis
+                kubespawner_override:
+                  image: ghcr.io/nmfs-opensci/container-images/arcgis:latest
+          requests: &profile_options_resource_allocation
+            display_name: Resource Allocation
+            choices:
+              mem_1_9:
+                display_name: 1.9 GB RAM up to 4 CPUs
+                kubespawner_override:
+                  mem_guarantee: 1991244775
+                  mem_limit: 1991244775
+                  cpu_guarantee: 0.2328125
+                  cpu_limit: 3.725
+                  default: true
+                  node_selector:
+                    topology.kubernetes.io/zone: westus2-2
+                    node.kubernetes.io/instance-type: Standard_E4as_v5
+              mem_3_7:
+                display_name: 3.7 GB RAM up to 4 CPUs
+                kubespawner_override:
+                  mem_guarantee: 3982489550
+                  mem_limit: 3982489550
+                  cpu_guarantee: 0.465625
+                  cpu_limit: 3.725
+                  node_selector:
+                    topology.kubernetes.io/zone: westus2-2
+                    node.kubernetes.io/instance-type: Standard_E4as_v5
+              mem_7_4:
+                display_name: 7.4 GB RAM up to 4 CPUs
+                kubespawner_override:
+                  mem_guarantee: 7964979101
+                  mem_limit: 7964979101
+                  cpu_guarantee: 0.93125
+                  cpu_limit: 3.725
+                  node_selector:
+                    topology.kubernetes.io/zone: westus2-2
+                    node.kubernetes.io/instance-type: Standard_E4as_v5
+              mem_14_8:
+                display_name: 14.8 GB RAM up to 4 CPUs
+                kubespawner_override:
+                  mem_guarantee: 15929958203
+                  mem_limit: 15929958203
+                  cpu_guarantee: 1.8625
+                  cpu_limit: 3.725
+                  node_selector:
+                    topology.kubernetes.io/zone: westus2-2
+                    node.kubernetes.io/instance-type: Standard_E4as_v5
+              mem_29_7:
+                display_name: 29.7 GB RAM up to 4 CPUs
+                kubespawner_override:
+                  mem_guarantee: 31859916406
+                  mem_limit: 31859916406
+                  cpu_guarantee: 3.725
+                  cpu_limit: 3.725
+                  node_selector:
+                    topology.kubernetes.io/zone: westus2-2
+                    node.kubernetes.io/instance-type: Standard_E4as_v5
+              mem_60_6:
+                display_name: 60.6 GB RAM up to 16 CPU
+                kubespawner_override:
+                  mem_guarantee: 65094448840
+                  mem_limit: 65094448840
+                  cpu_guarantee: 7.8475
+                  cpu_limit: 15.695
+                  node_selector:
+                    topology.kubernetes.io/zone: westus2-2
+                    node.kubernetes.io/instance-type: Standard_E16as_v5
+              mem_121_2:
+                display_name: 121.2 GB RAM, upto 15.6 CPUs
+                kubespawner_override:
+                  mem_guarantee: 130188897681
+                  mem_limit: 130188897681
+                  cpu_guarantee: 15.695
+                  cpu_limit: 15.695
+                  node_selector:
+                    topology.kubernetes.io/zone: westus2-2
+                    node.kubernetes.io/instance-type: Standard_E16as_v5
+dask-gateway:
+  gateway:
+    extraConfig:
+      idle: |-
+        # timeout after 30 minutes of inactivity
+        c.KubeClusterConfig.idle_timeout = 1800        
+        
