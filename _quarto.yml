@@ -32,6 +32,8 @@ website:
         href: posts/JHub-User-Guide.Rmd
       - text: "Set-up DaskHub on Azure"
         href: posts/Set-up-daskhub.Rmd
+      - text: "Set-up DaskHub on Azure 2"
+        href: posts/Set-up-daskhub2.Rmd
       - text: "Set-up JHub on GCP"
         href: posts/set-up-jh-gcp.Rmd
       - text: "Set-up JHub on AWS"

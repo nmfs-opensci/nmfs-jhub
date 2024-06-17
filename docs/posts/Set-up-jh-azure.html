@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Setting up a multi-user JupyterHub with Dask enabled">
+<meta name="description" content="Second time setting up a multi-user JupyterHub with Dask enabled">
 
-<title>Eli’s JupyterHub notes - DaskHub Set-up</title>
+<title>Eli’s JupyterHub notes - JHub Set-up on Azure</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../posts/Set-up-jh-azure.html" rel="next">
-<link href="../posts/JHub-User-Guide.html" rel="prev">
+<link href="../posts/set-up-jh-gcp.html" rel="next">
+<link href="../posts/Set-up-daskhub.html" rel="prev">
 <link href="../images/nmfs-opensci-logo2-notext.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -84,7 +84,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../posts/Set-up-daskhub.html">Set-up DaskHub on Azure</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../posts/Set-up-jh-azure.html">Set-up DaskHub on Azure 2</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -126,13 +126,13 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../posts/Set-up-daskhub.html" class="sidebar-item-text sidebar-link active">
+  <a href="../posts/Set-up-daskhub.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Set-up DaskHub on Azure</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../posts/Set-up-jh-azure.html" class="sidebar-item-text sidebar-link">
+  <a href="../posts/Set-up-jh-azure.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Set-up DaskHub on Azure 2</span></a>
   </div>
 </li>
@@ -183,32 +183,31 @@ ul.task-list li input[type="checkbox"] {
    
   <ul class="collapse">
   <li><a href="#requirements" id="toc-requirements" class="nav-link active" data-scroll-target="#requirements">Requirements</a></li>
-  <li><a href="#set-up-on-azure" id="toc-set-up-on-azure" class="nav-link" data-scroll-target="#set-up-on-azure">Set up on Azure</a></li>
+  <li><a href="#open-the-azure-cloud-shell" id="toc-open-the-azure-cloud-shell" class="nav-link" data-scroll-target="#open-the-azure-cloud-shell">Open the Azure Cloud Shell</a></li>
   <li><a href="#create-your-kubernetes-cluster" id="toc-create-your-kubernetes-cluster" class="nav-link" data-scroll-target="#create-your-kubernetes-cluster">Create your Kubernetes cluster</a></li>
+  <li><a href="#create-user-node-pools" id="toc-create-user-node-pools" class="nav-link" data-scroll-target="#create-user-node-pools">Create user node pools</a></li>
+  <li><a href="#check-out-what-you-created" id="toc-check-out-what-you-created" class="nav-link" data-scroll-target="#check-out-what-you-created">Check out what you created</a></li>
   <li><a href="#install-daskhub-on-your-cluster" id="toc-install-daskhub-on-your-cluster" class="nav-link" data-scroll-target="#install-daskhub-on-your-cluster">Install DaskHub on your cluster</a></li>
-  <li><a href="#step-2-set-up-https" id="toc-step-2-set-up-https" class="nav-link" data-scroll-target="#step-2-set-up-https">Step 2 Set up https</a></li>
+  <li><a href="#set-up-https" id="toc-set-up-https" class="nav-link" data-scroll-target="#set-up-https">Set up https</a></li>
   <li><a href="#step-3-set-up-github-authentication" id="toc-step-3-set-up-github-authentication" class="nav-link" data-scroll-target="#step-3-set-up-github-authentication">Step 3 Set up GitHub authentication</a></li>
   <li><a href="#set-up-the-container-image" id="toc-set-up-the-container-image" class="nav-link" data-scroll-target="#set-up-the-container-image">Set up the container image</a></li>
-  <li><a href="#changing-the-vm-size" id="toc-changing-the-vm-size" class="nav-link" data-scroll-target="#changing-the-vm-size">Changing the VM size</a></li>
-  <li><a href="#create-a-separate-disk-for-user-data" id="toc-create-a-separate-disk-for-user-data" class="nav-link" data-scroll-target="#create-a-separate-disk-for-user-data">Create a separate disk for user data</a></li>
-  <li><a href="#troubleshooting" id="toc-troubleshooting" class="nav-link" data-scroll-target="#troubleshooting">Troubleshooting</a></li>
-  <li><a href="#refs-i-used" id="toc-refs-i-used" class="nav-link" data-scroll-target="#refs-i-used">Refs I used</a></li>
-  <li><a href="#setting-up-a-shared-data-disk" id="toc-setting-up-a-shared-data-disk" class="nav-link" data-scroll-target="#setting-up-a-shared-data-disk">Setting up a shared data disk</a></li>
-  <li><a href="#s3-access" id="toc-s3-access" class="nav-link" data-scroll-target="#s3-access">S3 access</a></li>
+  <li><a href="#test-a-full-config-file" id="toc-test-a-full-config-file" class="nav-link" data-scroll-target="#test-a-full-config-file">Test a full config file</a></li>
+  <li><a href="#create-a-2t-shared-drive" id="toc-create-a-2t-shared-drive" class="nav-link" data-scroll-target="#create-a-2t-shared-drive">Create a 2T shared drive</a></li>
+  <li><a href="#final-config.yaml" id="toc-final-config.yaml" class="nav-link" data-scroll-target="#final-config.yaml">Final config.yaml</a></li>
   </ul>
-<div class="toc-actions"><ul class="collapse"><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/edit/main/posts/Set-up-daskhub.Rmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/posts/Set-up-daskhub.Rmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+<div class="toc-actions"><ul class="collapse"><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/edit/main/posts/Set-up-jh-azure.Rmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/posts/Set-up-jh-azure.Rmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">DaskHub Set-up</h1>
+<h1 class="title">JHub Set-up on Azure</h1>
 </div>
 
 <div>
   <div class="description">
-    <p>Setting up a multi-user JupyterHub with Dask enabled</p>
+    <p>Second time setting up a multi-user JupyterHub with Dask enabled</p>
   </div>
 </div>
 
@@ -230,93 +229,168 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li>Documentation: <a href="https://z2jh.jupyter.org">https://z2jh.jupyter.org</a></li>
 </ul>
-<p>See examples of full <code>config.yaml</code> files in the <code>config</code> directory in the <a href="https://github.com/nmfs-opensci/nmfs-jhub">nmfs-opensci/nmfs-jhub</a> GitHub repo.</p>
+<p>See full <code>config.yaml</code> files in the <code>config-template</code> directory in the <a href="https://github.com/nmfs-opensci/nmfs-jhub">nmfs-opensci/nmfs-jhub</a> GitHub repo. Name of config file is <code>fish-config.yaml</code>.</p>
+<ul>
+<li>Domain Name: You will need one. I use Godaddy. They are cheap.</li>
+</ul>
+<section id="steps" class="level3">
+<h3 class="anchored" data-anchor-id="steps">Steps</h3>
+<ul>
+<li>Open the Azure Cloud Shell</li>
+<li>Create a Kubernetes cluster</li>
+<li>Create the node pools (what types of VMs)</li>
+<li>Install JupyterHub with Dask</li>
+<li>Edit the config file</li>
+<li>Set up https</li>
+<li>Set up authentication</li>
+<li>Once it is working, you can create user shared drive</li>
+</ul>
 </section>
-<section id="set-up-on-azure" class="level2">
-<h2 class="anchored" data-anchor-id="set-up-on-azure">Set up on Azure</h2>
-<p>This is my notes for setting this up on Azure. Attempting to replicate the Openscapes 2i2c JupyterHub: https://github.com/2i2c-org/infrastructure/tree/master/config/clusters/openscapes</p>
-<p>That hub is on AWS and is designed for large workshops (100+) however the NMFS OpenSci JHub is quite similar. Main difference at the moment is that I don’t have a shared drive set-up and the user persistent volume (storage) is on the same VM as the user node for their Jupyter Notebook. This means that I cannot have multiple VM sizes. Need to fix so that user can pick a larger VM for a task if needed.</p>
+</section>
+<section id="open-the-azure-cloud-shell" class="level2">
+<h2 class="anchored" data-anchor-id="open-the-azure-cloud-shell">Open the Azure Cloud Shell</h2>
+<p>I am using a simpler version of the instructions here: <a href="https://z2jh.jupyter.org/en/stable/kubernetes/microsoft/step-zero-azure.html">Z2JH Set up Kubernetes on Azure</a>. To see how to do these steps using the Azure Dashboard go to the <a href="posts/Set-up-daskhub.html">DaskHub Set-up on Azure</a>. If this is your first time setting up a hub on Azure, it would be good to skim that post to get an overview of the process.</p>
+<ol type="1">
+<li><p>Log into <code>https:\\portal.azure.com</code></p></li>
+<li><p>Look for the Cloud Shell icon in the top nav bar. Box with a right pointing arrow in it. Click on that and use bash shell not the Power Shell.</p></li>
+<li><p>Make sure to set up a storage account. You can just have Azure set one up for you. If you forget and later get warnings that your shell is ephemeral, then go into settings in the cloud shell and reset the user settings.</p></li>
+</ol>
 </section>
 <section id="create-your-kubernetes-cluster" class="level2">
 <h2 class="anchored" data-anchor-id="create-your-kubernetes-cluster">Create your Kubernetes cluster</h2>
-<p>Log into <code>https:\\portal.azure.com</code></p>
-<ol type="1">
-<li>Get to the dashboard that looks similar to this.</li>
-</ol>
-<p><img src="../images/img1.png" class="img-fluid"></p>
-<ol start="2" type="1">
-<li>Click on the Kubernetes Services button and you should see something like this</li>
-</ol>
-<p><img src="../images/img2.png" class="img-fluid"></p>
-<ol start="3" type="1">
-<li>Click Create Kubernetes Cluster</li>
-</ol>
-<p>At this point, you will get to the set-up with lots of tabs.</p>
+<p>We have to create a resource group.</p>
+<pre><code># Create names
+RES_GP="SAFSJHub"
+CLUSTER_NAME="jhub"
+
+# Create a resource group
+az group create \
+   --name=$RES_GP \
+   --location=westus2 \
+   --output table</code></pre>
+<p>Then we create a cluster with <a href="https://learn.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az-aks-create">az aks create</a>. I am going to accept most of the defaults. This will create our cluster and create the first node pool which just runs the hub (not the user VMs). This node (VM) must always be running and there is only ever one (so no autoscaling).</p>
+<pre><code># Create the cluster
+az aks create \
+   --name $CLUSTER_NAME \
+   --resource-group $RES_GP \
+   --node-vm-size Standard_D2s_v3 \
+   --generate-ssh-keys \
+   --node-count 1 \
+   --nodepool-name core \
+   --nodepool-labels hub.jupyter.org/node-purpose=core \
+   --zones 2 \
+   --location westus2</code></pre>
 <ul>
-<li>You need to select the resource group. You can create a new one if needed.</li>
-<li>You need to give your Kubernetes cluster a name. For example, <code>jhub</code> or <code>daskhub</code> or whatever.</li>
-<li>You need to chose the region and zone. If you are using Azure file access (big data in the cloud), then you need to be on the same region as the files you are accessing. Do you have no idea? In that case, just go with the default or something close to you. Make sure to use the same region and zone in every node pool creation step.</li>
-<li>Next you chose the “Node size”. This is the size of the base virtural machine (VM). It is going to spin up as many as it needs. The default is <a href="https://azureprice.net/vm/Standard_DS2_v2">Standard DS2 v2</a> which as 2 CPU, 7 Gig RAM and 1T memory. This is fine for set-up. You can add more (bigger VMs later). Accept autoscaling since this is a multi-user hub.</li>
+<li><code>--name</code> name of our cluster. I made a variable called <code>$HUB_NAME</code></li>
+<li><code>--node-vm-size Standard_D2s_v3</code> This is a 2 CPU and 4 Gb RAM VM to run the hub itself (so not the user VMs). Costs about $80 a month.</li>
+<li><code>--generate-ssh-keys</code> Just use the default generator.</li>
+<li><code>--node-count 1</code> There is only ever one core node which the hub server runs alone on.</li>
+<li><code>--nodepool-name core</code> Required. This is the name of the node pool for the hub.</li>
+<li><code>--nodepool-labels hub.jupyter.org/node-purpose=core</code> so that when you do queries re the nodes and pods, you can make sense of the output.</li>
+<li><code>--zones 2</code> Probably not needed here. Only needed for user pods.</li>
+<li><code>--location westus2</code> Required. Pick something close. use <code>az account list-locations --output table</code> to see a list of the options.</li>
+<li><code>--output table</code> So that output is pretty.</li>
 </ul>
-<p>The first tab is all you need for now. Later you may want to allow the user, to choose a different base VM. You can do that by adding node-pools. That’ll be covered after the initial set-up. For now, just get your basic hub working. You can add more VM sizes later.</p>
-<ol start="4" type="1">
-<li>Click “Review and Create”</li>
-</ol>
-<p>Wait for validation tests to pass.</p>
-<ol start="5" type="1">
-<li>Click “Create”.</li>
-</ol>
-<p>Once it is done deploying, you will see this.</p>
-<p><img src="../images/img3.png" class="img-fluid"></p>
+</section>
+<section id="create-user-node-pools" class="level2">
+<h2 class="anchored" data-anchor-id="create-user-node-pools">Create user node pools</h2>
+<p>This will define the types of VMs that will spin up for our users. In the JHub, I am creating, the users can request a minimum amount of RAM from 2-128Gb. For normal uses, the users will select 2 or 4 Gb and 16 to 8 users will be sharing each VM. If a VM runs out of RAM, then another will be spun up. I want to create a separate node pool for 128Gb requests because that is an expensive VM and I only want that if a user requests it (it will go away after the user shuts down their server).</p>
+<p>Before you get started, take a look at <a href="https://portal.azure.com/#view/Microsoft_Azure_Capacity/QuotaMenuBlade/~/myQuotas">your quota</a>. Your CPUs*<code>max-count</code> for all node pools should not exceed that.</p>
+<p>What sort of machines should I put in my node pool?</p>
+<ul>
+<li>Lots of memory intensive work? Lower CPU and higher RAM (memory optimized).</li>
+<li>Lots of parallel processing or batch processing? Lots of CPU and lower RAM (compute optimized).</li>
+</ul>
+<p>Create the 32Gb RAM w 4 CPU node pool. This is a standard base user node for JupyterHubs.</p>
+<pre><code>az aks nodepool add \
+    --cluster-name $CLUSTER_NAME \
+    --resource-group $RES_GP \
+    --name usermedium \
+    --enable-cluster-autoscaler \
+    --min-count 0 \
+    --max-count 4 \
+    --node-vm-size Standard_E4as_v5 \
+    --labels hub.jupyter.org/node-purpose=usermedium \
+    --zones 2</code></pre>
+<ul>
+<li><code>--name usersmall</code> give this node pool a unique name. We will need this in our JHub config file.</li>
+<li><code>--enable-cluster-autoscaler</code> Required. We want more VMs to be spun up if more users sign into the hub.</li>
+<li><code>--min-count 0</code> We want the minimum to be 0 because if there are no users, then we don’t need a user VM (node) to be running and costing money.</li>
+<li><code>--max-count 4</code> This should accommodate roughly 32-64 users if most users are requesting 2-4 Gb of RAM. This is 4*8 = 32 CPU if all nodes are in use.</li>
+<li><code>--node-vm-size Standard_E4as_v5</code> This is a general use VM with 32 Gb RAM and 4 CPU. Similar to AWS <code>r5.xlarge</code>.</li>
+<li><code>--labels hub.jupyter.org/node-purpose=usersmall</code> So that we can decipher our node and pod output.</li>
+<li><code>--zones 2</code> Very important. We have to pin our user storage to a specific region and zone. We don’t want our nodes (VMs) to ever spin up in a zone different than our user (cloud) storage.</li>
+</ul>
+<p>Create the 128Gb RAM/16 CPU node pool. Everything is the same except <code>Standard_E16as_v5</code> and the node pool name. This is similar to AWS <code>r5.4xlarge</code>.</p>
+<pre><code>az aks nodepool add \
+    --cluster-name $CLUSTER_NAME \
+    --name userxlarge \
+    --resource-group $RES_GP \
+    --enable-cluster-autoscaler \
+    --min-count 0 \
+    --max-count 3 \
+    --node-vm-size Standard_E16as_v5 \
+    --labels hub.jupyter.org/node-purpose=userlarge \
+    --zones 2</code></pre>
+<ul>
+<li><code>--node-count 2</code> The default is 3 and it threw an error if I didn’t pass this in.</li>
+</ul>
+</section>
+<section id="check-out-what-you-created" class="level2">
+<h2 class="anchored" data-anchor-id="check-out-what-you-created">Check out what you created</h2>
+<p>Click on the Kubernetes Services button and you should see something like this</p>
+<p><img src="../images/img2.png" class="img-fluid"></p>
+<p>Click Kubernetes Cluster and then on the <code>jhub</code> cluster. Poke around on the tabs and look at the node pools.</p>
 </section>
 <section id="install-daskhub-on-your-cluster" class="level2">
 <h2 class="anchored" data-anchor-id="install-daskhub-on-your-cluster">Install DaskHub on your cluster</h2>
-<p>These next steps are done in the shell after connecting to your cluster. First you need to get to the shell.</p>
+<p>These next steps are done in the shell after connecting to your cluster. First you need to get to the shell <strong>for your cluster</strong>. Make sure you don’t have the ephemeral warning when you launch your cloud shell.</p>
 <section id="connect-to-your-cluster" class="level3">
 <h3 class="anchored" data-anchor-id="connect-to-your-cluster">Connect to your cluster</h3>
-<p>Once you have created your Kubernetes cluster, you want to go to its dashboard (by clicking on the name you gave it). You’ll see something like this (I named mine <code>daskhub</code>).</p>
+<p>Once you have created your Kubernetes cluster, you want to go to its dashboard (by clicking on the name you gave it). You’ll see something like this (in this image the cluster is named <code>daskhub</code>).</p>
 <p><img src="../images/img4.png" class="img-fluid"></p>
-<p>Click on the Connect icon in the nav bar at top.</p>
+<p>Click on the Connect icon to the right of “+ Create”.</p>
 <p>You then see this</p>
 <p><img src="../images/img5.png" class="img-fluid"></p>
 <p>Click on the link that says “Open Cloud Shell”.</p>
 <p><img src="../images/img6.png" class="img-fluid"></p>
-<p>You will get to a terminal. Paste in the two commands in the previous image (the commands that show up for you that is).</p>
+<p>You will get to a terminal and it should automatically run those <code>az</code> commands.</p>
 </section>
-<section id="create-dconfig.yaml" class="level3">
-<h3 class="anchored" data-anchor-id="create-dconfig.yaml">Create <code>dconfig.yaml</code></h3>
-<p>This will be the configuration file for your Dask-enabled JupyterHub. For now, it can be just comments. Note the name is unimportant but should end in <code>.yaml</code>. I am using <code>dconfig.yaml</code> instead of <code>config.yaml</code> since I already have a <code>config.yaml</code> file for something else–and I have not figured out how to install different hubs in different directories or even different clusters in different directories (I have much to learn…).</p>
-<pre><code>nano dconfig.yaml</code></pre>
+<section id="create-config.yaml" class="level3">
+<h3 class="anchored" data-anchor-id="create-config.yaml">Create <code>config.yaml</code></h3>
+<p>This will be the configuration file for your JupyterHub. For now, it can be just comments. Note the name is unimportant but should end in <code>.yaml</code>.</p>
+<pre><code>nano config.yaml</code></pre>
 <p>This will open the nano editor. Edit your file. You can do <code># just blank for now</code>. Then <code>Cntl-O</code> to save and <code>Cntl-X</code> to exit.</p>
 </section>
 <section id="install-daskhub-via-helm-chart" class="level3">
 <h3 class="anchored" data-anchor-id="install-daskhub-via-helm-chart">Install daskhub via helm chart</h3>
 <p>Instructions: <a href="https://artifacthub.io/packages/helm/dask/daskhub" class="uri">https://artifacthub.io/packages/helm/dask/daskhub</a> .</p>
-<p>Check that helm is installed</p>
+<p>Check that helm is installed. It should be.</p>
 <pre><code>helm version</code></pre>
 <p>Tell helm about the dask helm repository</p>
 <pre><code>helm repo add dask https://helm.dask.org
 helm repo update</code></pre>
-<p>Now install</p>
+<p>Now install. The first <code>dhub</code> is your release name and the second is the namespace name.</p>
 <pre><code>helm upgrade --wait --install --render-subchart-notes \
     dhub dask/daskhub \
     --namespace=dhub --create-namespace \
-    --values=dconfig.yaml</code></pre>
+    --values=config.yaml</code></pre>
 <p>You will see this on successful installation (it’s long. much has been cut). <img src="../images/img7.png" class="img-fluid"></p>
 </section>
 <section id="set-up-your-external-ip-address" class="level3">
 <h3 class="anchored" data-anchor-id="set-up-your-external-ip-address">Set-up your external IP address</h3>
+<p>Set the namespace context for the Kubernetes cluster and the the external IP address.</p>
 <pre><code>kubectl config set-context $(kubectl config current-context) --namespace dhub
 kubectl --namespace=dhub get service proxy-public</code></pre>
 <p>These commands will show the the IP address. Save the public IP address. You will need it in step 2. Look for the IP address under <code>EXTERNAL-IP</code>.</p>
 </section>
 </section>
-<section id="step-2-set-up-https" class="level2">
-<h2 class="anchored" data-anchor-id="step-2-set-up-https">Step 2 Set up https</h2>
+<section id="set-up-https" class="level2">
+<h2 class="anchored" data-anchor-id="set-up-https">Set up https</h2>
 <p>You can log out of your cluster. The next steps are done elsewhere.</p>
 <section id="create-a-domain-name" class="level3">
 <h3 class="anchored" data-anchor-id="create-a-domain-name">Create a domain name</h3>
-<p>You will need a domain name for <code>https</code> which you want for security (and JHub won’t stop complaining if you don’t). Find a domain name provider and set one up. It is not expensive. I used GoDaddy.</p>
+<p>You will need a domain name for <code>https</code> which you want for security (and JupyterHub won’t stop complaining if you don’t). Find a domain name provider and set one up. It is not expensive. I used GoDaddy. If you already have one, you don’t need another. You create a subdomain under that.</p>
 </section>
 <section id="create-a-dns-entry" class="level3">
 <h3 class="anchored" data-anchor-id="create-a-dns-entry">Create a DNS entry</h3>
@@ -332,7 +406,7 @@ kubectl --namespace=dhub get service proxy-public</code></pre>
 <h3 class="anchored" data-anchor-id="set-up-https-on-your-jupyterhub">Set-up https on your JupyterHub</h3>
 <p>Log back into your Kubernetes cluster: go to portal.azure.com, click on your Kubernetes cluster name, and then click on “Connect”. Then click on “Open Cloud Shell”. <a href="https://tljh.jupyter.org/en/latest/howto/admin/https.html">Read documentation about https</a></p>
 <p>Once you are on the shell, type</p>
-<pre><code>nano dconfig.yaml</code></pre>
+<pre><code>nano config.yaml</code></pre>
 <p>to edit the config file. Paste this in and save. Note the additional <code>jupyterhub:</code> in the yaml file. This is not in a plain JupyterHub with Kubernetes config file (i.e.&nbsp;in a non-daskhub, the <code>jupyterhub:</code> bit is not there and everything is moved to left by 2 spaces).</p>
 <pre><code>jupyterhub:
   proxy:
@@ -345,11 +419,12 @@ kubectl --namespace=dhub get service proxy-public</code></pre>
 </section>
 <section id="update-the-jupyterhub-installation" class="level3">
 <h3 class="anchored" data-anchor-id="update-the-jupyterhub-installation">Update the JupyterHub installation</h3>
-<p>Anytime you change <code>dconfig.yaml</code> you need to run this code.</p>
-<pre><code>helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml</code></pre>
+<p>Anytime you change <code>config.yaml</code> you need to run this code. Find the latest version <a href="https://artifacthub.io/packages/helm/dask/daskhub">here</a>.</p>
+<pre><code>helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2024.1.1 --values config.yaml</code></pre>
 </section>
 <section id="test-if-https-is-working" class="level3">
 <h3 class="anchored" data-anchor-id="test-if-https-is-working">Test if https is working</h3>
+<p><strong>COME BACK IN AN HOUR</strong> It takes awhile for a certificate to be issued. If it still doesn’t work, try editing the config file and re-upgrading.</p>
 <p>Try <code>https:\\dhub.bluemountain123.live</code> and you should see the JupyterHub login without that http warning.</p>
 </section>
 </section>
@@ -359,7 +434,7 @@ kubectl --namespace=dhub get service proxy-public</code></pre>
 <section id="create-a-new-oauth-application-on-github" class="level3">
 <h3 class="anchored" data-anchor-id="create-a-new-oauth-application-on-github">Create a new Oauth Application on GitHub</h3>
 <p>This is going to be associated with your (personal) GitHub account, but you can use a team on a GitHub org that you are owner of.</p>
-<p>Log into GitHub and go to GitHub &gt; Settings &gt; Developer Settings &gt; New Oauth Application</p>
+<p>Log into GitHub and go to GitHub &gt; Settings &gt; Developer Settings &gt; Oauth Apps &gt; Register New Oauth Application</p>
 <p>Look carefully at how I filled in the boxes.</p>
 <p><img src="../images/img10.png" class="img-fluid"></p>
 <p>Next you will see something like this</p>
@@ -370,10 +445,10 @@ kubectl --namespace=dhub get service proxy-public</code></pre>
 <h3 class="anchored" data-anchor-id="create-a-team-in-your-github-org">Create a team in your GitHub org</h3>
 <p>You will be added by default and add anyone else who needs access to the hub. Let’s say your org is <code>MyOrg</code> and the team is called <code>DaskHub</code>. So then the allowed organization is MyOrg:DaskHub. You can leave off <code>:DaskHub</code> if you want to allow all members of the organization to log in.</p>
 </section>
-<section id="edit-the-dconfig.yaml-file" class="level3">
-<h3 class="anchored" data-anchor-id="edit-the-dconfig.yaml-file">Edit the <code>dconfig.yaml</code> file</h3>
-<pre><code>nano dconfig.yaml</code></pre>
-<p>Add to your config file so it is now this. Replace the id, secret and url with your values. We need to set the KubeSpawner working directory because the Openscapes Docker image sets it to <code>home/jovyan/.kernels</code>–which is fine but annoying since <code>.kernels</code> is hidden and not <code>$HOME</code>.</p>
+<section id="edit-the-config.yaml-file" class="level3">
+<h3 class="anchored" data-anchor-id="edit-the-config.yaml-file">Edit the <code>config.yaml</code> file</h3>
+<pre><code>nano config.yaml</code></pre>
+<p>Add to your config file so it is now this. Replace the id, secret and url with your values.</p>
 <pre><code>jupyterhub:
   hub:
     config:
@@ -399,7 +474,7 @@ kubectl --namespace=dhub get service proxy-public</code></pre>
 </section>
 <section id="update-the-hub" class="level3">
 <h3 class="anchored" data-anchor-id="update-the-hub">Update the hub</h3>
-<pre><code>helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml</code></pre>
+<pre><code>helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2024.1.1 --values config.yaml</code></pre>
 </section>
 <section id="test" class="level3">
 <h3 class="anchored" data-anchor-id="test">Test</h3>
@@ -409,29 +484,8 @@ kubectl --namespace=dhub get service proxy-public</code></pre>
 </section>
 <section id="set-up-the-container-image" class="level2">
 <h2 class="anchored" data-anchor-id="set-up-the-container-image">Set up the container image</h2>
-<p>Now you need to specify the Docker image that will be used. We will use 2 different profiles: Python and R (RStudio).</p>
-<p>Edit the <code>dconfig.yaml</code> file and add the user image info. Note the spacing matters (a lot). I also added some Dask gateway config.</p>
-<pre><code>jupyterhub:
-  hub:
-    config:
-      GitHubOAuthenticator:
-        client_id: &lt;replace with your OAuth id&gt;
-        client_secret: &lt;replace with your OAuth app secret&gt;
-        oauth_callback_url: https://dhub.bluemountain123.live/hub/oauth_callback
-        allowed_organizations:
-          - MyOrg:DaskHub
-        scope:
-          - read:org
-      JupyterHub:
-        authenticator_class: github
-  proxy:
-    https:
-      enabled: true
-      hosts:
-        - dhub.bluemountain123.live
-      letsencrypt:
-        contactEmail: your@email.com        
-  singleuser:
+<p>Now you need to specify the Docker image that will be used. Edit the <code>config.yaml</code> file and add the user image info. Note the spacing matters (a lot).</p>
+<pre><code>  singleuser:
     image:
       name: openscapes/python
       tag: f577786
@@ -448,127 +502,130 @@ kubectl --namespace=dhub get service proxy-public</code></pre>
       - display_name: "R"
         description: "NASA Openscapes RStudio image"
         kubespawner_override:
-          image: openscapes/rocker:a7596b5        
-dask-gateway:
-  gateway:
-    extraConfig:
-      idle: |-
-        # timeout after 30 minutes of inactivity
-        c.KubeClusterConfig.idle_timeout = 1800        </code></pre>
-<section id="update-the-hub-1" class="level3">
-<h3 class="anchored" data-anchor-id="update-the-hub-1">Update the hub</h3>
-<pre><code>helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig.yaml</code></pre>
+          image: openscapes/rocker:a7596b5        </code></pre>
 </section>
+<section id="test-a-full-config-file" class="level2">
+<h2 class="anchored" data-anchor-id="test-a-full-config-file">Test a full config file</h2>
+<p>My config.yaml is a bit more customized to allow the user to reserve the amount of RAM that they need. Full config file: <a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/config-template/fish-config.yaml" class="uri">https://github.com/nmfs-opensci/nmfs-jhub/blob/main/config-template/fish-config.yaml</a></p>
+<p>Cut out the part regarding the shared drive:</p>
+<pre><code>      extraVolumes:
+        - name: jupyterhub-shared
+          persistentVolumeClaim:
+            claimName: daskhub-pvc
+      extraVolumeMounts:
+        - name: jupyterhub-shared
+          mountPath: /home/jovyan/shared</code></pre>
+<p>And make sure the hub is working nicely before adding a shared drive. The shared drive part tends to break things.</p>
 </section>
-<section id="changing-the-vm-size" class="level2">
-<h2 class="anchored" data-anchor-id="changing-the-vm-size">Changing the VM size</h2>
-<p><strong>NOT WORKING YET</strong> I am stuck on creating the persistent volumes. Needed because you need the user storage somewhere if you have multiple node pools.</p>
-<p><img src="../images/img13.png" class="img-fluid"></p>
-<pre><code>kubectl get nodes --show-labels | grep instance-type</code></pre>
-<p>beta.kubernetes.io/instance-type=Standard_D8s_v3</p>
-</section>
-<section id="create-a-separate-disk-for-user-data" class="level2">
-<h2 class="anchored" data-anchor-id="create-a-separate-disk-for-user-data">Create a separate disk for user data</h2>
-<p>I want the user data to be in a drive different from the VM being spun up for their notebook. Sounds easy here https://z2jh.jupyter.org/en/latest/jupyterhub/customizing/user-storage.html but I cannot string the steps together.</p>
-<p>Steps, I think?</p>
-<section id="create-disk" class="level3">
-<h3 class="anchored" data-anchor-id="create-disk">Create disk</h3>
-<p>Something like this?</p>
-<p>https://bluexp.netapp.com/blog/azure-cvo-blg-azure-kubernetes-service-configuring-persistent-volumes-in-aks</p>
-<p>But I can’t figure out the steps.</p>
-</section>
-<section id="pvc" class="level3">
-<h3 class="anchored" data-anchor-id="pvc">PVC</h3>
-<p><strong>NOT WORKING YET</strong></p>
+<section id="create-a-2t-shared-drive" class="level2">
+<h2 class="anchored" data-anchor-id="create-a-2t-shared-drive">Create a 2T shared drive</h2>
+<p>This will cost about $172 a month. Here are some notes on how to do this: https://www.c2labs.com/post/persistent-storage-on-kubernetes-for-azure</p>
+<section id="create-a-storage-account-in-the-portal" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-storage-account-in-the-portal">Create a storage account in the portal</h3>
+<p>First we must create a storage account (add the resource). The name must be globally unique, so don’t use the one here.</p>
 <ul>
-<li>Is this pvc.yaml right?</li>
-<li>How would I point this to the disk that I mount in the step above??</li>
+<li>Go to the dashboard and look for “storage account”</li>
+<li>Create one with a unique name</li>
+<li>Use the resource group that the Kubernetes cluster is in. For me it is SAFSJHub</li>
+<li>Choose Standard LRS storage</li>
+<li>Kind StorageV2</li>
+<li><strong>key bit</strong> you need to set the storage to use the VNET associated with the cluster. Look at the cluster. The VNET you want will be something like <code>aks-vnet-123</code>.</li>
+<li><strong>key bit</strong> you need to create a file share. Make it 2Tb by changing the quota to 2048. Make sure it uses the same resource group as the cluster.</li>
 </ul>
-<p>This command might have useful info</p>
-<pre><code>KUBE_EDITOR="nano" kubectl edit pvc --namespace=dhub claim-eeholmes</code></pre>
-<pre><code>nana pvc.yaml</code></pre>
-<pre><code>kind: PersistentVolumeClaim
-apiVersion: v1
+<p>Something like this might work but you need to set the VNET.</p>
+<pre><code>az storage account create \
+  --name safshubnfs \
+  --resource-group SAFSJHub \
+  --location westus2 \
+  --sku Standard_LRS \
+  --kind StorageV2 </code></pre>
+</section>
+<section id="set-up-the-storage-class-pv-and-pvc" class="level3">
+<h3 class="anchored" data-anchor-id="set-up-the-storage-class-pv-and-pvc">Set up the storage class, PV and PVC</h3>
+<pre><code>mkdir nfs-shared-setup
+cd nfs-shared-setup</code></pre>
+<p>In here we create 3 files.</p>
+<p>sc.yaml</p>
+<pre><code>apiVersion: storage.k8s.io/v1
+kind: StorageClass
 metadata:
-  name: hub-db-dir
-  labels:
-    component: jupyter
+  name: dask-fileshare
+provisioner: file.csi.azure.com
+allowVolumeExpansion: true
+mountOptions:
+  - nconnect=10 # per pod number of connections
+parameters:
+  resourceGroup: SAFSJHub
+  server: safshubnfs.file.core.windows.net
+  storageAccount: safshubnfs # storage account created manually
+  shareName: daskhub-shared # a file share created manually
+  protocol: nfs</code></pre>
+<p>pv.yaml</p>
+<pre><code>apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/provisioned-by: file.csi.azure.com
+  name: daskhub-pv
 spec:
-  storageClassName: "standard" # name of storage class, it will be default storage class if unspecified.
+  capacity:
+    storage: 2048Gi
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain  # if set as "Delete" file share would be removed in pvc deletion
+  storageClassName: dask-fileshare
+  csi:
+    driver: file.csi.azure.com
+    readOnly: false
+    volumeHandle: daskhub-shared
+    volumeAttributes:
+      resourceGroup: SAFSJHub
+      storageAccount: daskhubnfs
+      shareName: daskhub-shared
+      protocol: nfs</code></pre>
+<p>pvc.yaml</p>
+<pre><code>apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: daskhub-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: dask-fileshare
   resources:
     requests:
-      storage: "40Gi"</code></pre>
-<pre><code>kubectl create -f pvc.yaml</code></pre>
-<p>To delete, you need to first edit the pvc yaml file and get rid of pvc protection. It is 2 lines.</p>
-<pre><code>kubectl --namespace=dhub get pvc
-KUBE_EDITOR="nano" kubectl edit pvc --namespace=dhub claim-eeholmes</code></pre>
-<p>Then you can delete</p>
-<pre><code>kubectl --namespace=dhub delete pvc claim-eeholmes</code></pre>
-<p>Check that it is gone</p>
-<pre><code>kubectl --namespace=dhub get pvc</code></pre>
-<p>if not try</p>
-<pre><code>kubectl --namespace=dhub delete pvc claim-eeholmes --grace-period=0 --force</code></pre>
+      storage: 2048Gi</code></pre>
+<p>Now set everything up. Storage Classes and Persisten Volumes are not scoped to a namespace but Persistent Volume Claims are.</p>
+<pre><code># Apply storage class. View with "kubectl get sc"
+kubectl apply -f sc.yaml
+
+# Apply the Persistent Volume
+kubectl apply -f pv.yaml
+
+# Apply the Persistent Volume Claim
+kubectl apply -f pvc.yaml --namespace=dhub</code></pre>
 </section>
-<section id="pv" class="level3">
-<h3 class="anchored" data-anchor-id="pv">PV</h3>
-<p>Need a persistent volume claim too….</p>
-</section>
-<section id="tell-the-hub-about-the-disk" class="level3">
-<h3 class="anchored" data-anchor-id="tell-the-hub-about-the-disk">Tell the hub about the disk</h3>
-<p>https://z2jh.jupyter.org/en/latest/jupyterhub/customizing/user-storage.html</p>
-<p>But see how this is done on the Openscapes 2i2c hub https://github.com/2i2c-org/infrastructure/blob/master/config/clusters/openscapes/common.values.yaml</p>
-<p>I know their set-up is a little different: basehub -&gt; jupyterhub in the helm chart, but I don’t see how the singleuser bit in the yaml file is referencing the nfs in the top of that yaml.</p>
-</section>
-</section>
-<section id="troubleshooting" class="level2">
-<h2 class="anchored" data-anchor-id="troubleshooting">Troubleshooting</h2>
-<ul>
-<li>I cannot clone repos in the JupyterHub. Restart the server. In Jupyter, File &gt; Hub Control Panel &gt; Stop My Server.</li>
-</ul>
-</section>
-<section id="refs-i-used" class="level2">
-<h2 class="anchored" data-anchor-id="refs-i-used">Refs I used</h2>
-<section id="overall" class="level3">
-<h3 class="anchored" data-anchor-id="overall">Overall</h3>
-<ul>
-<li>https://2i2c.org/service/#getahub</li>
-<li>Openscapes common.values.yaml https://github.com/2i2c-org/infrastructure/blob/master/config/clusters/openscapes/common.values.yaml</li>
-<li>https://artifacthub.io/packages/helm/dask/daskhub</li>
-<li>https://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/dask_gateway/dask-hub/config_daskhub.yaml</li>
-<li>https://saturncloud.io/blog/how-to-setup-jupyterhub-on-azure/</li>
-<li>https://saturncloud.io/blog/jupyterhub-and-azure-ad/</li>
-</ul>
-</section>
-<section id="storage" class="level3">
-<h3 class="anchored" data-anchor-id="storage">Storage</h3>
-<ul>
-<li>https://www.youtube.com/watch?v=Da1qn7-RHvY</li>
-<li>Dynamic NFS provisioning 2 https://www.youtube.com/watch?v=DF3v2P8ENEg&amp;t=0s</li>
-<li>Dynamic NFS provisioning 1 https://www.youtube.com/watch?v=AavnQzWDTEk&amp;t=0s</li>
-<li>https://alan-turing-institute.github.io/hub23-deploy/</li>
-<li>https://z2jh.jupyter.org/en/latest/jupyterhub/customizing/user-storage.html</li>
-<li>https://learn.microsoft.com/en-us/azure/aks/azure-nfs-volume</li>
-<li>https://learn.microsoft.com/en-us/azure/storage/files/storage-files-quick-create-use-linux</li>
-<li>https://bluexp.netapp.com/blog/azure-cvo-blg-azure-kubernetes-service-configuring-persistent-volumes-in-aks</li>
-</ul>
+<section id="add-the-storage-class-to-the-config.yaml" class="level3">
+<h3 class="anchored" data-anchor-id="add-the-storage-class-to-the-config.yaml">Add the storage class to the config.yaml</h3>
+<p>It will look like this.</p>
+<pre><code>  singleuser:
+    startTimeout: 3600
+    defaultUrl: /lab
+    storage:
+      capacity: 50Gi
+      extraVolumes:
+        - name: jupyterhub-shared
+          persistentVolumeClaim:
+            claimName: daskhub-pvc
+      extraVolumeMounts:
+        - name: jupyterhub-shared
+          mountPath: /home/jovyan/shared</code></pre>
 </section>
 </section>
-<section id="setting-up-a-shared-data-disk" class="level2">
-<h2 class="anchored" data-anchor-id="setting-up-a-shared-data-disk">Setting up a shared data disk</h2>
-<ul>
-<li>https://www.mathworks.com/help/matlab/import_export/work-with-remote-data.html</li>
-<li>https://realpython.com/storing-images-in-python/</li>
-</ul>
-</section>
-<section id="s3-access" class="level2">
-<h2 class="anchored" data-anchor-id="s3-access">S3 access</h2>
-<ul>
-<li>https://s3fs.readthedocs.io/en/latest/</li>
-<li>https://stackoverflow.com/questions/67259323/jupyterhub-access-aws-s3</li>
-<li>https://data.lpdaac.earthdatacloud.nasa.gov/s3credentialsREADME</li>
-</ul>
+<section id="final-config.yaml" class="level2">
+<h2 class="anchored" data-anchor-id="final-config.yaml">Final config.yaml</h2>
+<p>My config.yaml is a bit more customized to allow the user to reserve the amount of RAM that they need.</p>
+<p>Full config file: <a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/config-template/fish-config.yaml" class="uri">https://github.com/nmfs-opensci/nmfs-jhub/blob/main/config-template/fish-config.yaml</a></p>
 
 
 </section>
@@ -1110,13 +1167,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../posts/JHub-User-Guide.html" class="pagination-link  aria-label=" jhub="" user="" guide"="">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">JHub User Guide</span>
+      <a href="../posts/Set-up-daskhub.html" class="pagination-link  aria-label=" set-up="" daskhub="" on="" azure"="">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Set-up DaskHub on Azure</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../posts/Set-up-jh-azure.html" class="pagination-link" aria-label="Set-up DaskHub on Azure 2">
-        <span class="nav-page-text">Set-up DaskHub on Azure 2</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../posts/set-up-jh-gcp.html" class="pagination-link" aria-label="Set-up JHub on GCP">
+        <span class="nav-page-text">Set-up JHub on GCP</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
