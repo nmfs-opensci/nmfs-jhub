@@ -1021,7 +1021,7 @@
   {
     "objectID": "posts/tips.html",
     "href": "posts/tips.html",
-    "title": "Tips",
+    "title": "Troubleshooting",
     "section": "",
     "text": "These are big and storage is expensive. Within a JHub terminal, run\nfind / -iname 'core.[0-9]*'\nThen delete them.",
     "crumbs": [
@@ -1031,7 +1031,7 @@
   {
     "objectID": "posts/tips.html#finding-core-files",
     "href": "posts/tips.html#finding-core-files",
-    "title": "Tips",
+    "title": "Troubleshooting",
     "section": "",
     "text": "These are big and storage is expensive. Within a JHub terminal, run\nfind / -iname 'core.[0-9]*'\nThen delete them.",
     "crumbs": [
@@ -1041,7 +1041,7 @@
   {
     "objectID": "posts/tips.html#list-kernels",
     "href": "posts/tips.html#list-kernels",
-    "title": "Tips",
+    "title": "Troubleshooting",
     "section": "List kernels",
     "text": "List kernels\nWhen in the cloud provider, shell for a cluster, e.g. Cloud Shell in Azure from the overview tab for a Kubernetes cluster.\njupyter kernelspec list\nRemove\njupyter kernelspec remove &lt;kernel_name&gt;\nif the kernel is not in the usual place use something like this to remove\njupyter kernelspec remove -p /home/jovyan/.local/share/jupyter/kernels notebook\nCreate a kernel\n# make sure ipykernel is in your env\nconda install ipykernel\npython -m ipykernel install --user --name mykernel",
     "crumbs": [
@@ -1051,7 +1051,7 @@
   {
     "objectID": "posts/tips.html#creating-a-persistent-environment",
     "href": "posts/tips.html#creating-a-persistent-environment",
-    "title": "Tips",
+    "title": "Troubleshooting",
     "section": "Creating a persistent environment",
     "text": "Creating a persistent environment\nhttps://nmfs-opensci.github.io/nmfs-jhub/posts/JHub-User-Guide.html#using-your-own-conda-environment",
     "crumbs": [
@@ -1061,7 +1061,7 @@
   {
     "objectID": "posts/tips.html#troubleshooting-hanging-pods",
     "href": "posts/tips.html#troubleshooting-hanging-pods",
-    "title": "Tips",
+    "title": "Troubleshooting",
     "section": "Troubleshooting hanging pods",
     "text": "Troubleshooting hanging pods\n\nSearch history history | grep thingtosearch\nFind info on the nodes and regions/zones kubectl get nodes --show-labels | grep topology.kubernetes.io\nVerify that created Pods enter a Running state: kubectl --namespace=jhubk8 get pod\nIf a pod is stuck with a Pending or ContainerCreating status, diagnose with: kubectl --namespace=jhubk8 describe pod &lt;name of pod&gt;\nIf a pod keeps restarting, diagnose with: kubectl --namespace=jhubk8 logs --previous &lt;name of pod&gt;\nDelete a pod kubectl --namespace=jhubk8 delete pod &lt;name of pod&gt;\nIf it says a containter is the problem kubectl --namespace=dhub logs --previous hub-5f5d96968d-z59bx -c git-clone-templates\nVerify an external IP is provided for the k8s Service proxy-public. kubectl --namespace=jhubk8 get service proxy-public\nIf the external ip remains Pending, diagnose with: kubectl --namespace=jhubk8 describe service proxy-public\nGet info on persistent volumes. Sometimes hang if there is a disconnect between node region/zone and pv region/zone\n\nkubectl get pv -n jhub\nkubectl describe pv pvc-25a4c791-d2e7-4aaa-bf5a-459c3de0e60c -n jhub\nLook for topology.kubernetes.io * Get the pod specification (created by jupyterhub helm)\nkubectl get pod hub-5f5d96968d-z59bx -n dhub -oyaml &gt; test2.yaml\nNote don’t try kubectl apply -f test2.yaml to change the config on the fly. It breaks things with a jupyterhub. * Open a shell into a container. Container must be running.\nkubectl exec -stdin -tty hub-5f5d96968d-z59bx --container git-clone-templates -- /bin/bash\n\nHistory of problems I have solved\nProblem with pod stuck in Init:CrashLoopBackOff\nThis was due to git-clone-templates showing user not known. Somehow the repo being cloned was set to private, so the git clone needed credentials which it didn’t have and that caused the init container to fail.\n\nVerify that created Pods enter a Running state: kubectl --namespace=jhubk8 get pod\nGet some info on problem: kubectl --namespace=jhubk8 describe pod &lt;name of pod&gt;\nIf a pod keeps restarting, diagnose with: kubectl --namespace=jhubk8 logs --previous &lt;name of pod&gt;\nFix\n\ntried applying and empty config.yaml but that didn’t replace the old one.\ncreate a config-test.yaml without the init container part that had the git clone. Now the hub would start.\ndiscovered that the repo was private. Fixed.\n\n\nProblem with pod unable to start do to node affinity mismatch\nI had set up my node pools to be one region but multiple zones. When I stopped the cluster and restarted, the system node ended up in another zone than the hub database pv. I tried to stop and restart multiple times to see if the system node would by chance start in the right zone, but it didn’t work. Had to tear down the cluster and start again with region and one zone specified.\n\nGet list of pvs kubectl get pv -n jhub\nFind the one associated with the hub database dhub/hub-db-dir.\nGet info on pv region/zone. Look for topology.kubernetes.io.\n\nkubectl get pv -n jhub\nkubectl describe pv pvc-25a4c791-d2e7-4aaa-bf5a-459c3de0e60c -n jhub\n\nGet info on the region/zone for nodes.\n\nkubectl get nodes --show-labels | grep topology.kubernetes.io\n\nLook for the one that is the system node kubernetes.azure.com/mode=system.\n\nLook for a mismatch in zones. Like westus2-1 versus westus2-3\nNode affinity mismatch prevents some user pods from starting\nWrite up in Jupyter Discourse: https://discourse.jupyter.org/t/fixed-node-affinity-mismatch-stopping-some-pods-from-starting/23020\nI set up a JupyterHub w Kubernetes on Azure and had been using it with a small team of 3-4 for a year. Then I did a workshop to test it with more people. It worked great during the workshop. After the workshop, I crashed my server (ran out of RAM). No problem. That often happens and I restart. This time, I got a volume / node affinity error and the pod was stuck in pending. Some other people could still launch pods, but I could not.\nTurns out it was a mismatch between the zone that my user PVC was on and the zone of the node. As the cluster scaled up during the workshop, new nodes on uswest2-1, uswest2-2, uswest-3 were created because I didn’t specify the zone of my nodes when setting up Kubernetes nodes. I only set the region: uswest2. As the cluster auto-scaled back down, it just so happened that the ‘last node standing’ was on uswest2-2. My user PVC is on uswest2-1 and so there was a pvc / node mismatch.",
     "crumbs": [
