@@ -131,7 +131,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../posts/Set-up-jh-azure.html" class="sidebar-item-text sidebar-link">
+  <a href="../posts/Set-up-daskhub2.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Set-up DaskHub on Azure 2</span></a>
   </div>
 </li>
@@ -184,6 +184,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#finding-core-files" id="toc-finding-core-files" class="nav-link active" data-scroll-target="#finding-core-files">Finding core files</a></li>
   <li><a href="#list-kernels" id="toc-list-kernels" class="nav-link" data-scroll-target="#list-kernels">List kernels</a></li>
   <li><a href="#creating-a-persistent-environment" id="toc-creating-a-persistent-environment" class="nav-link" data-scroll-target="#creating-a-persistent-environment">Creating a persistent environment</a></li>
+  <li><a href="#troubleshooting-hanging-pods" id="toc-troubleshooting-hanging-pods" class="nav-link" data-scroll-target="#troubleshooting-hanging-pods">Troubleshooting hanging pods</a></li>
   </ul>
 <div class="toc-actions"><ul class="collapse"><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/edit/main/posts/tips.Rmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/posts/tips.Rmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
@@ -216,12 +217,13 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="finding-core-files" class="level2">
 <h2 class="anchored" data-anchor-id="finding-core-files">Finding core files</h2>
-<p>These are big and storage is expensive.</p>
+<p>These are big and storage is expensive. Within a JHub terminal, run</p>
 <pre><code>find / -iname 'core.[0-9]*'</code></pre>
 <p>Then delete them.</p>
 </section>
 <section id="list-kernels" class="level2">
 <h2 class="anchored" data-anchor-id="list-kernels">List kernels</h2>
+<p>When in the cloud provider, shell for a cluster, e.g.&nbsp;Cloud Shell in Azure from the overview tab for a Kubernetes cluster.</p>
 <pre><code>jupyter kernelspec list</code></pre>
 <p>Remove</p>
 <pre><code>jupyter kernelspec remove &lt;kernel_name&gt;</code></pre>
@@ -235,8 +237,66 @@ python -m ipykernel install --user --name mykernel</code></pre>
 <section id="creating-a-persistent-environment" class="level2">
 <h2 class="anchored" data-anchor-id="creating-a-persistent-environment">Creating a persistent environment</h2>
 <p>https://nmfs-opensci.github.io/nmfs-jhub/posts/JHub-User-Guide.html#using-your-own-conda-environment</p>
+</section>
+<section id="troubleshooting-hanging-pods" class="level2">
+<h2 class="anchored" data-anchor-id="troubleshooting-hanging-pods">Troubleshooting hanging pods</h2>
+<ul>
+<li>Search history <code>history | grep thingtosearch</code></li>
+<li>Find info on the nodes and regions/zones <code>kubectl get nodes --show-labels | grep topology.kubernetes.io</code></li>
+<li>Verify that created Pods enter a Running state: <code>kubectl --namespace=jhubk8 get pod</code></li>
+<li>If a pod is stuck with a Pending or ContainerCreating status, diagnose with: <code>kubectl --namespace=jhubk8 describe pod &lt;name of pod&gt;</code></li>
+<li>If a pod keeps restarting, diagnose with: <code>kubectl --namespace=jhubk8 logs --previous &lt;name of pod&gt;</code></li>
+<li>Delete a pod <code>kubectl --namespace=jhubk8 delete pod &lt;name of pod&gt;</code></li>
+<li>If it says a containter is the problem <code>kubectl --namespace=dhub logs --previous hub-5f5d96968d-z59bx -c git-clone-templates</code></li>
+<li>Verify an external IP is provided for the k8s Service proxy-public. <code>kubectl --namespace=jhubk8 get service proxy-public</code></li>
+<li>If the external ip remains Pending, diagnose with: <code>kubectl --namespace=jhubk8 describe service proxy-public</code></li>
+<li>Get info on persistent volumes. Sometimes hang if there is a disconnect between node region/zone and pv region/zone</li>
+</ul>
+<pre><code>kubectl get pv -n jhub
+kubectl describe pv pvc-25a4c791-d2e7-4aaa-bf5a-459c3de0e60c -n jhub</code></pre>
+<p>Look for <code>topology.kubernetes.io</code> * Get the pod specification (created by jupyterhub helm)</p>
+<pre><code>kubectl get pod hub-5f5d96968d-z59bx -n dhub -oyaml &gt; test2.yaml</code></pre>
+<p>Note don’t try <code>kubectl apply -f test2.yaml</code> to change the config on the fly. It breaks things with a jupyterhub. * Open a shell into a container. Container must be running.</p>
+<pre><code>kubectl exec -stdin -tty hub-5f5d96968d-z59bx --container git-clone-templates -- /bin/bash</code></pre>
+<section id="history-of-problems-i-have-solved" class="level3">
+<h3 class="anchored" data-anchor-id="history-of-problems-i-have-solved">History of problems I have solved</h3>
+<p><strong>Problem with pod stuck in <code>Init:CrashLoopBackOff</code></strong></p>
+<p>This was due to <code>git-clone-templates</code> showing user not known. Somehow the repo being cloned was set to private, so the <code>git clone</code> needed credentials which it didn’t have and that caused the init container to fail.</p>
+<ul>
+<li>Verify that created Pods enter a Running state: <code>kubectl --namespace=jhubk8 get pod</code></li>
+<li>Get some info on problem: <code>kubectl --namespace=jhubk8 describe pod &lt;name of pod&gt;</code></li>
+<li>If a pod keeps restarting, diagnose with: <code>kubectl --namespace=jhubk8 logs --previous &lt;name of pod&gt;</code></li>
+<li>Fix
+<ul>
+<li>tried applying and empty config.yaml but that didn’t replace the old one.</li>
+<li>create a config-test.yaml without the init container part that had the <code>git clone</code>. Now the hub would start.</li>
+<li>discovered that the repo was private. Fixed.</li>
+</ul></li>
+</ul>
+<p><strong>Problem with pod unable to start do to node affinity mismatch</strong></p>
+<p>I had set up my node pools to be one region but multiple zones. When I stopped the cluster and restarted, the system node ended up in another zone than the hub database pv. I tried to stop and restart multiple times to see if the system node would by chance start in the right zone, but it didn’t work. Had to tear down the cluster and start again with region and one zone specified.</p>
+<ul>
+<li>Get list of pvs <code>kubectl get pv -n jhub</code></li>
+<li>Find the one associated with the hub database <code>dhub/hub-db-dir</code>.</li>
+<li>Get info on pv region/zone. Look for <code>topology.kubernetes.io</code>.</li>
+</ul>
+<pre><code>kubectl get pv -n jhub
+kubectl describe pv pvc-25a4c791-d2e7-4aaa-bf5a-459c3de0e60c -n jhub</code></pre>
+<ul>
+<li>Get info on the region/zone for nodes.</li>
+</ul>
+<pre><code>kubectl get nodes --show-labels | grep topology.kubernetes.io</code></pre>
+<ul>
+<li>Look for the one that is the system node <code>kubernetes.azure.com/mode=system</code>.</li>
+</ul>
+<p>Look for a mismatch in zones. Like <code>westus2-1</code> versus <code>westus2-3</code></p>
+<p><strong>Node affinity mismatch prevents some user pods from starting</strong></p>
+<p>Write up in Jupyter Discourse: <a href="https://discourse.jupyter.org/t/fixed-node-affinity-mismatch-stopping-some-pods-from-starting/23020">https://discourse.jupyter.org/t/fixed-node-affinity-mismatch-stopping-some-pods-from-starting/23020</a></p>
+<p>I set up a JupyterHub w Kubernetes on Azure and had been using it with a small team of 3-4 for a year. Then I did a workshop to test it with more people. It worked great during the workshop. After the workshop, I crashed my server (ran out of RAM). No problem. That often happens and I restart. This time, I got a volume / node affinity error and the pod was stuck in pending. Some other people could still launch pods, but I could not.</p>
+<p>Turns out it was a mismatch between the zone that my user PVC was on and the zone of the node. As the cluster scaled up during the workshop, new nodes on uswest2-1, uswest2-2, uswest-3 were created because I didn’t specify the zone of my nodes when setting up Kubernetes nodes. I only set the region: uswest2. As the cluster auto-scaled back down, it just so happened that the ‘last node standing’ was on uswest2-2. My user PVC is on uswest2-1 and so there was a pvc / node mismatch.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

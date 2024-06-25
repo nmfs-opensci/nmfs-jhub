@@ -31,7 +31,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
 <link href="../posts/set-up-jh-aws.html" rel="next">
-<link href="../posts/Set-up-jh-azure.html" rel="prev">
+<link href="../posts/Set-up-daskhub2.html" rel="prev">
 <link href="../images/nmfs-opensci-logo2-notext.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -132,7 +132,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../posts/Set-up-jh-azure.html" class="sidebar-item-text sidebar-link">
+  <a href="../posts/Set-up-daskhub2.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Set-up DaskHub on Azure 2</span></a>
   </div>
 </li>
@@ -374,7 +374,7 @@ helm repo update</code></pre>
 <li>If a pod is stuck with a Pending or ContainerCreating status, diagnose with: <code>kubectl --namespace=jhubk8 describe pod &lt;name of pod&gt;</code></li>
 <li>If a pod keeps restarting, diagnose with: <code>kubectl --namespace=jhubk8 logs --previous &lt;name of pod&gt;</code></li>
 <li>Verify an external IP is provided for the k8s Service proxy-public. <code>kubectl --namespace=jhubk8 get service proxy-public</code></li>
-<li>If the external ip remains <pending>, diagnose with: <code>kubectl --namespace=jhubk8 describe service proxy-public</code></pending></li>
+<li>If the external ip remains Pending, diagnose with: <code>kubectl --namespace=jhubk8 describe service proxy-public</code></li>
 </ul>
 </section>
 <section id="just-the-code-to-set-up" class="level2">
@@ -957,7 +957,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../posts/Set-up-jh-azure.html" class="pagination-link  aria-label=" set-up="" daskhub="" on="" azure="" 2"="">
+      <a href="../posts/Set-up-daskhub2.html" class="pagination-link  aria-label=" set-up="" daskhub="" on="" azure="" 2"="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Set-up DaskHub on Azure 2</span>
       </a>          
   </div>

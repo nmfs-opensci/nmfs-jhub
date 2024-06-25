@@ -190,7 +190,7 @@ See the post on [setting up authentication](set-up-authentication.html) for inst
 * If a pod is stuck with a Pending or ContainerCreating status, diagnose with: `kubectl --namespace=jhubk8 describe pod <name of pod>`
 * If a pod keeps restarting, diagnose with: `kubectl --namespace=jhubk8 logs --previous <name of pod>`
 * Verify an external IP is provided for the k8s Service proxy-public. `kubectl --namespace=jhubk8 get service proxy-public`
-* If the external ip remains <pending>, diagnose with: `kubectl --namespace=jhubk8 describe service proxy-public`
+* If the external ip remains Pending, diagnose with: `kubectl --namespace=jhubk8 describe service proxy-public`
 
 ## Just the code to set up
 
