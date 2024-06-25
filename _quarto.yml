@@ -27,7 +27,7 @@ website:
     toc-expand: false
     contents:
       - text: "Home"
-        href: index.Rmd
+        href: index.html
       - text: "JHub User Guide"
         href: posts/JHub-User-Guide.Rmd
       - text: "Set-up DaskHub on Azure"
