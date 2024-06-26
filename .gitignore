@@ -6,6 +6,7 @@
 config/jhub/config.yaml
 config/dhub/dconfig2.yaml
 config/dhub/dconfig-resource.yaml
+config/fish/*.yaml
 
 config/uhub/ssh-info
 

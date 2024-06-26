@@ -1,24 +1,22 @@
-# The config file for the dask-enabled hub
+# The config file for the dask-enabled hub with GPU node pool
 jupyterhub:
   hub:
     extraEnv:
       DASK_DISTRIBUTED__DASHBOARD_LINK: '/user/{JUPYTERHUB_USER}/proxy/{port}/status'
     config:
       GitHubOAuthenticator:
-        client_id: Ov23libiD8a0yN8mO504
-        client_secret: 83490b0cdf5c6d501eb50e1f7a781ac795674a1b
-        oauth_callback_url: https://fish.opensci.live/hub/oauth_callback
+        client_id: <get from GitHub when you define the oauth>
+        client_secret: <get from GitHub when you define the oauth>
+        oauth_callback_url: https://<url to your hub>/hub/oauth_callback
         allowed_organizations:
-          - SAFS-Varanasi-Internship:summer-2024
-          - summerinterns-2024:interns
-          - summerinterns-2024:mentors
+          - <org>:<team>
+          - myghorg:team1
         scope:
           - read:org
       Authenticator:
         admin_users:
-          - eeholmes
-          - eeholmes-uw
-      JupyterHub:
+          - <GitHub user name>
+=      JupyterHub:
         authenticator_class: github
       KubeSpawner:
         working_dir: /home/jovyan
@@ -29,6 +27,9 @@ jupyterhub:
     readinessProbe:
       enabled: false
     initContainers:
+      # Optional if you want a custom landing page
+      # copy https://github.com/nmfs-opensci/jupyterhub-templates as example
+      # template repo must be PUBLIC
       - name: git-clone-templates
         image: alpine/git
         command:
@@ -36,7 +37,7 @@ jupyterhub:
           - -c
         args:
           - >-
-              git clone --branch=master https://github.com/SAFS-Varanasi-Internship/jupyterhub-templates.git &&
+              git clone --branch=master https://github.com/<your GitHub org>/jupyterhub-templates.git &&
               cp -r jupyterhub-templates/templates/* /templates &&
               cp -r jupyterhub-templates/extra-assets/* /extra-assets
         volumeMounts:
@@ -65,14 +66,14 @@ jupyterhub:
       letsencrypt:
         contactEmail: eli.holmes@noaa.gov       
   singleuser:
-    startTimeout: 3600
+    startTimeout: 600
     defaultUrl: /lab
     storage:
       capacity: 50Gi
       extraVolumes:
         - name: jupyterhub-shared
           persistentVolumeClaim:
-            claimName: daskhub-pvc
+            claimName: safshub-pvc
       extraVolumeMounts:
         - name: jupyterhub-shared
           mountPath: /home/jovyan/shared
@@ -81,7 +82,7 @@ jupyterhub:
       tag: 6ee57a9
       pullPolicy: Always
     profileList:
-      - display_name: "Select image and RAM"
+      - display_name: "Intel Xeon - Select image and RAM"
         description: &profile_list_description "Start a container with at least a chosen share of capacity on a node of this type"
         default: true
         slug: small
@@ -157,7 +158,7 @@ jupyterhub:
                   node_selector:
                     node.kubernetes.io/instance-type: Standard_E4s_v5
               mem_14_8:
-                display_name: 14.8 GB RAM up to 3 CPUs
+                display_name: 15.1 GB RAM up to 3 CPUs
                 kubespawner_override:
                   mem_guarantee: 15929958203
                   mem_limit: 15929958203
@@ -183,7 +184,7 @@ jupyterhub:
                   cpu_limit: 15
                   node_selector:
                     node.kubernetes.io/instance-type: Standard_E16s_v5
-              mem_121:
+              mem_112:
                 display_name: 112 GB RAM, upto 15 CPUs
                 kubespawner_override:
                   mem_guarantee: 118471896889
@@ -192,10 +193,37 @@ jupyterhub:
                   cpu_limit: 15
                   node_selector:
                     node.kubernetes.io/instance-type: Standard_E16s_v5
+      - display_name: NVIDIA Tesla T4, 28 GB, 4 CPUs
+        description: "Start a container on a dedicated node with a GPU"
+        slug: "gpu"
+        profile_options:
+          image:
+            display_name: Image
+            choices:
+              pytorch:
+                display_name: Pangeo PyTorch ML Notebook
+                default: true
+                slug: "pytorch"
+                kubespawner_override:
+                  image: "quay.io/pangeo/pytorch-notebook:2024.06.24"
+              tensorflow:
+                display_name: Pangeo TensorFlow ML Notebook
+                default: true
+                slug: "tensorflow"
+                kubespawner_override:
+                  image: "quay.io/pangeo/ml-notebook:2024.06.24"
+        kubespawner_override:
+          environment:
+            NVIDIA_DRIVER_CAPABILITIES: compute,utility
+          mem_limit: null
+          mem_guarantee: 14G
+          node_selector:
+            node.kubernetes.io/instance-type: Standard_NC4as_T4_v3
+          extra_resource_limits:
+            nvidia.com/gpu: "1"
 dask-gateway:
   gateway:
     extraConfig:
       idle: |-
         # timeout after 30 minutes of inactivity
         c.KubeClusterConfig.idle_timeout = 1800        
-        

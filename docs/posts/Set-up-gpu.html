@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Misc tips">
+<meta name="description" content="Setting up GPU enabled computing">
 
-<title>Eli’s JupyterHub notes - Troubleshooting</title>
+<title>Eli’s JupyterHub notes - Add GPU</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,7 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../posts/Set-up-gpu.html" rel="prev">
+<link href="../posts/tips.html" rel="next">
+<link href="../posts/set-up-authentication.html" rel="prev">
 <link href="../images/nmfs-opensci-logo2-notext.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -83,7 +84,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../posts/tips.html">Troubleshooting</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../posts/Set-up-gpu.html">Set-up GPU</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -167,13 +168,13 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../posts/Set-up-gpu.html" class="sidebar-item-text sidebar-link">
+  <a href="../posts/Set-up-gpu.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Set-up GPU</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../posts/tips.html" class="sidebar-item-text sidebar-link active">
+  <a href="../posts/tips.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Troubleshooting</span></a>
   </div>
 </li>
@@ -187,24 +188,22 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#finding-core-files" id="toc-finding-core-files" class="nav-link active" data-scroll-target="#finding-core-files">Finding core files</a></li>
-  <li><a href="#list-kernels" id="toc-list-kernels" class="nav-link" data-scroll-target="#list-kernels">List kernels</a></li>
-  <li><a href="#creating-a-persistent-environment" id="toc-creating-a-persistent-environment" class="nav-link" data-scroll-target="#creating-a-persistent-environment">Creating a persistent environment</a></li>
-  <li><a href="#troubleshooting-hanging-pods" id="toc-troubleshooting-hanging-pods" class="nav-link" data-scroll-target="#troubleshooting-hanging-pods">Troubleshooting hanging pods</a></li>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background">Background</a></li>
+  <li><a href="#adding-gpu-in-azure" id="toc-adding-gpu-in-azure" class="nav-link" data-scroll-target="#adding-gpu-in-azure">Adding GPU in Azure</a></li>
   </ul>
-<div class="toc-actions"><ul class="collapse"><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/edit/main/posts/tips.Rmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/posts/tips.Rmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+<div class="toc-actions"><ul class="collapse"><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/edit/main/posts/Set-up-gpu.Rmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/posts/Set-up-gpu.Rmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Troubleshooting</h1>
+<h1 class="title">Add GPU</h1>
 </div>
 
 <div>
   <div class="description">
-    <p>Misc tips</p>
+    <p>Setting up GPU enabled computing</p>
   </div>
 </div>
 
@@ -221,91 +220,99 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="finding-core-files" class="level2">
-<h2 class="anchored" data-anchor-id="finding-core-files">Finding core files</h2>
-<p>These are big and storage is expensive. Within a JHub terminal, run</p>
-<pre><code>find / -iname 'core.[0-9]*'</code></pre>
-<p>Then delete them.</p>
-</section>
-<section id="list-kernels" class="level2">
-<h2 class="anchored" data-anchor-id="list-kernels">List kernels</h2>
-<p>When in the cloud provider, shell for a cluster, e.g.&nbsp;Cloud Shell in Azure from the overview tab for a Kubernetes cluster.</p>
-<pre><code>jupyter kernelspec list</code></pre>
-<p>Remove</p>
-<pre><code>jupyter kernelspec remove &lt;kernel_name&gt;</code></pre>
-<p>if the kernel is not in the usual place use something like this to remove</p>
-<pre><code>jupyter kernelspec remove -p /home/jovyan/.local/share/jupyter/kernels notebook</code></pre>
-<p>Create a kernel</p>
-<pre><code># make sure ipykernel is in your env
-conda install ipykernel
-python -m ipykernel install --user --name mykernel</code></pre>
-</section>
-<section id="creating-a-persistent-environment" class="level2">
-<h2 class="anchored" data-anchor-id="creating-a-persistent-environment">Creating a persistent environment</h2>
-<p>https://nmfs-opensci.github.io/nmfs-jhub/posts/JHub-User-Guide.html#using-your-own-conda-environment</p>
-</section>
-<section id="troubleshooting-hanging-pods" class="level2">
-<h2 class="anchored" data-anchor-id="troubleshooting-hanging-pods">Troubleshooting hanging pods</h2>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">Background</h2>
+<p>For certain types of model fitting, GPU-enabled computing can speed up the calculations by orders of magnitude. This is especially the case for machine-learning tasks.</p>
+<p><strong>Reading</strong></p>
 <ul>
-<li>Search history <code>history | grep thingtosearch</code></li>
-<li>Find info on the nodes and regions/zones <code>kubectl get nodes --show-labels | grep topology.kubernetes.io</code></li>
-<li>Verify that created Pods enter a Running state: <code>kubectl --namespace=jhubk8 get pod</code></li>
-<li>If a pod is stuck with a Pending or ContainerCreating status, diagnose with: <code>kubectl --namespace=jhubk8 describe pod &lt;name of pod&gt;</code></li>
-<li>If a pod keeps restarting, diagnose with: <code>kubectl --namespace=jhubk8 logs --previous &lt;name of pod&gt;</code></li>
-<li>Delete a pod <code>kubectl --namespace=jhubk8 delete pod &lt;name of pod&gt;</code></li>
-<li>If it says a containter is the problem <code>kubectl --namespace=dhub logs --previous hub-5f5d96968d-z59bx -c git-clone-templates</code></li>
-<li>Verify an external IP is provided for the k8s Service proxy-public. <code>kubectl --namespace=jhubk8 get service proxy-public</code></li>
-<li>If the external ip remains Pending, diagnose with: <code>kubectl --namespace=jhubk8 describe service proxy-public</code></li>
-<li>Get info on persistent volumes. Sometimes hang if there is a disconnect between node region/zone and pv region/zone</li>
+<li><a href="Instructions https://z2jh.jupyter.org/en/latest/jupyterhub/customizing/user-resources.html#set-user-gpu-guarantees-limits">Zero2JH Instructions</a></li>
+<li><a href="https://medium.com/pangeo/deep-learning-with-gpus-on-pangeo-9466e25bfd74">Pangeo ML Cloud</a></li>
+<li><a href="https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues/994">WIP on GPU on GKE</a>. From 2019-2020 but lots of good info.</li>
 </ul>
-<pre><code>kubectl get pv -n jhub
-kubectl describe pv pvc-25a4c791-d2e7-4aaa-bf5a-459c3de0e60c -n jhub</code></pre>
-<p>Look for <code>topology.kubernetes.io</code> * Get the pod specification (created by jupyterhub helm)</p>
-<pre><code>kubectl get pod hub-5f5d96968d-z59bx -n dhub -oyaml &gt; test2.yaml</code></pre>
-<p>Note don’t try <code>kubectl apply -f test2.yaml</code> to change the config on the fly. It breaks things with a jupyterhub. * Open a shell into a container. Container must be running.</p>
-<pre><code>kubectl exec -stdin -tty hub-5f5d96968d-z59bx --container git-clone-templates -- /bin/bash</code></pre>
+<section id="requirements" class="level3">
+<h3 class="anchored" data-anchor-id="requirements">Requirements:</h3>
 <ul>
-<li>Debug helm upgrade. Add <code>--debug</code></li>
+<li>GPU-enabled node pool</li>
+<li>Drivers specific to the chip, e.g.&nbsp;NVIDIA T4 chip would require NVIDIA drivers. Note that in a Kubernetes cluster, drivers may be installed by default for GPU-enabled node pools. This is part of what causes GPU-enabled nodes to take a long-time to spin up.</li>
+<li>For Kubernetes, a NVIDIA device plugin (for NVIDIA chips). This sets up the pod descriptions to enable access to the GPU in the nodes.</li>
 </ul>
-<pre><code>helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2024.1.1 --values config.yaml --debug</code></pre>
-<section id="history-of-problems-i-have-solved" class="level3">
-<h3 class="anchored" data-anchor-id="history-of-problems-i-have-solved">History of problems I have solved</h3>
-<p><strong>Problem with pod stuck in <code>Init:CrashLoopBackOff</code></strong></p>
-<p>This was due to <code>git-clone-templates</code> showing user not known. Somehow the repo being cloned was set to private, so the <code>git clone</code> needed credentials which it didn’t have and that caused the init container to fail.</p>
+</section>
+<section id="basic-workflow" class="level3">
+<h3 class="anchored" data-anchor-id="basic-workflow">Basic workflow</h3>
 <ul>
-<li>Verify that created Pods enter a Running state: <code>kubectl --namespace=jhubk8 get pod</code></li>
-<li>Get some info on problem: <code>kubectl --namespace=jhubk8 describe pod &lt;name of pod&gt;</code></li>
-<li>If a pod keeps restarting, diagnose with: <code>kubectl --namespace=jhubk8 logs --previous &lt;name of pod&gt;</code></li>
-<li>Fix
+<li>Update your quotas on your cloud provider to include GPU compute. <a href="https://portal.azure.com/quotas">Azure</a></li>
+<li>Look up how to add GPU to a Kubernetes cluster in your cloud provider
 <ul>
-<li>tried applying and empty config.yaml but that didn’t replace the old one.</li>
-<li>create a config-test.yaml without the init container part that had the <code>git clone</code>. Now the hub would start.</li>
-<li>discovered that the repo was private. Fixed.</li>
+<li><a href="https://learn.microsoft.com/en-us/azure/aks/gpu-cluster?tabs=add-ubuntu-gpu-node-pool">Azure</a></li>
+<li>GCP</li>
+<li>AWS</li>
 </ul></li>
+<li>Add a nodepool with GPU. Make sure autoscale has min 0 so that no nodes are spun up yet.</li>
+<li>Install the driver (unless it is installed by default for your machine nodepool) and install a Kubernetes plug-in</li>
+<li>Force the nodepool to scale up by setting autoscale min to 1.</li>
+<li>Check that node with GPU has GPU capacity.</li>
+<li>Edit your config.yaml for JHub with GPU capacity request and an image with the CUDA enabled packages (meaning package recognizes that GPU is available and uses it).</li>
+<li>Restart the JHub with <code>helm upgrade</code></li>
+<li>Test</li>
 </ul>
-<p><strong>Problem with pod unable to start do to node affinity mismatch</strong></p>
-<p>I had set up my node pools to be one region but multiple zones. When I stopped the cluster and restarted, the system node ended up in another zone than the hub database pv. I tried to stop and restart multiple times to see if the system node would by chance start in the right zone, but it didn’t work. Had to tear down the cluster and start again with region and one zone specified.</p>
+</section>
+<section id="size-of-machine" class="level3">
+<h3 class="anchored" data-anchor-id="size-of-machine">Size of machine</h3>
+<p>In a teaching or workshop setting, the following are commonly chosen machine sizes.</p>
 <ul>
-<li>Get list of pvs <code>kubectl get pv -n jhub</code></li>
-<li>Find the one associated with the hub database <code>dhub/hub-db-dir</code>.</li>
-<li>Get info on pv region/zone. Look for <code>topology.kubernetes.io</code>.</li>
+<li>1 GPU; 16 Gig RAM</li>
+<li>AWS: g4dn.xlarge $385/mo</li>
+<li>GCP: n1-standard-4, nvidia-tesla-t4 attached to n1 family</li>
+<li>Azure: Standard_NC4as_T4_v3 (or ) $383/mo</li>
 </ul>
-<pre><code>kubectl get pv -n jhub
-kubectl describe pv pvc-25a4c791-d2e7-4aaa-bf5a-459c3de0e60c -n jhub</code></pre>
+</section>
+</section>
+<section id="adding-gpu-in-azure" class="level2">
+<h2 class="anchored" data-anchor-id="adding-gpu-in-azure">Adding GPU in Azure</h2>
+<p>Follow instructions on the <a href="https://learn.microsoft.com/en-us/azure/aks/gpu-cluster?tabs=add-ubuntu-gpu-node-pool">Use GPUs for compute-intensive workloads on Azure Kubernetes Service (AKS)</a>.</p>
+<p>My steps in June 2024.</p>
 <ul>
-<li>Get info on the region/zone for nodes.</li>
+<li></li>
 </ul>
-<pre><code>kubectl get nodes --show-labels | grep topology.kubernetes.io</code></pre>
-<ul>
-<li>Look for the one that is the system node <code>kubernetes.azure.com/mode=system</code>.</li>
-</ul>
-<p>Look for a mismatch in zones. Like <code>westus2-1</code> versus <code>westus2-3</code></p>
-<p><strong>Node affinity mismatch prevents some user pods from starting</strong></p>
-<p>Write up in Jupyter Discourse: <a href="https://discourse.jupyter.org/t/fixed-node-affinity-mismatch-stopping-some-pods-from-starting/23020">https://discourse.jupyter.org/t/fixed-node-affinity-mismatch-stopping-some-pods-from-starting/23020</a></p>
-<p>I set up a JupyterHub w Kubernetes on Azure and had been using it with a small team of 3-4 for a year. Then I did a workshop to test it with more people. It worked great during the workshop. After the workshop, I crashed my server (ran out of RAM). No problem. That often happens and I restart. This time, I got a volume / node affinity error and the pod was stuck in pending. Some other people could still launch pods, but I could not.</p>
-<p>Turns out it was a mismatch between the zone that my user PVC was on and the zone of the node. As the cluster scaled up during the workshop, new nodes on uswest2-1, uswest2-2, uswest-3 were created because I didn’t specify the zone of my nodes when setting up Kubernetes nodes. I only set the region: uswest2. As the cluster auto-scaled back down, it just so happened that the ‘last node standing’ was on uswest2-2. My user PVC is on uswest2-1 and so there was a pvc / node mismatch.</p>
+<section id="test" class="level3">
+<h3 class="anchored" data-anchor-id="test">Test</h3>
+<p>Open a notebook and run</p>
+<pre><code>import torch
+torch.cuda.is_available()</code></pre>
+<p>Should say True.</p>
+</section>
+<section id="config-file" class="level3">
+<h3 class="anchored" data-anchor-id="config-file">Config file</h3>
+<p>Add this in the profile list:</p>
+<pre><code>    profileList:
+      - display_name: NVIDIA Tesla T4, 28 GB, 4 CPUs
+        description: "Start a container on a dedicated node with a GPU"
+        slug: "gpu"
+        profile_options:
+          image:
+            display_name: Image
+            choices:
+              pytorch:
+                display_name: Pangeo PyTorch ML Notebook
+                default: true
+                slug: "pytorch"
+                kubespawner_override:
+                  image: "quay.io/pangeo/pytorch-notebook:2023.09.19"
+        kubespawner_override:
+          environment:
+            NVIDIA_DRIVER_CAPABILITIES: compute,utility
+          mem_limit: null
+          mem_guarantee: 14G
+          node_selector:
+            node.kubernetes.io/instance-type: Standard_NC4as_T4_v3
+          extra_resource_limits:
+            nvidia.com/gpu: "1"</code></pre>
+<section id="problems" class="level4">
+<h4 class="anchored" data-anchor-id="problems">Problems</h4>
+<p>wherever I change image, the hub will not restart. I get time out errors. Does it need to pull the image?</p>
 
 
+</section>
 </section>
 </section>
 
@@ -846,11 +853,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../posts/Set-up-gpu.html" class="pagination-link  aria-label=" set-up="" gpu"="">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Set-up GPU</span>
+      <a href="../posts/set-up-authentication.html" class="pagination-link  aria-label=" set-up="" authentication"="">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Set-up authentication</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="../posts/tips.html" class="pagination-link" aria-label="Troubleshooting">
+        <span class="nav-page-text">Troubleshooting</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

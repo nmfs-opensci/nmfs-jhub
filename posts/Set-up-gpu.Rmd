@@ -1,0 +1,95 @@
+---
+title: "Add GPU"
+description: |
+  Setting up GPU enabled computing
+---
+
+## Background
+
+For certain types of model fitting, GPU-enabled computing can speed up the calculations by orders of magnitude. This is especially the case for machine-learning tasks.
+
+**Reading**
+
+* [Zero2JH Instructions](Instructions https://z2jh.jupyter.org/en/latest/jupyterhub/customizing/user-resources.html#set-user-gpu-guarantees-limits)
+* [Pangeo ML Cloud](https://medium.com/pangeo/deep-learning-with-gpus-on-pangeo-9466e25bfd74)
+* [WIP on GPU on GKE](https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues/994). From 2019-2020 but lots of good info.
+
+### Requirements:
+
+* GPU-enabled node pool
+* Drivers specific to the chip, e.g. NVIDIA T4 chip would require NVIDIA drivers. Note that in a Kubernetes cluster, drivers may be installed by default for GPU-enabled node pools. This is part of what causes GPU-enabled nodes to take a long-time to spin up.
+* For Kubernetes, a NVIDIA device plugin (for NVIDIA chips). This sets up the pod descriptions to enable access to the GPU in the nodes.
+
+### Basic workflow
+
+* Update your quotas on your cloud provider to include GPU compute. [Azure](https://portal.azure.com/quotas)
+* Look up how to add GPU to a Kubernetes cluster in your cloud provider
+  - [Azure](https://learn.microsoft.com/en-us/azure/aks/gpu-cluster?tabs=add-ubuntu-gpu-node-pool)
+  - GCP
+  - AWS
+* Add a nodepool with GPU. Make sure autoscale has min 0 so that no nodes are spun up yet.
+* Install the driver (unless it is installed by default for your machine nodepool) and install a Kubernetes plug-in
+* Force the nodepool to scale up by setting autoscale min to 1.
+* Check that node with GPU has GPU capacity.
+* Edit your config.yaml for JHub with GPU capacity request and an image with the CUDA enabled packages (meaning package recognizes that GPU is available and uses it).
+* Restart the JHub with `helm upgrade`
+* Test
+
+### Size of machine
+
+In a teaching or workshop setting, the following are commonly chosen machine sizes.
+
+* 1 GPU; 16 Gig RAM
+* AWS: g4dn.xlarge $385/mo
+* GCP: n1-standard-4, nvidia-tesla-t4 attached to n1 family
+* Azure: Standard_NC4as_T4_v3 (or ) $383/mo
+  
+## Adding GPU in Azure
+
+Follow instructions on the [Use GPUs for compute-intensive workloads on Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/gpu-cluster?tabs=add-ubuntu-gpu-node-pool).
+
+My steps in June 2024.
+
+* 
+
+### Test
+
+Open a notebook and run
+```
+import torch
+torch.cuda.is_available()
+```
+Should say True.
+
+### Config file
+
+Add this in the profile list:
+```
+    profileList:
+      - display_name: NVIDIA Tesla T4, 28 GB, 4 CPUs
+        description: "Start a container on a dedicated node with a GPU"
+        slug: "gpu"
+        profile_options:
+          image:
+            display_name: Image
+            choices:
+              pytorch:
+                display_name: Pangeo PyTorch ML Notebook
+                default: true
+                slug: "pytorch"
+                kubespawner_override:
+                  image: "quay.io/pangeo/pytorch-notebook:2023.09.19"
+        kubespawner_override:
+          environment:
+            NVIDIA_DRIVER_CAPABILITIES: compute,utility
+          mem_limit: null
+          mem_guarantee: 14G
+          node_selector:
+            node.kubernetes.io/instance-type: Standard_NC4as_T4_v3
+          extra_resource_limits:
+            nvidia.com/gpu: "1"
+```
+
+#### Problems
+
+wherever I change image, the hub will not restart. I get time out errors. Does it need to pull the image?

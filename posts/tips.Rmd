@@ -71,6 +71,10 @@ Note don't try `kubectl apply -f test2.yaml` to change the config on the fly. It
 ```
 kubectl exec -stdin -tty hub-5f5d96968d-z59bx --container git-clone-templates -- /bin/bash
 ```
+* Debug helm upgrade. Add `--debug`
+```
+helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2024.1.1 --values config.yaml --debug
+```
 
 ### History of problems I have solved
 
