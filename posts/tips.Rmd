@@ -53,7 +53,7 @@ https://nmfs-opensci.github.io/nmfs-jhub/posts/JHub-User-Guide.html#using-your-o
 * If a pod is stuck with a Pending or ContainerCreating status, diagnose with: `kubectl --namespace=jhubk8 describe pod <name of pod>`
 * If a pod keeps restarting, diagnose with: `kubectl --namespace=jhubk8 logs --previous <name of pod>`
 * Delete a pod `kubectl --namespace=jhubk8 delete pod <name of pod>`
-* If it says a containter is the problem `kubectl --namespace=dhub logs --previous hub-5f5d96968d-z59bx -c git-clone-templates`
+* If it says a container is the problem `kubectl --namespace=dhub logs --previous hub-5f5d96968d-z59bx -c git-clone-templates`
 * Verify an external IP is provided for the k8s Service proxy-public. `kubectl --namespace=jhubk8 get service proxy-public`
 * If the external ip remains Pending, diagnose with: `kubectl --namespace=jhubk8 describe service proxy-public`
 * Get info on persistent volumes. Sometimes hang if there is a disconnect between node region/zone and pv region/zone
