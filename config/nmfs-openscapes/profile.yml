@@ -61,3 +61,7 @@
                 display_name: R - VAST with TMB - nmfs-opensci vast latest
                 kubespawner_override:
                   image: ghcr.io/nmfs-opensci/container-images/vast:latest
+              oci:
+                display_name: Py - Ocean Color with OCSSW
+                kubespawner_override:
+                  image: http://quay.io/pacehackweek/pace-2024:latest
