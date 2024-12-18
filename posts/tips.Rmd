@@ -4,6 +4,30 @@ description: |
   Misc tips
 ---
 
+## Check your hub
+
+Verify that created Pods enter a Running state:
+
+    kubectl --namespace=dhub get pod
+
+If a pod is stuck with a Pending or ContainerCreating status, diagnose with:
+
+    kubectl --namespace=dhub describe pod <name of pod>
+
+If a pod keeps restarting, diagnose with:
+
+    kubectl --namespace=dhub logs --previous <name of pod>
+
+Verify an external IP is provided for the k8s Service proxy-public.
+
+    kubectl --namespace=dhub get service proxy-public
+
+If the external ip remains <pending>, diagnose with:
+
+    kubectl --namespace=dhub describe service proxy-public
+      
+
+
 ## Finding core files
 
 These are big and storage is expensive. Within a JHub terminal, run
@@ -119,3 +143,29 @@ I set up a JupyterHub w Kubernetes on Azure and had been using it with a small t
 
 Turns out it was a mismatch between the zone that my user PVC was on and the zone of the node. As the cluster scaled up during the workshop, new nodes on uswest2-1, uswest2-2, uswest-3 were created because I didn’t specify the zone of my nodes when setting up Kubernetes nodes. I only set the region: uswest2. As the cluster auto-scaled back down, it just so happened that the ‘last node standing’ was on uswest2-2. My user PVC is on uswest2-1 and so there was a pvc / node mismatch.
 
+**Google installations need init pause for SSL**
+
+https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues/2601
+
+```
+proxy:
+  traefik:
+    extraInitContainers:
+      # This startup delay can help the k8s container network find the 
+      # https certificate and allow letsencrypt to work
+      - name: startup-delay
+        image: busybox:stable
+        command: ["sh", "-c", "sleep 10"]
+```
+
+**No https after restarting hub**
+
+Hub was stopped for awhile and then restarted (Azure dashboard) and then `helm updated`. I got connection refused due to improper SSL certificate. I needed to delete the autohttps pod to get https working again.
+
+```
+kubectl get namespace
+kubectl get pods --namespace dhub
+kubectl delete pods --namespace dhub autohttps-554f6c47f-z86d9
+```
+
+Wait a bit and then it started working again.

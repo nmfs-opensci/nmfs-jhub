@@ -1,3 +1,5 @@
+November 2024
+
 To restart hub after changing `dconfig-resource.yaml`
 ```
 helm upgrade --cleanup-on-fail --render-subchart-notes dhub dask/daskhub --namespace dhub --version=2023.1.0 --values dconfig-resource.yaml

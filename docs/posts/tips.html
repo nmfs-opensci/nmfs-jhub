@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.433">
+<meta name="generator" content="quarto-1.6.39">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="description" content="Misc tips">
 
-<title>Eli’s JupyterHub notes - Troubleshooting</title>
+<title>Troubleshooting – Eli’s JupyterHub notes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -37,12 +37,12 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-8c89492777ddc1c6ab649c9c2f2ee7ae.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-a2029ef242be1da2c8c50230e0c63228.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -64,6 +64,7 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -80,13 +81,13 @@ ul.task-list li input[type="checkbox"] {
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../posts/tips.html">Troubleshooting</a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -95,7 +96,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-center sidebar-header">
       <a href="../index.html" class="sidebar-logo-link">
       <img src="../images/nmfs-opensci-logo2-notext.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
@@ -180,14 +181,15 @@ ul.task-list li input[type="checkbox"] {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#finding-core-files" id="toc-finding-core-files" class="nav-link active" data-scroll-target="#finding-core-files">Finding core files</a></li>
+  <li><a href="#check-your-hub" id="toc-check-your-hub" class="nav-link active" data-scroll-target="#check-your-hub">Check your hub</a></li>
+  <li><a href="#finding-core-files" id="toc-finding-core-files" class="nav-link" data-scroll-target="#finding-core-files">Finding core files</a></li>
   <li><a href="#list-kernels" id="toc-list-kernels" class="nav-link" data-scroll-target="#list-kernels">List kernels</a></li>
   <li><a href="#creating-a-persistent-environment" id="toc-creating-a-persistent-environment" class="nav-link" data-scroll-target="#creating-a-persistent-environment">Creating a persistent environment</a></li>
   <li><a href="#troubleshooting-hanging-pods" id="toc-troubleshooting-hanging-pods" class="nav-link" data-scroll-target="#troubleshooting-hanging-pods">Troubleshooting hanging pods</a></li>
@@ -221,6 +223,20 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="check-your-hub" class="level2">
+<h2 class="anchored" data-anchor-id="check-your-hub">Check your hub</h2>
+<p>Verify that created Pods enter a Running state:</p>
+<pre><code>kubectl --namespace=dhub get pod</code></pre>
+<p>If a pod is stuck with a Pending or ContainerCreating status, diagnose with:</p>
+<pre><code>kubectl --namespace=dhub describe pod &lt;name of pod&gt;</code></pre>
+<p>If a pod keeps restarting, diagnose with:</p>
+<pre><code>kubectl --namespace=dhub logs --previous &lt;name of pod&gt;</code></pre>
+<p>Verify an external IP is provided for the k8s Service proxy-public.</p>
+<pre><code>kubectl --namespace=dhub get service proxy-public</code></pre>
+<p>If the external ip remains <pending>, diagnose with:</pending></p>
+<pre><code>kubectl --namespace=dhub describe service proxy-public
+  </code></pre>
+</section>
 <section id="finding-core-files" class="level2">
 <h2 class="anchored" data-anchor-id="finding-core-files">Finding core files</h2>
 <p>These are big and storage is expensive. Within a JHub terminal, run</p>
@@ -253,7 +269,7 @@ python -m ipykernel install --user --name mykernel</code></pre>
 <li>If a pod is stuck with a Pending or ContainerCreating status, diagnose with: <code>kubectl --namespace=jhubk8 describe pod &lt;name of pod&gt;</code></li>
 <li>If a pod keeps restarting, diagnose with: <code>kubectl --namespace=jhubk8 logs --previous &lt;name of pod&gt;</code></li>
 <li>Delete a pod <code>kubectl --namespace=jhubk8 delete pod &lt;name of pod&gt;</code></li>
-<li>If it says a containter is the problem <code>kubectl --namespace=dhub logs --previous hub-5f5d96968d-z59bx -c git-clone-templates</code></li>
+<li>If it says a container is the problem <code>kubectl --namespace=dhub logs --previous hub-5f5d96968d-z59bx -c git-clone-templates</code></li>
 <li>Verify an external IP is provided for the k8s Service proxy-public. <code>kubectl --namespace=jhubk8 get service proxy-public</code></li>
 <li>If the external ip remains Pending, diagnose with: <code>kubectl --namespace=jhubk8 describe service proxy-public</code></li>
 <li>Get info on persistent volumes. Sometimes hang if there is a disconnect between node region/zone and pv region/zone</li>
@@ -304,6 +320,22 @@ kubectl describe pv pvc-25a4c791-d2e7-4aaa-bf5a-459c3de0e60c -n jhub</code></pre
 <p>Write up in Jupyter Discourse: <a href="https://discourse.jupyter.org/t/fixed-node-affinity-mismatch-stopping-some-pods-from-starting/23020">https://discourse.jupyter.org/t/fixed-node-affinity-mismatch-stopping-some-pods-from-starting/23020</a></p>
 <p>I set up a JupyterHub w Kubernetes on Azure and had been using it with a small team of 3-4 for a year. Then I did a workshop to test it with more people. It worked great during the workshop. After the workshop, I crashed my server (ran out of RAM). No problem. That often happens and I restart. This time, I got a volume / node affinity error and the pod was stuck in pending. Some other people could still launch pods, but I could not.</p>
 <p>Turns out it was a mismatch between the zone that my user PVC was on and the zone of the node. As the cluster scaled up during the workshop, new nodes on uswest2-1, uswest2-2, uswest-3 were created because I didn’t specify the zone of my nodes when setting up Kubernetes nodes. I only set the region: uswest2. As the cluster auto-scaled back down, it just so happened that the ‘last node standing’ was on uswest2-2. My user PVC is on uswest2-1 and so there was a pvc / node mismatch.</p>
+<p><strong>Google installations need init pause for SSL</strong></p>
+<p>https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues/2601</p>
+<pre><code>proxy:
+  traefik:
+    extraInitContainers:
+      # This startup delay can help the k8s container network find the 
+      # https certificate and allow letsencrypt to work
+      - name: startup-delay
+        image: busybox:stable
+        command: ["sh", "-c", "sleep 10"]</code></pre>
+<p><strong>No https after restarting hub</strong></p>
+<p>Hub was stopped for awhile and then restarted (Azure dashboard) and then <code>helm updated</code>. I got connection refused due to improper SSL certificate. I needed to delete the autohttps pod to get https working again.</p>
+<pre><code>kubectl get namespace
+kubectl get pods --namespace dhub
+kubectl delete pods --namespace dhub autohttps-554f6c47f-z86d9</code></pre>
+<p>Wait a bit and then it started working again.</p>
 
 
 </section>
@@ -489,18 +521,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -532,7 +553,45 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/nmfs-opensci\.github\.io\/nmfs-jhub");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -567,7 +626,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -582,38 +645,28 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
-        for (let i = 0; i < 2; i++) {
-          container.appendChild(note.children[i].cloneNode(true));
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -622,8 +675,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -846,7 +905,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../posts/Set-up-gpu.html" class="pagination-link  aria-label=" set-up="" gpu"="">
+      <a href="../posts/Set-up-gpu.html" class="pagination-link" aria-label="Set-up GPU">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Set-up GPU</span>
       </a>          
   </div>
@@ -861,7 +920,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>   
     <div class="nav-footer-center">
 <p><img src="../images/nmfs-opensci-logo2-notext.png" alt="NMFS OpenSci logo" style="width:150px"><br>NMFS OpenSci (2023)</p>
-</div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/edit/main/posts/tips.Rmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/nmfs-opensci/nmfs-jhub/blob/main/posts/tips.Rmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
